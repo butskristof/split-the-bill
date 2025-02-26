@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitTheBillPoc", "SplitTheBillPoc\SplitTheBillPoc.csproj", "{45CA63C2-A624-49D2-A925-95E476D5AFB6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45CA63C2-A624-49D2-A925-95E476D5AFB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45CA63C2-A624-49D2-A925-95E476D5AFB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45CA63C2-A624-49D2-A925-95E476D5AFB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45CA63C2-A624-49D2-A925-95E476D5AFB6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
