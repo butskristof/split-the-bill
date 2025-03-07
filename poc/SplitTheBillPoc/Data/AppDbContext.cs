@@ -16,39 +16,15 @@ internal sealed class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .Entity<Group>()
-            .HasMany<Member>(g => g.Members)
-            .WithMany();
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    }
 
-        modelBuilder
-            .Entity<Expense>()
-            .HasOne<Group>()
-            .WithMany(g => g.Expenses)
-            .HasForeignKey(e => e.GroupId);
-
-        modelBuilder
-            .Entity<Expense>()
-            .HasOne<Member>()
-            .WithMany()
-            .HasForeignKey(e => e.PaidByMemberId);
-
-        modelBuilder
-            .Entity<Payment>()
-            .HasOne<Group>()
-            .WithMany(g => g.Payments)
-            .HasForeignKey(p => p.GroupId);
-
-        modelBuilder
-            .Entity<Payment>()
-            .HasOne<Member>()
-            .WithMany()
-            .HasForeignKey(p => p.PaidByMemberId);
-
-        modelBuilder
-            .Entity<Payment>()
-            .HasOne<Member>()
-            .WithMany()
-            .HasForeignKey(p => p.PaidToMemberId);
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+        configurationBuilder
+            .Properties<string>()
+            .HaveMaxLength(512);
     }
 }

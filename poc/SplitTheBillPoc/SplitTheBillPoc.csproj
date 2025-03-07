@@ -4,7 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>15f361fc-feac-408c-b6ac-f0f25b1b515a</UserSecretsId>
+        <UserSecretsId>c51e9305-3cdb-4668-975c-f9373c8801a1</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,7 +13,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     </ItemGroup>
 
 </Project>

@@ -1,68 +1,35 @@
-using SplitTheBillPoc.Models;
-
 namespace SplitTheBillPoc.Modules.Groups;
 
-internal sealed class GroupDTO
+internal sealed record GroupDTO(
+    Guid Id,
+    string Name
+);
+
+internal sealed record DetailedGroupDTO(
+    Guid Id,
+    string Name,
+    List<DetailedGroupDTO.MemberDTO> Members,
+    List<DetailedGroupDTO.ExpenseDTO> Expenses,
+    List<DetailedGroupDTO.PaymentDTO> Payments
+)
 {
-    public Guid Id { get; init; }
-    public required string Name { get; set; }
+    internal sealed record MemberDTO(Guid Id, string Name);
 
-    public ICollection<MemberDTO> Members { get; set; } = [];
-    public ICollection<ExpenseDTO> Expenses { get; set; } = [];
-    public ICollection<PaymentDTO> Payments { get; set; } = [];
+    internal sealed record ExpenseDTO(Guid Id, string Description, decimal Amount);
 
-    public decimal TotalExpenses => Expenses.Sum(e => e.Amount);
+    internal sealed record PaymentDTO(Guid Id, Guid MemberId, decimal Amount);
+
+    public decimal TotalExpenseAmount => Expenses.Sum(e => e.Amount);
     public decimal TotalPaymentAmount => Payments.Sum(p => p.Amount);
-    public decimal TotalAmountDue => TotalExpenses - TotalPaymentAmount;
+    public decimal AmountDue => TotalExpenseAmount - TotalPaymentAmount;
+    public decimal ExpenseAmountPerMember => TotalExpenseAmount / Members.Count;
 
-    internal sealed class MemberDTO
-    {
-        public Guid Id { get; init; }
-        public required string Name { get; set; }
-    }
-
-    internal sealed class ExpenseDTO
-    {
-        public Guid Id { get; set; }
-        public required decimal Amount { get; set; }
-
-        public required Guid PaidByMemberId { get; set; }
-    }
-
-    internal sealed class PaymentDTO
-    {
-        public Guid Id { get; set; }
-        public required decimal Amount { get; set; }
-
-        public required Guid PaidByMemberId { get; set; }
-        public required Guid PaidToMemberId { get; set; }
-    }
-}
-
-internal static class GroupDTOExtensions
-{
-    internal static GroupDTO ToDTO(this Group group)
-        => new()
-        {
-            Id = group.Id,
-            Name = group.Name,
-            Members = group.Members.Select(m => new GroupDTO.MemberDTO
-            {
-                Id = m.Id,
-                Name = m.Name,
-            }).ToList(),
-            Expenses = group.Expenses.Select(g => new GroupDTO.ExpenseDTO
-            {
-                Id = g.Id,
-                Amount = g.Amount,
-                PaidByMemberId = g.PaidByMemberId,
-            }).ToList(),
-            Payments = group.Payments.Select(p => new GroupDTO.PaymentDTO
-            {
-                Id = p.Id,
-                Amount = p.Amount,
-                PaidByMemberId = p.PaidByMemberId,
-                PaidToMemberId = p.PaidToMemberId,
-            }).ToList(),
-        };
+    public Dictionary<Guid, decimal> AmountsDueByMember => Members
+        .ToDictionary(
+            m => m.Id,
+            m =>
+                ExpenseAmountPerMember - Payments
+                    .Where(p => p.MemberId == m.Id)
+                    .Sum(p => p.Amount)
+        );
 }
