@@ -12,8 +12,8 @@ using SplitTheBillPoc.Data;
 namespace SplitTheBillPoc.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250226223823_AddExpenses")]
-    partial class AddExpenses
+    [Migration("20250307234130_AddPaymentMemberId")]
+    partial class AddPaymentMemberId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,21 +25,6 @@ namespace SplitTheBillPoc.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("GroupMember", b =>
-                {
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("MembersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("GroupId", "MembersId");
-
-                    b.HasIndex("MembersId");
-
-                    b.ToTable("GroupMember");
-                });
-
             modelBuilder.Entity("SplitTheBillPoc.Models.Expense", b =>
                 {
                     b.Property<Guid>("Id")
@@ -49,17 +34,17 @@ namespace SplitTheBillPoc.Data.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
-                    b.Property<Guid>("PaidByMemberId")
+                    b.Property<Guid>("GroupId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
-
-                    b.HasIndex("PaidByMemberId");
 
                     b.ToTable("Expenses");
                 });
@@ -72,11 +57,27 @@ namespace SplitTheBillPoc.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("SplitTheBillPoc.Models.GroupMember", b =>
+                {
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MemberId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("GroupId", "MemberId");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("GroupMembers", (string)null);
                 });
 
             modelBuilder.Entity("SplitTheBillPoc.Models.Member", b =>
@@ -87,26 +88,36 @@ namespace SplitTheBillPoc.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Members");
                 });
 
-            modelBuilder.Entity("GroupMember", b =>
+            modelBuilder.Entity("SplitTheBillPoc.Models.Payment", b =>
                 {
-                    b.HasOne("SplitTheBillPoc.Models.Group", null)
-                        .WithMany()
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
-                    b.HasOne("SplitTheBillPoc.Models.Member", null)
-                        .WithMany()
-                        .HasForeignKey("MembersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MemberId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("SplitTheBillPoc.Models.Expense", b =>
@@ -116,10 +127,34 @@ namespace SplitTheBillPoc.Data.Migrations
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SplitTheBillPoc.Models.GroupMember", b =>
+                {
+                    b.HasOne("SplitTheBillPoc.Models.Group", null)
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SplitTheBillPoc.Models.Member", null)
                         .WithMany()
-                        .HasForeignKey("PaidByMemberId")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SplitTheBillPoc.Models.Payment", b =>
+                {
+                    b.HasOne("SplitTheBillPoc.Models.Group", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SplitTheBillPoc.Models.Member", null)
+                        .WithMany()
+                        .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -127,6 +162,8 @@ namespace SplitTheBillPoc.Data.Migrations
             modelBuilder.Entity("SplitTheBillPoc.Models.Group", b =>
                 {
                     b.Navigation("Expenses");
+
+                    b.Navigation("Payments");
                 });
 #pragma warning restore 612, 618
         }

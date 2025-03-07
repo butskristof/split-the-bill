@@ -12,24 +12,19 @@ internal sealed class AppDbContext : DbContext
     public DbSet<Member> Members { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Expense> Expenses { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .Entity<Group>()
-            .HasMany<Member>(g => g.Members)
-            .WithMany();
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    }
 
-        modelBuilder
-            .Entity<Expense>()
-            .HasOne<Group>()
-            .WithMany(g => g.Expenses)
-            .HasForeignKey(e => e.GroupId);
-
-        modelBuilder
-            .Entity<Expense>()
-            .HasOne<Member>()
-            .WithMany()
-            .HasForeignKey(e => e.PaidByMemberId);
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
+        configurationBuilder
+            .Properties<string>()
+            .HaveMaxLength(512);
     }
 }
