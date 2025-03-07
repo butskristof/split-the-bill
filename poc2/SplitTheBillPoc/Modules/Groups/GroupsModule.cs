@@ -38,13 +38,13 @@ internal static class GroupsModule
             group.Id,
             group.Name,
             group.Members
-                .Select(m => new DetailedGroupDTO.GroupMemberDTO(m.Id, m.Name))
+                .Select(m => new DetailedGroupDTO.MemberDTO(m.Id, m.Name))
                 .ToList(),
             group.Expenses
                 .Select(e => new DetailedGroupDTO.ExpenseDTO(e.Id, e.Description, e.Amount))
                 .ToList(),
             group.Payments
-                .Select(p => new DetailedGroupDTO.PaymentDTO(p.Id, p.Amount))
+                .Select(p => new DetailedGroupDTO.PaymentDTO(p.Id, p.MemberId, p.Amount))
                 .ToList()
         );
         return TypedResults.Ok(mappedGroup);
