@@ -6,4 +6,5 @@ internal sealed class Group
     public required string Name { get; set; }
 
     public List<Member> Members { get; set; } = [];
+    public List<Expense> Expenses { get; set; } = [];
 }

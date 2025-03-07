@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SplitTheBillPoc.Data;
+using SplitTheBillPoc.Modules.Groups;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,5 +10,5 @@ builder.Services
     );
 
 var app = builder.Build();
-
+app.MapGroupsModule();
 app.Run();
