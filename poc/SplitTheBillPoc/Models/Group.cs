@@ -7,6 +7,5 @@ internal sealed class Group
 
     public ICollection<Member> Members { get; set; } = [];
     public ICollection<Expense> Expenses { get; set; } = [];
-
-    public decimal TotalExpenses => Expenses.Sum(e => e.Amount);
+    public ICollection<Payment> Payments { get; set; } = [];
 }

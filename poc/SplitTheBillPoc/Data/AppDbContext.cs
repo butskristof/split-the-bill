@@ -12,6 +12,7 @@ internal sealed class AppDbContext : DbContext
     public DbSet<Member> Members { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Expense> Expenses { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,5 +32,23 @@ internal sealed class AppDbContext : DbContext
             .HasOne<Member>()
             .WithMany()
             .HasForeignKey(e => e.PaidByMemberId);
+
+        modelBuilder
+            .Entity<Payment>()
+            .HasOne<Group>()
+            .WithMany(g => g.Payments)
+            .HasForeignKey(p => p.GroupId);
+
+        modelBuilder
+            .Entity<Payment>()
+            .HasOne<Member>()
+            .WithMany()
+            .HasForeignKey(p => p.PaidByMemberId);
+
+        modelBuilder
+            .Entity<Payment>()
+            .HasOne<Member>()
+            .WithMany()
+            .HasForeignKey(p => p.PaidToMemberId);
     }
 }

@@ -14,8 +14,14 @@ internal static class GroupsModule
     }
 
     private static async Task<IResult> GetGroups([FromServices] AppDbContext dbContext)
-        => Results.Ok(await dbContext.Groups
+    {
+        var groups = await dbContext.Groups
             .Include(g => g.Members)
             .Include(g => g.Expenses)
-            .ToListAsync());
+            .Include(g => g.Payments)
+            .ToListAsync();
+        var mappedGroups = groups
+            .Select(g => g.ToDTO());
+        return Results.Ok(mappedGroups);
+    }
 }
