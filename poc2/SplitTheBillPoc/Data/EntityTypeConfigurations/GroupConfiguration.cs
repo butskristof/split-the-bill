@@ -18,5 +18,11 @@ internal sealed class GroupConfiguration : IEntityTypeConfiguration<Group>
             .WithOne()
             .HasForeignKey(e => e.GroupId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasMany<Payment>(g => g.Payments)
+            .WithOne()
+            .HasForeignKey(p => p.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

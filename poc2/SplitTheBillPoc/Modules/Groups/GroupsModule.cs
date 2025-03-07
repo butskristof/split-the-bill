@@ -30,6 +30,7 @@ internal static class GroupsModule
         var group = await dbContext.Groups
             .Include(g => g.Members)
             .Include(g => g.Expenses)
+            .Include(group => group.Payments)
             .SingleOrDefaultAsync(g => g.Id == id);
         if (group is null) return Results.NotFound();
 
@@ -41,6 +42,9 @@ internal static class GroupsModule
                 .ToList(),
             group.Expenses
                 .Select(e => new DetailedGroupDTO.ExpenseDTO(e.Id, e.Description, e.Amount))
+                .ToList(),
+            group.Payments
+                .Select(p => new DetailedGroupDTO.PaymentDTO(p.Id, p.Amount))
                 .ToList()
         );
         return TypedResults.Ok(mappedGroup);

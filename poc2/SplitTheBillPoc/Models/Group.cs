@@ -7,4 +7,5 @@ internal sealed class Group
 
     public List<Member> Members { get; set; } = [];
     public List<Expense> Expenses { get; set; } = [];
+    public List<Payment> Payments { get; set; } = [];
 }
