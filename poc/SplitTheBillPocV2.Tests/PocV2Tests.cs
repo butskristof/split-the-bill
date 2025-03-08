@@ -17,4 +17,28 @@ public class PocV2Tests
         dto.ExpenseAmountPerMember.ShouldBe(0);
         dto.AmountsDueByMember.Values.ShouldAllBe(v => v == 0);
     }
+
+    [Test]
+    public void ExpenseForAll_SpreadEvenly()
+    {
+        true.ShouldBeFalse();
+    }
+
+    [Test]
+    public void ExpenseForOne_CountedPersonally()
+    {
+        true.ShouldBeFalse();
+    }
+
+    [Test]
+    public void ExpenseForSome_AttributedToSome()
+    {
+        true.ShouldBeFalse();
+    }
+
+    [Test]
+    public void ExpenseForAll_AddMember_HasNoAmountDue()
+    {
+        true.ShouldBeFalse();
+    }
 }
