@@ -11,7 +11,7 @@ internal static class GroupsModule
         var group = endpoints.MapGroup("groups");
 
         group.MapGet("", GetGroups);
-        group.MapGet("{id:guid}", MapGroup);
+        group.MapGet("{id:guid}", GetGroup);
 
         return endpoints;
     }
@@ -25,7 +25,7 @@ internal static class GroupsModule
         return TypedResults.Ok(groups);
     }
 
-    private static async Task<IResult> MapGroup([FromRoute] Guid id, [FromServices] AppDbContext dbContext)
+    private static async Task<IResult> GetGroup([FromRoute] Guid id, [FromServices] AppDbContext dbContext)
     {
         var group = await dbContext.Groups
             .Include(g => g.Members)
@@ -34,19 +34,7 @@ internal static class GroupsModule
             .SingleOrDefaultAsync(g => g.Id == id);
         if (group is null) return Results.NotFound();
 
-        var mappedGroup = new DetailedGroupDTO(
-            group.Id,
-            group.Name,
-            group.Members
-                .Select(m => new DetailedGroupDTO.MemberDTO(m.Id, m.Name))
-                .ToList(),
-            group.Expenses
-                .Select(e => new DetailedGroupDTO.ExpenseDTO(e.Id, e.Description, e.Amount))
-                .ToList(),
-            group.Payments
-                .Select(p => new DetailedGroupDTO.PaymentDTO(p.Id, p.MemberId, p.Amount))
-                .ToList()
-        );
+        var mappedGroup = group.MapToDetailedGroupDTO();
         return TypedResults.Ok(mappedGroup);
     }
 }

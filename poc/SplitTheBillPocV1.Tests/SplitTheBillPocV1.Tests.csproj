@@ -22,4 +22,8 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SplitTheBillPocV1\SplitTheBillPocV1.csproj" />
+    </ItemGroup>
+
 </Project>

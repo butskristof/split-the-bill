@@ -22,7 +22,7 @@ internal sealed record DetailedGroupDTO(
     public decimal TotalExpenseAmount => Expenses.Sum(e => e.Amount);
     public decimal TotalPaymentAmount => Payments.Sum(p => p.Amount);
     public decimal AmountDue => TotalExpenseAmount - TotalPaymentAmount;
-    public decimal ExpenseAmountPerMember => TotalExpenseAmount / Members.Count;
+    public decimal ExpenseAmountPerMember => Members.Count > 0 ? TotalExpenseAmount / Members.Count : 0;
 
     public Dictionary<Guid, decimal> AmountsDueByMember => Members
         .ToDictionary(
