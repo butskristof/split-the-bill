@@ -19,4 +19,12 @@ internal static class Members
 
         internal static Member Entity() => new() { Id = Id, Name = Name };
     }
+
+    internal static class Charlie
+    {
+        internal static readonly Guid Id = new("98B9B416-E832-41C7-BE64-0C329BEE17BB");
+        internal const string Name = nameof(Charlie);
+        
+        internal static Member Entity() => new() { Id = Id, Name = Name };
+    }
 }

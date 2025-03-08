@@ -15,21 +15,28 @@ internal sealed record DetailedGroupDTO(
 {
     internal sealed record MemberDTO(Guid Id, string Name);
 
-    internal sealed record ExpenseDTO(Guid Id, string Description, decimal Amount);
+    internal sealed record ExpenseDTO(Guid Id, string Description, decimal Amount, List<MemberDTO> Participants);
 
     internal sealed record PaymentDTO(Guid Id, Guid MemberId, decimal Amount);
 
     public decimal TotalExpenseAmount => Expenses.Sum(e => e.Amount);
     public decimal TotalPaymentAmount => Payments.Sum(p => p.Amount);
     public decimal AmountDue => TotalExpenseAmount - TotalPaymentAmount;
-    public decimal ExpenseAmountPerMember => Members.Count > 0 ? TotalExpenseAmount / Members.Count : 0;
 
     public Dictionary<Guid, decimal> AmountsDueByMember => Members
         .ToDictionary(
             m => m.Id,
             m =>
-                ExpenseAmountPerMember - Payments
+            {
+                var memberId = m.Id;
+                var memberExpenses = Expenses
+                    .Where(e => e.Participants.Any(p => p.Id == memberId));
+                var expenseAmount = memberExpenses
+                    .Sum(e => e.Amount / e.Participants.Count);
+                var paidAmount = Payments
                     .Where(p => p.MemberId == m.Id)
-                    .Sum(p => p.Amount)
+                    .Sum(p => p.Amount);
+                return expenseAmount - paidAmount;
+            }
         );
 }
