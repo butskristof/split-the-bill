@@ -1,4 +1,4 @@
-namespace SplitTheBillPocV1.Models;
+namespace SplitTheBillPocV2.Models;
 
 internal sealed class GroupMember
 {

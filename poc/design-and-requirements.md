@@ -12,11 +12,13 @@
 ## Improvements V2
 - Move away from one big group bill which is divided equally, but keep track of the "participants" per expense
     - these are set at the time of creation. If a member joins the group later, they should not be included in expenses for "all" members
-- Record who paid for an expense
-- For each relation between group members, calculate the balance between them 
 
 # Improvements V3 
 - Allow specifying partial attribution of an expense: equal splits, custom percentage or amount, ... 
+
+# Improvements V4
+- Instead of making a payment to "the group", move to amounts owed to each group member 
+- For each relation between group members, calculate the balance between them 
 
 ## Sources
 - https://github.com/ashishps1/awesome-low-level-design/blob/main/problems/splitwise.md 

@@ -1,4 +1,4 @@
-namespace SplitTheBillPocV1.Models;
+namespace SplitTheBillPocV2.Models;
 
 internal sealed class Expense
 {
@@ -7,4 +7,6 @@ internal sealed class Expense
     
     public required string Description { get; set; }
     public required decimal Amount { get; set; }
+
+    public List<Member> Participants { get; init; } = [];
 }
