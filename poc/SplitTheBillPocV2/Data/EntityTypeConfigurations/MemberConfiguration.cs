@@ -12,5 +12,10 @@ internal sealed class MemberConfiguration : IEntityTypeConfiguration<Member>
             .HasMany<Group>(m => m.Groups)
             .WithMany(g => g.Members)
             .UsingEntity<GroupMember>();
+
+        builder
+            .HasMany<Expense>()
+            .WithMany()
+            .UsingEntity<ExpenseParticipant>();
     }
 }
