@@ -1,9 +1,9 @@
 using Shouldly;
-using SplitTheBillPoc.Tests.TestData;
-using SplitTheBillPoc.Tests.TestData.Builders;
 using SplitTheBillPocV1.Modules.Groups;
+using SplitTheBillPocV1.Tests.TestData;
+using SplitTheBillPocV1.Tests.TestData.Builders;
 
-namespace SplitTheBillPoc.Tests;
+namespace SplitTheBillPocV1.Tests;
 
 public class PocV1Tests
 {

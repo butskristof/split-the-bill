@@ -1,6 +1,6 @@
 using SplitTheBillPocV1.Models;
 
-namespace SplitTheBillPoc.Tests.TestData;
+namespace SplitTheBillPocV1.Tests.TestData;
 
 internal static class Members
 {

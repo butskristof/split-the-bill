@@ -1,6 +1,6 @@
 using SplitTheBillPocV1.Models;
 
-namespace SplitTheBillPoc.Tests.TestData.Builders;
+namespace SplitTheBillPocV1.Tests.TestData.Builders;
 
 internal class GroupBuilder
 {

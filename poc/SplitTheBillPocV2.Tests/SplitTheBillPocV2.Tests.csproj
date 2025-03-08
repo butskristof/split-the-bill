@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SplitTheBillPocV1\SplitTheBillPocV1.csproj" />
+      <ProjectReference Include="..\SplitTheBillPocV2\SplitTheBillPocV2.csproj" />
     </ItemGroup>
 
 </Project>
