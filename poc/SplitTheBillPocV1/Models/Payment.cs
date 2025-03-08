@@ -2,9 +2,9 @@ namespace SplitTheBillPocV1.Models;
 
 internal sealed class Payment
 {
-    public required Guid Id { get; set; }
-    public required Guid GroupId { get; set; }
-    public required Guid MemberId { get; set; }
+    public required Guid Id { get; init; }
+    public required Guid GroupId { get; init; }
+    public required Guid MemberId { get; init; }
     
     public required decimal Amount { get; set; }
 }
