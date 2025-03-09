@@ -1,3 +1,5 @@
+using SplitTheBillPocV3.Models;
+
 namespace SplitTheBillPocV3.Modules;
 
 internal sealed record GroupDTO(
@@ -15,7 +17,17 @@ internal sealed record DetailedGroupDTO(
 {
     internal sealed record MemberDTO(Guid Id, string Name);
 
-    internal sealed record ExpenseDTO(Guid Id, string Description, decimal Amount, List<MemberDTO> Participants);
+    internal sealed record ExpenseDTO(
+        Guid Id,
+        string Description,
+        decimal Amount,
+        ExpenseSplitType SplitType,
+        List<ExpenseParticipantDTO> Participants);
+
+    internal sealed record ExpenseParticipantDTO(
+        Guid MemberId,
+        double? PercentualSplitShare,
+        decimal? ExactAmountSplitShare);
 
     internal sealed record PaymentDTO(Guid Id, Guid MemberId, decimal Amount);
 
@@ -29,14 +41,27 @@ internal sealed record DetailedGroupDTO(
             m =>
             {
                 var memberId = m.Id;
-                var memberExpenses = Expenses
-                    .Where(e => e.Participants.Any(p => p.Id == memberId));
-                var expenseAmount = memberExpenses
-                    .Sum(e => e.Amount / e.Participants.Count);
+                var totalExpenseAmountForMember = Expenses
+                    .Sum(e =>
+                    {
+                        if (e.Amount == 0) return 0;
+                        var participantForMember = e.Participants.SingleOrDefault(p => p.MemberId == memberId);
+                        if (participantForMember == null) return 0;
+                        var amount = e.SplitType switch
+                        {
+                            ExpenseSplitType.Evenly => e.Amount / e.Participants.Count,
+                            ExpenseSplitType.Percentual => e.Amount *
+                                                           (decimal)participantForMember.PercentualSplitShare.Value,
+                            ExpenseSplitType.ExactAmount => participantForMember.ExactAmountSplitShare.Value,
+                            _ => throw new ArgumentOutOfRangeException()
+                        };
+                        return amount;
+                    });
+
                 var paidAmount = Payments
                     .Where(p => p.MemberId == m.Id)
                     .Sum(p => p.Amount);
-                return expenseAmount - paidAmount;
+                return totalExpenseAmountForMember - paidAmount;
             }
         );
 }

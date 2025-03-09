@@ -12,9 +12,15 @@ internal static class GroupsMapping
                 .Select(m => new DetailedGroupDTO.MemberDTO(m.Id, m.Name))
                 .ToList(),
             group.Expenses
-                .Select(e => new DetailedGroupDTO.ExpenseDTO(e.Id, e.Description, e.Amount,
+                .Select(e => new DetailedGroupDTO.ExpenseDTO(
+                    e.Id, 
+                    e.Description, 
+                    e.Amount,
+                    e.SplitType,
                     e.Participants
-                        .Select(p => new DetailedGroupDTO.MemberDTO(p.Id, p.Name))
+                        .Select(p =>
+                            new DetailedGroupDTO.ExpenseParticipantDTO(p.MemberId, p.PercentualSplitShare,
+                                p.ExactAmountSplitShare))
                         .ToList())
                 )
                 .ToList(),

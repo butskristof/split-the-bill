@@ -1,4 +1,5 @@
 using Shouldly;
+using SplitTheBillPocV3.Models;
 using SplitTheBillPocV3.Modules;
 using SplitTheBillPocV3.Tests.TestData;
 using SplitTheBillPocV3.Tests.TestData.Builders;
@@ -98,5 +99,65 @@ public class PocV3Tests
         dto.AmountsDueByMember[Members.Alice.Id].ShouldBe(50m);
         dto.AmountsDueByMember[Members.Bob.Id].ShouldBe(50m);
         dto.AmountsDueByMember[Members.Charlie.Id].ShouldBe(0);
+    }
+
+    [Test]
+    public void ExpenseSplitPercentually()
+    {
+        var group = new GroupBuilder()
+            .WithMembers([Members.Alice.Entity(), Members.Bob.Entity()])
+            .AddExpense(new ExpenseBuilder()
+                .WithAmount(100m)
+                .WithSplitType(ExpenseSplitType.Percentual)
+                .WithParticipants([
+                    new ExpenseParticipantBuilder()
+                        .WithMemberId(Members.Alice.Id)
+                        .WithPercentualSplitShare(0.6),
+                    new ExpenseParticipantBuilder()
+                        .WithMemberId(Members.Bob.Id)
+                        .WithPercentualSplitShare(0.4),
+                ])
+                .Build())
+            .Build();
+        var dto = group.MapToDetailedGroupDTO();
+
+        dto.TotalExpenseAmount.ShouldBe(100m);
+        dto.TotalPaymentAmount.ShouldBe(0);
+        dto.AmountDue.ShouldBe(100m);
+        dto.AmountsDueByMember[Members.Alice.Id].ShouldBe(60m);
+        dto.AmountsDueByMember[Members.Bob.Id].ShouldBe(40m);
+    }
+
+    [Test]
+    public void ExpenseSplitExactly()
+    {
+        var group = new GroupBuilder()
+            .WithMembers([Members.Alice.Entity(), Members.Bob.Entity()])
+            .AddExpense(new ExpenseBuilder()
+                .WithAmount(100m)
+                .WithSplitType(ExpenseSplitType.ExactAmount)
+                .WithParticipants([
+                    new ExpenseParticipantBuilder()
+                        .WithMemberId(Members.Alice.Id)
+                        .WithExactAmountSplitShare(70),
+                    new ExpenseParticipantBuilder()
+                        .WithMemberId(Members.Bob.Id)
+                        .WithExactAmountSplitShare(30)
+                ])
+                .Build())
+            .Build();
+        var dto = group.MapToDetailedGroupDTO();
+
+        dto.TotalExpenseAmount.ShouldBe(100m);
+        dto.TotalPaymentAmount.ShouldBe(0);
+        dto.AmountDue.ShouldBe(100m);
+        dto.AmountsDueByMember[Members.Alice.Id].ShouldBe(70m);
+        dto.AmountsDueByMember[Members.Bob.Id].ShouldBe(30m);
+    }
+
+    [Test]
+    public void MultipleExpenseSplitTypes()
+    {
+        true.ShouldBeFalse();
     }
 }

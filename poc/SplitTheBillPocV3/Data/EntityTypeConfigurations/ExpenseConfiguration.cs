@@ -9,8 +9,9 @@ internal sealed class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
     public void Configure(EntityTypeBuilder<Expense> builder)
     {
         builder
-            .HasMany<Member>(e => e.Participants)
-            .WithMany()
-            .UsingEntity<ExpenseParticipant>();
+            .HasMany<ExpenseParticipant>(e => e.Participants)
+            .WithOne()
+            .HasForeignKey(ep => ep.ExpenseId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
