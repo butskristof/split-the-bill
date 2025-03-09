@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitTheBillPocV2", "SplitT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitTheBillPocV2.Tests", "SplitTheBillPocV2.Tests\SplitTheBillPocV2.Tests.csproj", "{506D03CC-8AC2-4771-B01F-60A47293157F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitTheBillPocV3", "SplitTheBillPocV3\SplitTheBillPocV3.csproj", "{5EF74BE8-2E75-4E12-B839-19B5B1EA76D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SplitTheBillPocV3.Tests", "SplitTheBillPocV3.Tests\SplitTheBillPocV3.Tests.csproj", "{21055DEB-8EDC-43F5-9301-16C6DE6EC45D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{506D03CC-8AC2-4771-B01F-60A47293157F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{506D03CC-8AC2-4771-B01F-60A47293157F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{506D03CC-8AC2-4771-B01F-60A47293157F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EF74BE8-2E75-4E12-B839-19B5B1EA76D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EF74BE8-2E75-4E12-B839-19B5B1EA76D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EF74BE8-2E75-4E12-B839-19B5B1EA76D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EF74BE8-2E75-4E12-B839-19B5B1EA76D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21055DEB-8EDC-43F5-9301-16C6DE6EC45D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21055DEB-8EDC-43F5-9301-16C6DE6EC45D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21055DEB-8EDC-43F5-9301-16C6DE6EC45D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21055DEB-8EDC-43F5-9301-16C6DE6EC45D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
