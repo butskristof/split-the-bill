@@ -158,6 +158,44 @@ public class PocV3Tests
     [Test]
     public void MultipleExpenseSplitTypes()
     {
-        true.ShouldBeFalse();
+        var group = new GroupBuilder()
+            .WithMembers([Members.Alice.Entity(), Members.Bob.Entity()])
+            .AddExpense(new ExpenseBuilder()
+                .WithAmount(500m)
+                .WithSplitType(ExpenseSplitType.Evenly)
+                .WithParticipants([Members.Alice.Entity(), Members.Bob.Entity()])
+            )
+            .AddExpense(new ExpenseBuilder()
+                .WithAmount(500m)
+                .WithSplitType(ExpenseSplitType.Percentual)
+                .WithParticipants([
+                    new ExpenseParticipantBuilder()
+                        .WithMemberId(Members.Alice.Id)
+                        .WithPercentualSplitShare(0.1),
+                    new ExpenseParticipantBuilder()
+                        .WithMemberId(Members.Bob.Id)
+                        .WithPercentualSplitShare(0.9),
+                ])
+            )
+            .AddExpense(new ExpenseBuilder()
+                .WithAmount(500m)
+                .WithSplitType(ExpenseSplitType.ExactAmount)
+                .WithParticipants([
+                    new ExpenseParticipantBuilder()
+                        .WithMemberId(Members.Alice.Id)
+                        .WithExactAmountSplitShare(400),
+                    new ExpenseParticipantBuilder()
+                        .WithMemberId(Members.Bob.Id)
+                        .WithExactAmountSplitShare(100),
+                ])
+            )
+            .Build();
+        var dto = group.MapToDetailedGroupDTO();
+
+        dto.TotalExpenseAmount.ShouldBe(1500m);
+        dto.TotalPaymentAmount.ShouldBe(0);
+        dto.AmountDue.ShouldBe(1500m);
+        dto.AmountsDueByMember[Members.Alice.Id].ShouldBe(700m);
+        dto.AmountsDueByMember[Members.Bob.Id].ShouldBe(800m);
     }
 }
