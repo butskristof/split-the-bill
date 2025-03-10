@@ -29,7 +29,7 @@ internal sealed record DetailedGroupDTO(
         double? PercentualSplitShare,
         decimal? ExactAmountSplitShare);
 
-    internal sealed record PaymentDTO(Guid Id, Guid MemberId, decimal Amount);
+    internal sealed record PaymentDTO(Guid Id, Guid SendingMemberId, Guid ReceivingMemberId, decimal Amount);
 
     public decimal TotalExpenseAmount => Expenses.Sum(e => e.Amount);
     public decimal TotalPaymentAmount => Payments.Sum(p => p.Amount);
@@ -59,9 +59,12 @@ internal sealed record DetailedGroupDTO(
                     });
 
                 var paidAmount = Payments
-                    .Where(p => p.MemberId == m.Id)
+                    .Where(p => p.SendingMemberId == m.Id)
                     .Sum(p => p.Amount);
-                return totalExpenseAmountForMember - paidAmount;
+                var receivedAmount = Payments
+                    .Where(p => p.ReceivingMemberId == m.Id)
+                    .Sum(p => p.Amount);
+                return totalExpenseAmountForMember - paidAmount - receivedAmount;
             }
         );
 }

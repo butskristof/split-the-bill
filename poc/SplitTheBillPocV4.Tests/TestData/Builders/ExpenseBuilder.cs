@@ -10,6 +10,7 @@ internal class ExpenseBuilder
     private decimal _amount = 0m;
     private ExpenseSplitType _splitType = ExpenseSplitType.Evenly;
     private List<ExpenseParticipant> _participants = [];
+    private Guid _paidByMemberId = Guid.Empty;
 
     internal ExpenseBuilder WithId(Guid id)
     {
@@ -57,7 +58,7 @@ internal class ExpenseBuilder
             .WithMemberId(member.Id)
             .Build());
     }
-    
+
     internal ExpenseBuilder WithParticipants(List<ExpenseParticipant> participants)
     {
         _participants = participants;
@@ -70,6 +71,12 @@ internal class ExpenseBuilder
         return this;
     }
 
+    internal ExpenseBuilder WithPaidByMemberId(Guid paidByMemberId)
+    {
+        _paidByMemberId = paidByMemberId;
+        return this;
+    }
+
     internal Expense Build() => new()
     {
         Id = _id,
@@ -77,7 +84,8 @@ internal class ExpenseBuilder
         Description = _description,
         Amount = _amount,
         SplitType = _splitType,
-        Participants = _participants
+        Participants = _participants,
+        PaidByMemberId = _paidByMemberId
     };
 
     public static implicit operator Expense(ExpenseBuilder builder) => builder.Build();

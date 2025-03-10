@@ -25,7 +25,7 @@ internal static class GroupsMapping
                 )
                 .ToList(),
             group.Payments
-                .Select(p => new DetailedGroupDTO.PaymentDTO(p.Id, p.MemberId, p.Amount))
+                .Select(p => new DetailedGroupDTO.PaymentDTO(p.Id, p.SendingMemberId, p.ReceivingMemberId, p.Amount))
                 .ToList()
         );
 }

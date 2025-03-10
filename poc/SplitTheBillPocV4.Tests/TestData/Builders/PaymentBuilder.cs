@@ -6,7 +6,8 @@ internal class PaymentBuilder
 {
     private Guid _id = Guid.Empty;
     private Guid _groupId = Guid.Empty;
-    private Guid _memberId = Guid.Empty;
+    private Guid _sendingMemberId = Guid.Empty;
+    private Guid _receivingMemberId = Guid.Empty;
     private decimal _amount = 0m;
     
     internal PaymentBuilder WithId(Guid id)
@@ -21,9 +22,15 @@ internal class PaymentBuilder
         return this;
     }
     
-    internal PaymentBuilder WithMemberId(Guid memberId)
+    internal PaymentBuilder WithSendingMemberId(Guid sendingMemberId)
     {
-        _memberId = memberId;
+        _sendingMemberId = sendingMemberId;
+        return this;
+    }
+    
+    internal PaymentBuilder WithReceivingMemberId(Guid receivingMemberId)
+    {
+        _receivingMemberId = receivingMemberId;
         return this;
     }
     
@@ -37,7 +44,8 @@ internal class PaymentBuilder
     {
         Id = _id,
         GroupId = _groupId,
-        MemberId = _memberId,
+        SendingMemberId = _sendingMemberId,
+        ReceivingMemberId = _receivingMemberId,
         Amount = _amount
     };
     
