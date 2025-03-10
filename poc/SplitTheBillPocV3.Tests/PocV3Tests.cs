@@ -198,4 +198,60 @@ public class PocV3Tests
         dto.AmountsDueByMember[Members.Alice.Id].ShouldBe(700m);
         dto.AmountsDueByMember[Members.Bob.Id].ShouldBe(800m);
     }
+
+    [Test]
+    public void MemberPaysExpense_HasNegativeAmountDueBalance()
+    {
+        var group = new GroupBuilder()
+            .WithMembers([Members.Alice.Entity(), Members.Bob.Entity(), Members.Charlie.Entity()])
+            .AddExpense(new ExpenseBuilder()
+                .WithAmount(1500m)
+                .WithParticipants([Members.Alice.Entity(), Members.Bob.Entity(), Members.Charlie.Entity()])
+            )
+            .AddPayment(new PaymentBuilder()
+                .WithAmount(1500m)
+                .WithMemberId(Members.Alice.Id)
+            )
+            .Build();
+        var dto = group.MapToDetailedGroupDTO();
+
+        dto.TotalExpenseAmount.ShouldBe(1500m);
+        dto.TotalPaymentAmount.ShouldBe(1500m);
+        dto.AmountDue.ShouldBe(0m);
+        dto.AmountsDueByMember[Members.Alice.Id].ShouldBe(-1000m);
+        dto.AmountsDueByMember[Members.Bob.Id].ShouldBe(500m);
+        dto.AmountsDueByMember[Members.Charlie.Id].ShouldBe(500m);
+    }
+
+    [Test]
+    public void MemberPaysExpense_OtherMembersPayBack_ReconciledBalances()
+    {
+        var group = new GroupBuilder()
+            .WithMembers([Members.Alice.Entity(), Members.Bob.Entity(), Members.Charlie.Entity()])
+            .AddExpense(new ExpenseBuilder()
+                .WithAmount(1500m)
+                .WithParticipants([Members.Alice.Entity(), Members.Bob.Entity(), Members.Charlie.Entity()])
+            )
+            .AddPayment(new PaymentBuilder()
+                .WithAmount(1500m)
+                .WithMemberId(Members.Alice.Id)
+            )
+            .AddPayment(new PaymentBuilder()
+                .WithAmount(500m)
+                .WithMemberId(Members.Bob.Id)
+            )
+            .AddPayment(new PaymentBuilder()
+                .WithAmount(500m)
+                .WithMemberId(Members.Charlie.Id)
+            )
+            .Build();
+        var dto = group.MapToDetailedGroupDTO();
+
+        dto.TotalExpenseAmount.ShouldBe(1500m);
+        dto.TotalPaymentAmount.ShouldBe(2500m);
+        dto.AmountDue.ShouldBe(-1000m);
+        dto.AmountsDueByMember[Members.Alice.Id].ShouldBe(-1000m);
+        dto.AmountsDueByMember[Members.Bob.Id].ShouldBe(0m);
+        dto.AmountsDueByMember[Members.Charlie.Id].ShouldBe(0m);
+    }
 }
