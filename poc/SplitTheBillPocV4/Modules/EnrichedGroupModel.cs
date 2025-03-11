@@ -91,6 +91,58 @@ internal sealed record EnrichedGroupModel
         /// Total balance that is owed to/by this member
         /// </summary>
         public decimal Balance => TotalAmountOwed - TotalAmountOwedToOtherMembers;
+
+        public Dictionary<Guid, MemberRelationModel> Relations => _group.Members
+            .Where(m => m.Id != Id) // exclude self
+            .ToDictionary(
+                m => m.Id,
+                m => new MemberRelationModel(_group, _member, m));
+
+        internal sealed record MemberRelationModel
+        {
+            private readonly Group _group;
+            private readonly Member _thisMember;
+            private readonly Member _otherMember;
+
+            public MemberRelationModel(Group group, Member thisMember, Member otherMember)
+            {
+                _group = group;
+                _thisMember = thisMember;
+                _otherMember = otherMember;
+            }
+
+            public Guid Id => _otherMember.Id;
+
+            public decimal ExpenseAmountPaidByOtherMemberForThisMember => _group.Expenses
+                .Where(e => e.PaidByMemberId == _otherMember.Id &&
+                            e.Participants.Any(p => p.MemberId == _thisMember.Id))
+                .Sum(e => e.GetExpenseAmountForMember(_thisMember.Id));
+
+            public decimal ExpenseAmountPaidByThisMemberForOtherMember => _group.Expenses
+                .Where(e => e.PaidByMemberId == _thisMember.Id &&
+                            e.Participants.Any(p => p.MemberId == _otherMember.Id))
+                .Sum(e => e.GetExpenseAmountForMember(_otherMember.Id));
+
+            public decimal PaymentAmountSentToOtherMemberFromThisMember => _group.Payments
+                .Where(p => p.SendingMemberId == _thisMember.Id &&
+                            p.ReceivingMemberId == _otherMember.Id)
+                .Sum(p => p.Amount);
+
+            public decimal PaymentAmountReceivedFromOtherMemberToThisMember => _group.Payments
+                .Where(p => p.SendingMemberId == _otherMember.Id &&
+                            p.ReceivingMemberId == _thisMember.Id)
+                .Sum(p => p.Amount);
+
+            public decimal AmountOwedToThisMemberByOtherMember =>
+                ExpenseAmountPaidByThisMemberForOtherMember
+                - PaymentAmountReceivedFromOtherMemberToThisMember;
+
+            public decimal AmountOwedByThisMemberToOtherMember =>
+                ExpenseAmountPaidByOtherMemberForThisMember
+                - PaymentAmountSentToOtherMemberFromThisMember;
+
+            public decimal Balance => AmountOwedToThisMemberByOtherMember - AmountOwedByThisMemberToOtherMember;
+        }
     }
 
     public IReadOnlyList<EnrichedMemberModel> Members => _group
