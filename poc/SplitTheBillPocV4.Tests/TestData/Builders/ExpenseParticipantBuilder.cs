@@ -6,7 +6,7 @@ internal class ExpenseParticipantBuilder
 {
     private Guid _memberId = Guid.Empty;
     private Guid _expenseId = Guid.Empty;
-    private decimal? _percentualShare = null;
+    private int? _percentualShare = null;
     private decimal? _exactAmountShare = null;
 
     internal ExpenseParticipantBuilder WithMemberId(Guid memberId)
@@ -21,7 +21,7 @@ internal class ExpenseParticipantBuilder
         return this;
     }
 
-    internal ExpenseParticipantBuilder WithPercentualSplitShare(decimal? percentualShare)
+    internal ExpenseParticipantBuilder WithPercentualSplitShare(int? percentualShare)
     {
         _percentualShare = percentualShare;
         return this;

@@ -24,9 +24,13 @@ internal sealed class Expense
             ? SplitType switch
             {
                 ExpenseSplitType.Evenly => Participants.Count > 0 ? Amount / Participants.Count : 0,
-                ExpenseSplitType.Percentual => Amount * Participants
-                    .Single(p => p.MemberId == memberId)
-                    .PercentualShare! ?? throw new ArgumentNullException(nameof(ExpenseParticipant.PercentualShare)),
+                ExpenseSplitType.Percentual =>
+                    Amount *
+                    (Participants
+                         .Single(p => p.MemberId == memberId)
+                         .PercentualShare! ??
+                     throw new ArgumentNullException(nameof(ExpenseParticipant.PercentualShare))
+                    ) / 100m,
                 ExpenseSplitType.ExactAmount => Participants
                     .Single(p => p.MemberId == memberId)
                     .ExactAmountShare! ?? throw new ArgumentNullException(nameof(ExpenseParticipant.ExactAmountShare)),
