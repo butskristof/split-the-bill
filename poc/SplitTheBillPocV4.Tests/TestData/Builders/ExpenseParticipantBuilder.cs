@@ -6,39 +6,39 @@ internal class ExpenseParticipantBuilder
 {
     private Guid _memberId = Guid.Empty;
     private Guid _expenseId = Guid.Empty;
-    private double? _percentualSplitShare = null;
-    private decimal? _exactAmountSplitShare = null;
-    
+    private decimal? _percentualShare = null;
+    private decimal? _exactAmountShare = null;
+
     internal ExpenseParticipantBuilder WithMemberId(Guid memberId)
     {
         _memberId = memberId;
         return this;
     }
-    
+
     internal ExpenseParticipantBuilder WithExpenseId(Guid expenseId)
     {
         _expenseId = expenseId;
         return this;
     }
-    
-    internal ExpenseParticipantBuilder WithPercentualSplitShare(double? splitShare)
+
+    internal ExpenseParticipantBuilder WithPercentualSplitShare(decimal? percentualShare)
     {
-        _percentualSplitShare = splitShare;
+        _percentualShare = percentualShare;
         return this;
     }
-    
-    internal ExpenseParticipantBuilder WithExactAmountSplitShare(decimal? exactSplit)
+
+    internal ExpenseParticipantBuilder WithExactAmountSplitShare(decimal? exactShare)
     {
-        _exactAmountSplitShare = exactSplit;
+        _exactAmountShare = exactShare;
         return this;
     }
-    
+
     internal ExpenseParticipant Build() => new()
     {
         MemberId = _memberId,
         ExpenseId = _expenseId,
-        PercentualSplitShare = _percentualSplitShare,
-        ExactAmountSplitShare = _exactAmountSplitShare
+        PercentualShare = _percentualShare,
+        ExactAmountShare = _exactAmountShare
     };
 
     public static implicit operator ExpenseParticipant(ExpenseParticipantBuilder builder) => builder.Build();
