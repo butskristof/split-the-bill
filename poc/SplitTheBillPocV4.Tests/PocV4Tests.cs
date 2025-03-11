@@ -5,7 +5,7 @@ using SplitTheBillPocV4.Tests.TestData.Builders;
 
 namespace SplitTheBillPocV4.Tests;
 
-public class PocV4Tests
+internal sealed class PocV4Tests
 {
     [Test]
     public void EmptyGroup_ZeroAmounts()

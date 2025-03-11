@@ -22,7 +22,8 @@ internal sealed record DetailedGroupDTO(
         string Description,
         decimal Amount,
         ExpenseSplitType SplitType,
-        List<ExpenseParticipantDTO> Participants);
+        List<ExpenseParticipantDTO> Participants,
+        Guid PaidByMemberId);
 
     internal sealed record ExpenseParticipantDTO(
         Guid MemberId,
@@ -41,30 +42,15 @@ internal sealed record DetailedGroupDTO(
             m =>
             {
                 var memberId = m.Id;
-                var totalExpenseAmountForMember = Expenses
-                    .Sum(e =>
-                    {
-                        if (e.Amount == 0) return 0;
-                        var participantForMember = e.Participants.SingleOrDefault(p => p.MemberId == memberId);
-                        if (participantForMember == null) return 0;
-                        var amount = e.SplitType switch
-                        {
-                            ExpenseSplitType.Evenly => e.Amount / e.Participants.Count,
-                            ExpenseSplitType.Percentual => e.Amount *
-                                                           (decimal)participantForMember.PercentualSplitShare.Value,
-                            ExpenseSplitType.ExactAmount => participantForMember.ExactAmountSplitShare.Value,
-                            _ => throw new ArgumentOutOfRangeException()
-                        };
-                        return amount;
-                    });
-
-                var paidAmount = Payments
-                    .Where(p => p.SendingMemberId == m.Id)
-                    .Sum(p => p.Amount);
-                var receivedAmount = Payments
-                    .Where(p => p.ReceivingMemberId == m.Id)
-                    .Sum(p => p.Amount);
-                return totalExpenseAmountForMember - paidAmount - receivedAmount;
+                return -1m;
             }
         );
+
+    public Dictionary<Guid, Dictionary<Guid, decimal>> BalancesByMember => Members
+        .ToDictionary(
+            m => m.Id,
+            m =>
+            {
+                return new Dictionary<Guid, decimal>();
+            });
 }

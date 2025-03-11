@@ -21,7 +21,8 @@ internal static class GroupsMapping
                         .Select(p =>
                             new DetailedGroupDTO.ExpenseParticipantDTO(p.MemberId, p.PercentualSplitShare,
                                 p.ExactAmountSplitShare))
-                        .ToList())
+                        .ToList(),
+                    e.PaidByMemberId)
                 )
                 .ToList(),
             group.Payments
