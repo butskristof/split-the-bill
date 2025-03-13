@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>SplitTheBill.Application.UnitTests</AssemblyName>
+        <RootNamespace>SplitTheBill.Application.UnitTests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Shouldly" />
+      <PackageReference Include="TUnit" />
+    </ItemGroup>
+
+</Project>
