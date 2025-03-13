@@ -12,7 +12,7 @@ namespace SplitTheBill.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Group",
+                name: "Groups",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -20,11 +20,11 @@ namespace SplitTheBill.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Group", x => x.Id);
+                    table.PrimaryKey("PK_Groups", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Member",
+                name: "Members",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -32,11 +32,11 @@ namespace SplitTheBill.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Member", x => x.Id);
+                    table.PrimaryKey("PK_Members", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "GroupMember",
+                name: "GroupMembers",
                 columns: table => new
                 {
                     GroupId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -44,24 +44,24 @@ namespace SplitTheBill.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupMember", x => new { x.GroupId, x.MemberId });
+                    table.PrimaryKey("PK_GroupMembers", x => new { x.GroupId, x.MemberId });
                     table.ForeignKey(
-                        name: "FK_GroupMember_Group_GroupId",
+                        name: "FK_GroupMembers_Groups_GroupId",
                         column: x => x.GroupId,
-                        principalTable: "Group",
+                        principalTable: "Groups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GroupMember_Member_MemberId",
+                        name: "FK_GroupMembers_Members_MemberId",
                         column: x => x.MemberId,
-                        principalTable: "Member",
+                        principalTable: "Members",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupMember_MemberId",
-                table: "GroupMember",
+                name: "IX_GroupMembers_MemberId",
+                table: "GroupMembers",
                 column: "MemberId");
         }
 
@@ -69,13 +69,13 @@ namespace SplitTheBill.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GroupMember");
+                name: "GroupMembers");
 
             migrationBuilder.DropTable(
-                name: "Group");
+                name: "Groups");
 
             migrationBuilder.DropTable(
-                name: "Member");
+                name: "Members");
         }
     }
 }

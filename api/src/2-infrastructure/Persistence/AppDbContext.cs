@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SplitTheBill.Application.Common.Constants;
+using SplitTheBill.Domain.Models.Groups;
+using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Persistence;
 
@@ -8,6 +10,15 @@ internal sealed class AppDbContext : DbContext
     public AppDbContext(DbContextOptions options) : base(options)
     {
     }
+
+    #region Entities
+
+    public DbSet<Member> Members { get; set; }
+    public DbSet<Group> Groups { get; set; }
+
+    #endregion
+
+    #region Configuration
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -29,4 +40,6 @@ internal sealed class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
+
+    #endregion
 }

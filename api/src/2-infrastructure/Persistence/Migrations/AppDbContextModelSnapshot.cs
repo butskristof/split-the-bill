@@ -35,7 +35,7 @@ namespace SplitTheBill.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Group");
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("SplitTheBill.Domain.Models.Groups.GroupMember", b =>
@@ -50,7 +50,7 @@ namespace SplitTheBill.Persistence.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("GroupMember");
+                    b.ToTable("GroupMembers", (string)null);
                 });
 
             modelBuilder.Entity("SplitTheBill.Domain.Models.Members.Member", b =>
@@ -66,7 +66,7 @@ namespace SplitTheBill.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Member");
+                    b.ToTable("Members");
                 });
 
             modelBuilder.Entity("SplitTheBill.Domain.Models.Groups.GroupMember", b =>
