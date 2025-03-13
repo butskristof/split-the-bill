@@ -7,9 +7,17 @@
         <AssemblyName>SplitTheBill.Application</AssemblyName>
         <RootNamespace>SplitTheBill.Application</RootNamespace>
     </PropertyGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="SplitTheBill.Application.UnitTests" />
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>

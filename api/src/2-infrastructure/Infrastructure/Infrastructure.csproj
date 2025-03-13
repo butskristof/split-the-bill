@@ -8,4 +8,8 @@
         <RootNamespace>SplitTheBill.Infrastructure</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\1-core\Application\Application.csproj" />
+    </ItemGroup>
+
 </Project>

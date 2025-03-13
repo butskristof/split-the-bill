@@ -5,4 +5,5 @@ namespace SplitTheBill.Domain.Models.Members;
 public sealed class Member : IAggregateRoot<Guid>
 {
     public required Guid Id { get; init; }
+    public required string Name { get; set; }
 }
