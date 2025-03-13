@@ -9,6 +9,8 @@ internal sealed class MemberConfiguration : IEntityTypeConfiguration<Member>
 {
     public void Configure(EntityTypeBuilder<Member> builder)
     {
+        builder.ToTable("Members");
+        
         builder
             .HasMany(m => m.Groups)
             .WithMany(g => g.Members)

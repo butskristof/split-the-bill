@@ -5,22 +5,28 @@ using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Persistence.Configuration;
 
-internal sealed class GroupMemberConfiguration : IEntityTypeConfiguration<GroupMember>
+internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
-    public void Configure(EntityTypeBuilder<GroupMember> builder)
+    public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        builder.ToTable("GroupMembers");
-
+        builder.ToTable("Payments");
+        
         builder
             .HasOne<Group>()
             .WithMany()
-            .HasForeignKey(gm => gm.GroupId)
+            .HasForeignKey(p => p.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasOne<Member>()
+            .WithMany()
+            .HasForeignKey(p => p.SendingMemberId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
             .HasOne<Member>()
             .WithMany()
-            .HasForeignKey(gm => gm.MemberId)
+            .HasForeignKey(p => p.ReceivingMemberId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
