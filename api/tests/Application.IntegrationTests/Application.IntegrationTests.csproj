@@ -4,12 +4,13 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>SplitTheBill.Persistence</AssemblyName>
-        <RootNamespace>SplitTheBill.Persistence</RootNamespace>
+        <AssemblyName>SplitTheBill.Application.IntegrationTests</AssemblyName>
+        <RootNamespace>SplitTheBill.Application.IntegrationTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+      <PackageReference Include="Shouldly" />
+      <PackageReference Include="TUnit" />
     </ItemGroup>
 
 </Project>
