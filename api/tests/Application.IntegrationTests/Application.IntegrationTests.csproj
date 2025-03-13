@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>SplitTheBill.Application.IntegrationTests</AssemblyName>
+        <RootNamespace>SplitTheBill.Application.IntegrationTests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Shouldly" />
+      <PackageReference Include="TUnit" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\1-core\Application\Application.csproj" />
+      <ProjectReference Include="..\..\src\2-infrastructure\Persistence\Persistence.csproj" />
+    </ItemGroup>
+
+</Project>
