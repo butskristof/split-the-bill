@@ -4,11 +4,11 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>df1846b6-d967-4bf9-9b58-4e6ae83e1aa9</UserSecretsId>
+        <UserSecretsId>4a94e310-7a18-4225-9c37-80e65e27203e</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="SplitTheBillPocV3.Tests"/>
+        <InternalsVisibleTo Include="SplitTheBillPocV4.Tests"/>
     </ItemGroup>
 
     <ItemGroup>

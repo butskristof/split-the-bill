@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SplitTheBillPocV4\SplitTheBillPocV4.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Shouldly" Version="4.3.0" />
+      <PackageReference Include="TUnit" Version="0.17.14" />
+    </ItemGroup>
+
+</Project>
