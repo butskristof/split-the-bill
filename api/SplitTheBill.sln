@@ -13,15 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Infrastructure", "2. Inf
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Presentation", "3. Presentation", "{6A3333F2-A6C8-4781-9BAA-0FADD7472131}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{0B6DBFAA-2481-4E9E-8ECC-A473C4C6D5D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\1-core\Domain\Domain.csproj", "{0B6DBFAA-2481-4E9E-8ECC-A473C4C6D5D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{7C067B2D-6AA7-40AC-9CFD-016DF579E3DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\1-core\Application\Application.csproj", "{7C067B2D-6AA7-40AC-9CFD-016DF579E3DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{FF8898B1-2E1F-46AE-8F2A-B2F2FEB68DAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\2-infrastructure\Infrastructure\Infrastructure.csproj", "{FF8898B1-2E1F-46AE-8F2A-B2F2FEB68DAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{88C08161-4A37-490A-AEF9-017A94264D8D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "src\2-infrastructure\Persistence\Persistence.csproj", "{88C08161-4A37-490A-AEF9-017A94264D8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{0E07011E-3DAF-4F18-9786-E416D40A4DB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "src\3-presentation\Api\Api.csproj", "{0E07011E-3DAF-4F18-9786-E416D40A4DB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
