@@ -1,4 +1,5 @@
 using SplitTheBill.Domain.Models.Groups;
+using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Application.Modules.Groups;
 
@@ -14,9 +15,79 @@ internal sealed record GroupDto
     public Guid Id => _group.Id;
     public string Name => _group.Name;
 
+    public List<MemberDto> Members => _group.Members
+        .Select(m => new MemberDto(m))
+        .ToList();
+
+    public List<ExpenseDto> Expenses => _group.Expenses
+        .Select(e => new ExpenseDto(e))
+        .ToList();
+
     public List<PaymentDto> Payments => _group.Payments
         .Select(p => new PaymentDto(p))
         .ToList();
+
+    #region Members
+
+    internal sealed record MemberDto(
+        Guid Id,
+        string Name
+    )
+    {
+        public MemberDto(Member member) : this(
+            member.Id,
+            member.Name
+        )
+        {
+        }
+    }
+
+    #endregion
+
+    #region Expenses
+
+    internal sealed record ExpenseDto(
+        Guid Id,
+        string Description,
+        decimal Amount,
+        ExpenseSplitType SplitType,
+        List<ExpenseDto.ExpenseParticipantDto> Participants,
+        Guid PaidByMemberId
+    )
+    {
+        public ExpenseDto(Expense expense) : this(
+            expense.Id,
+            expense.Description,
+            expense.Amount,
+            expense.SplitType,
+            expense.Participants
+                .Select(p => new ExpenseParticipantDto(p))
+                .ToList(),
+            expense.PaidByMemberId
+        )
+        {
+        }
+
+        internal sealed record ExpenseParticipantDto(
+            Guid MemberId,
+            int? PercentualShare,
+            decimal? ExactShare
+        )
+        {
+            public ExpenseParticipantDto(ExpenseParticipant expenseParticipant)
+                : this(
+                    expenseParticipant.MemberId,
+                    expenseParticipant.PercentualShare,
+                    expenseParticipant.ExactShare
+                )
+            {
+            }
+        }
+    }
+
+    #endregion
+
+    #region Payments
 
     internal sealed record PaymentDto(
         Guid Id,
@@ -30,4 +101,6 @@ internal sealed record GroupDto
         {
         }
     }
+
+    #endregion
 }

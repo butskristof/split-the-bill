@@ -49,9 +49,28 @@ internal sealed class ExpenseBuilder
         return this;
     }
 
+    internal ExpenseBuilder WithParticipants(List<Member> members)
+    {
+        _participants = members
+            .Select(p => new ExpenseParticipantBuilder()
+                .WithMemberId(p.Id)
+                .Build()
+            )
+            .ToList();
+        return this;
+    }
+
     internal ExpenseBuilder WithParticipant(ExpenseParticipant participant)
     {
         _participants.Add(participant);
+        return this;
+    }
+
+    internal ExpenseBuilder WithParticipant(Member member)
+    {
+        _participants.Add(new ExpenseParticipantBuilder()
+            .WithMemberId(member.Id)
+        );
         return this;
     }
 
