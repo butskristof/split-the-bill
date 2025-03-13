@@ -13,7 +13,7 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         
         builder
             .HasOne<Group>()
-            .WithMany()
+            .WithMany(g => g.Payments)
             .HasForeignKey(p => p.GroupId)
             .OnDelete(DeleteBehavior.Cascade);
 

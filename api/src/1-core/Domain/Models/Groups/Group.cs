@@ -9,4 +9,6 @@ public sealed class Group : IAggregateRoot<Guid>
     public required string Name { get; set; }
 
     public List<Member> Members { get; init; } = [];
+    public List<Expense> Expenses { get; init; } = [];
+    public List<Payment> Payments { get; init; } = [];
 }

@@ -14,5 +14,17 @@ internal sealed class GroupConfiguration : IEntityTypeConfiguration<Group>
             .HasMany(g => g.Members)
             .WithMany(m => m.Groups)
             .UsingEntity<GroupMember>();
+        
+        builder
+            .HasMany(g => g.Expenses)
+            .WithOne()
+            .HasForeignKey(g => g.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        builder
+            .HasMany(g => g.Payments)
+            .WithOne()
+            .HasForeignKey(g => g.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
