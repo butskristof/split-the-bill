@@ -60,13 +60,13 @@ internal sealed class ExpenseBuilder
         return this;
     }
 
-    internal ExpenseBuilder WithParticipant(ExpenseParticipant participant)
+    internal ExpenseBuilder AddParticipant(ExpenseParticipant participant)
     {
         _participants.Add(participant);
         return this;
     }
 
-    internal ExpenseBuilder WithParticipant(Member member)
+    internal ExpenseBuilder AddParticipant(Member member)
     {
         _participants.Add(new ExpenseParticipantBuilder()
             .WithMemberId(member.Id)

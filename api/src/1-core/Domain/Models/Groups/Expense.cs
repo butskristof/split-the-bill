@@ -12,4 +12,23 @@ public sealed class Expense
     public List<ExpenseParticipant> Participants { get; init; } = [];
 
     public required Guid PaidByMemberId { get; set; }
+
+    public decimal GetExpenseAmountForMember(Guid memberId) =>
+        Participants.Any(p => p.MemberId == memberId)
+            ? SplitType switch
+            {
+                ExpenseSplitType.Evenly => Participants.Count > 0 ? Amount / Participants.Count : 0,
+                ExpenseSplitType.Percentual =>
+                    Amount *
+                    (Participants
+                         .Single(p => p.MemberId == memberId)
+                         .PercentualShare! ??
+                     throw new ArgumentNullException(nameof(ExpenseParticipant.PercentualShare))
+                    ) / 100m,
+                ExpenseSplitType.ExactAmount => Participants
+                    .Single(p => p.MemberId == memberId)
+                    .ExactShare! ?? throw new ArgumentNullException(nameof(ExpenseParticipant.ExactShare)),
+                _ => throw new ArgumentOutOfRangeException($"Invalid {nameof(ExpenseSplitType)}"),
+            }
+            : 0m;
 }
