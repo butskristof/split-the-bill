@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <AssemblyName>SplitTheBill.Api</AssemblyName>
+        <RootNamespace>SplitTheBill.Api</RootNamespace>
+        <UserSecretsId>2f389c86-6f73-4a14-bc92-e16890b63ef8</UserSecretsId>
+    </PropertyGroup>
+
+</Project>
