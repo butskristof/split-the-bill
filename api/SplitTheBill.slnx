@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/1. Core/">
+    <Project Path="src/1-core/Application/Application.csproj" />
+    <Project Path="src/1-core/Domain/Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/2. Infrastructure/">
+    <Project Path="src/2-infrastructure/Infrastructure/Infrastructure.csproj" />
+    <Project Path="src/2-infrastructure/Persistence/Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/3. Presentation/">
+    <Project Path="src/3-presentation/Api/Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Application.IntegrationTests/Application.IntegrationTests.csproj" />
+    <Project Path="tests/Application.UnitTests/Application.UnitTests.csproj" />
+  </Folder>
+</Solution>
