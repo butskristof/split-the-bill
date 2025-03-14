@@ -41,7 +41,7 @@ internal sealed class GroupBuilder
         return this;
     }
     
-    internal GroupBuilder WithExpense(Expense expense)
+    internal GroupBuilder AddExpense(Expense expense)
     {
         _expenses.Add(expense);
         return this;
@@ -53,7 +53,7 @@ internal sealed class GroupBuilder
         return this;
     }
     
-    internal GroupBuilder WithPayment(Payment payment)
+    internal GroupBuilder AddPayment(Payment payment)
     {
         _payments.Add(payment);
         return this;

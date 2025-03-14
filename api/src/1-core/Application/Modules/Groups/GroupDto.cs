@@ -12,11 +12,13 @@ internal sealed record GroupDto
         _group = group;
     }
 
+    #region Properties
+
     public Guid Id => _group.Id;
     public string Name => _group.Name;
 
     public List<MemberDto> Members => _group.Members
-        .Select(m => new MemberDto(m))
+        .Select(m => new MemberDto(_group, m))
         .ToList();
 
     public List<ExpenseDto> Expenses => _group.Expenses
@@ -27,19 +29,71 @@ internal sealed record GroupDto
         .Select(p => new PaymentDto(p))
         .ToList();
 
+    #endregion
+
+    #region Totals
+
+    public decimal TotalExpenseAmount => _group.Expenses.Sum(e => e.Amount);
+
+    public decimal TotalPaymentAmount => _group.Payments.Sum(p => p.Amount);
+
+    public decimal TotalBalance => TotalExpenseAmount - TotalPaymentAmount;
+
+    #endregion
+
     #region Members
 
-    internal sealed record MemberDto(
-        Guid Id,
-        string Name
-    )
+    internal sealed record MemberDto
     {
-        public MemberDto(Member member) : this(
-            member.Id,
-            member.Name
-        )
+        private readonly Group _group;
+        private readonly Member _member;
+
+        public MemberDto(Group group, Member member)
         {
+            _group = group;
+            _member = member;
         }
+
+        public Guid Id => _member.Id;
+        public string Name => _member.Name;
+
+        #region Totals
+
+        public decimal TotalExpenseAmount => _group.Expenses
+            .Sum(e => e.GetExpenseAmountForMember(Id));
+
+        public decimal TotalExpensePaidAmount => _group.Expenses
+            .Where(e => e.PaidByMemberId == Id)
+            .Sum(e => e.Amount);
+
+        private decimal ExpenseAmountSelfPaid => _group.Expenses
+            .Where(e => e.PaidByMemberId == Id && e.Participants.Any(p => p.MemberId == Id))
+            .Sum(e => e.GetExpenseAmountForMember(Id));
+
+        public decimal TotalExpenseAmountPaidByOtherMembers => _group.Expenses
+            .Where(e => e.Participants.Any(p => p.MemberId == Id) && e.PaidByMemberId != Id)
+            .Sum(e => e.GetExpenseAmountForMember(Id));
+
+        public decimal TotalPaymentReceivedAmount => _group.Payments
+            .Where(p => p.ReceivingMemberId == Id)
+            .Sum(p => p.Amount);
+
+        public decimal TotalPaymentSentAmount => _group.Payments
+            .Where(p => p.SendingMemberId == Id)
+            .Sum(p => p.Amount);
+
+        public decimal TotalAmountOwed =>
+            TotalExpensePaidAmount // total amount paid by
+            - ExpenseAmountSelfPaid
+            - TotalPaymentReceivedAmount; // subtract already received
+
+        public decimal TotalAmountOwedToOtherMembers =>
+            TotalExpenseAmountPaidByOtherMembers
+            - TotalPaymentSentAmount; // subtract already sent
+
+        public decimal TotalBalance => TotalAmountOwed - TotalAmountOwedToOtherMembers;
+
+        #endregion
     }
 
     #endregion
