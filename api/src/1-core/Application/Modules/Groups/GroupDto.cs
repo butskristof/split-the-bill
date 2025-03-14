@@ -34,7 +34,9 @@ internal sealed record GroupDto
     #region Totals
 
     public decimal TotalExpenseAmount => _group.Expenses.Sum(e => e.Amount);
+
     public decimal TotalPaymentAmount => _group.Payments.Sum(p => p.Amount);
+
     public decimal TotalBalance => TotalExpenseAmount - TotalPaymentAmount;
 
     #endregion
@@ -45,7 +47,7 @@ internal sealed record GroupDto
     {
         private readonly Group _group;
         private readonly Member _member;
-        
+
         public MemberDto(Group group, Member member)
         {
             _group = group;
@@ -77,7 +79,7 @@ internal sealed record GroupDto
             .Sum(p => p.Amount);
 
         public decimal TotalPaymentSentAmount => _group.Payments
-            .Where(p => p.ReceivingMemberId == Id)
+            .Where(p => p.SendingMemberId == Id)
             .Sum(p => p.Amount);
 
         public decimal TotalAmountOwed =>
