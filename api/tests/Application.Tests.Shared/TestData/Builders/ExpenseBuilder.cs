@@ -1,9 +1,9 @@
 using SplitTheBill.Domain.Models.Groups;
 using SplitTheBill.Domain.Models.Members;
 
-namespace SplitTheBill.Application.UnitTests.TestData.Builders;
+namespace SplitTheBill.Application.Tests.Shared.TestData.Builders;
 
-internal sealed class ExpenseBuilder
+public sealed class ExpenseBuilder
 {
     private Guid _id = Guid.Empty;
     private Guid _groupId = Guid.Empty;
@@ -13,43 +13,43 @@ internal sealed class ExpenseBuilder
     private List<ExpenseParticipant> _participants = [];
     private Guid _paidByMemberId = Guid.Empty;
 
-    internal ExpenseBuilder WithId(Guid id)
+    public ExpenseBuilder WithId(Guid id)
     {
         _id = id;
         return this;
     }
 
-    internal ExpenseBuilder WithGroupId(Guid groupId)
+    public ExpenseBuilder WithGroupId(Guid groupId)
     {
         _groupId = groupId;
         return this;
     }
 
-    internal ExpenseBuilder WithDescription(string description)
+    public ExpenseBuilder WithDescription(string description)
     {
         _description = description;
         return this;
     }
 
-    internal ExpenseBuilder WithAmount(decimal amount)
+    public ExpenseBuilder WithAmount(decimal amount)
     {
         _amount = amount;
         return this;
     }
 
-    internal ExpenseBuilder WithSplitType(ExpenseSplitType splitType)
+    public ExpenseBuilder WithSplitType(ExpenseSplitType splitType)
     {
         _splitType = splitType;
         return this;
     }
 
-    internal ExpenseBuilder WithParticipants(List<ExpenseParticipant> participants)
+    public ExpenseBuilder WithParticipants(List<ExpenseParticipant> participants)
     {
         _participants = participants;
         return this;
     }
 
-    internal ExpenseBuilder WithParticipants(List<Member> members)
+    public ExpenseBuilder WithParticipants(List<Member> members)
     {
         _participants = members
             .Select(p => new ExpenseParticipantBuilder()
@@ -60,13 +60,13 @@ internal sealed class ExpenseBuilder
         return this;
     }
 
-    internal ExpenseBuilder AddParticipant(ExpenseParticipant participant)
+    public ExpenseBuilder AddParticipant(ExpenseParticipant participant)
     {
         _participants.Add(participant);
         return this;
     }
 
-    internal ExpenseBuilder AddParticipant(Member member)
+    public ExpenseBuilder AddParticipant(Member member)
     {
         _participants.Add(new ExpenseParticipantBuilder()
             .WithMemberId(member.Id)
@@ -74,19 +74,19 @@ internal sealed class ExpenseBuilder
         return this;
     }
 
-    internal ExpenseBuilder WithPaidByMember(Member member)
+    public ExpenseBuilder WithPaidByMember(Member member)
     {
         _paidByMemberId = member.Id;
         return this;
     }
 
-    internal ExpenseBuilder WithPaidByMemberId(Guid member)
+    public ExpenseBuilder WithPaidByMemberId(Guid member)
     {
         _paidByMemberId = member;
         return this;
     }
 
-    internal Expense Build() => new()
+    public Expense Build() => new()
     {
         Id = _id,
         GroupId = _groupId,

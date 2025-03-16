@@ -17,5 +17,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/Application.IntegrationTests/Application.IntegrationTests.csproj" />
     <Project Path="tests/Application.UnitTests/Application.UnitTests.csproj" />
+    <Project Path="tests\Application.Tests.Shared\Application.Tests.Shared.csproj" Type="Classic C#" />
   </Folder>
 </Solution>
