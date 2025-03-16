@@ -10,9 +10,9 @@
       Total payment amount: {{ group.totalPaymentAmount }}<br />
       Total balance: {{ group.totalBalance }}
     </div>
-    <GroupMembers :group="group" />
     <GroupExpenses :group="group" />
     <GroupPayments :group="group" />
+    <GroupMembers :group="group" />
   </div>
   <p v-else>Group not found</p>
 </template>
