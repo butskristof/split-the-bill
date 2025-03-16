@@ -5,7 +5,7 @@ using SplitTheBill.Application.Modules.Members;
 
 namespace SplitTheBill.Api.Modules;
 
-internal static class Members
+internal static class MembersModule
 {
     private const string GroupName = "Members";
 

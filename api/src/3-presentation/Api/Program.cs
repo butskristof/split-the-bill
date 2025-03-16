@@ -43,7 +43,8 @@ try
 
     app.MapHealthChecks("/health");
     app
-        .MapMembersEndpoints();
+        .MapMembersEndpoints()
+        .MapGroupsEndpoints();
 
     app.Run();
 }
