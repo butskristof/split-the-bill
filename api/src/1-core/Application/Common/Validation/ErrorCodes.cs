@@ -1,7 +1,7 @@
 namespace SplitTheBill.Application.Common.Validation;
 
-internal static class ErrorCodes
+public static class ErrorCodes
 {
-    internal const string Required = "Required";
-    internal const string Invalid = "Invalid";
+    public const string Required = "Required";
+    public const string Invalid = "Invalid";
 }

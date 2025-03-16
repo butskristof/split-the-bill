@@ -1,3 +1,4 @@
+using System.Data;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -30,32 +31,36 @@ internal sealed class TestcontainersTestDatabase : ITestDatabase
     public async Task InitializeAsync()
     {
         await _container.StartAsync();
+
         _connectionString = _container.GetConnectionString();
         _dbConnection = new NpgsqlConnection(_connectionString);
+        await _dbConnection.OpenAsync();
+
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql(_connectionString, Persistence.DependencyInjection.GetDbContextOptionsBuilder())
             .Options;
         var context = new AppDbContext(options);
-        context.Database.Migrate();
+        await context.Database.MigrateAsync();
 
-        await using (var connection = new NpgsqlConnection(_connectionString))
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
-            await connection.OpenAsync();
-            _respawner = await Respawner.CreateAsync(connection, new RespawnerOptions
-            {
-                TablesToIgnore = new Table[] { "__EFMigrationsHistory" },
-                DbAdapter = DbAdapter.Postgres,
-            });
-        }
+            TablesToIgnore = new Table[] { "__EFMigrationsHistory" },
+            DbAdapter = DbAdapter.Postgres,
+        });
     }
 
-    public DbConnection GetConnection() => _dbConnection;
+    public DbConnection GetConnection()
+    {
+        if (_dbConnection.State is not ConnectionState.Open)
+            _dbConnection.Open();
+        return _dbConnection;
+    }
 
     public async Task ResetAsync()
     {
-        await using var connection = new NpgsqlConnection(_connectionString);
-        await connection.OpenAsync();
-        await _respawner.ResetAsync(connection);
+        if (_dbConnection.State is not ConnectionState.Open)
+            await _dbConnection.OpenAsync();
+        await _respawner.ResetAsync(_dbConnection);
     }
 
     public async Task DisposeAsync()

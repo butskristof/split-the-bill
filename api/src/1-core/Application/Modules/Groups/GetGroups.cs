@@ -2,17 +2,16 @@ using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SplitTheBill.Application.Common.Dto;
 using SplitTheBill.Application.Common.Persistence;
 
-namespace SplitTheBill.Application.Modules.Members;
+namespace SplitTheBill.Application.Modules.Groups;
 
-public static class GetMembers
+public static class GetGroups
 {
     public sealed record Request : IRequest<ErrorOr<Response>>;
 
     public sealed record Response(
-        List<MemberDto> Members
+        List<Application.Common.Dto.GroupDto> Groups
     );
 
     internal sealed class Handler : IRequestHandler<Request, ErrorOr<Response>>
@@ -35,16 +34,16 @@ public static class GetMembers
 
         public async Task<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("Fetching all members from database");
+            _logger.LogDebug("Fetching all groups from database");
 
-            var members = await _dbContext
-                .Members
+            var groups = await _dbContext
+                .Groups
                 .AsNoTracking()
-                .Select(m => new MemberDto(m.Id, m.Name))
+                .Select(g => new Application.Common.Dto.GroupDto(g.Id, g.Name))
                 .ToListAsync(cancellationToken);
-            _logger.LogDebug("Fetched mapped Member entities from database");
+            _logger.LogDebug("Fetched mapped Group entities from database");
 
-            return new Response(members);
+            return new Response(groups);
         }
     }
 }
