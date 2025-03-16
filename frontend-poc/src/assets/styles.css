@@ -30,7 +30,12 @@ p {
 
 ul {
   /*list-style: none;*/
-  /*padding: 0;*/
+  padding: 0;
+  list-style-position: inside;
+
+  li {
+    margin-left: 1rem;
+  }
 }
 
 /*button {*/

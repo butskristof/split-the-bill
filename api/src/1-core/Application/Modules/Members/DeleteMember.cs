@@ -38,7 +38,7 @@ public static class DeleteMember
 
         public async Task<ErrorOr<Deleted>> Handle(Request request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("Deleting member with id {Id}", request.Id);
+            _logger.LogDebug("Deleting Member with id {Id}", request.Id);
 
             var member = await _dbContext
                 .Members
