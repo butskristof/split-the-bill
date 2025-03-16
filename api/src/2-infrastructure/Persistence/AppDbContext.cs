@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using SplitTheBill.Application.Common.Constants;
+using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Domain.Models.Groups;
 using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Persistence;
 
-internal sealed class AppDbContext : DbContext
+internal sealed class AppDbContext : DbContext, IAppDbContext
 {
     public AppDbContext(DbContextOptions options) : base(options)
     {
