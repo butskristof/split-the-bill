@@ -2,6 +2,30 @@ namespace SplitTheBill.Api;
 
 internal static class DependencyInjection
 {
+    #region Configuration
+
+    internal static IServiceCollection AddConfiguration(this IServiceCollection services)
+    {
+        return services;
+    }
+
+    private static IServiceCollection AddValidatedSettings<TOptions>(this IServiceCollection services,
+        string sectionName)
+        where TOptions : class
+    {
+        services
+            .AddOptions<TOptions>()
+            .BindConfiguration(sectionName);
+        // .FluentValidateOptions()
+        // .ValidateOnStart();
+
+        return services;
+    }
+
+    #endregion
+
+    #region API
+
     internal static IServiceCollection AddApi(this IServiceCollection services)
     {
         // add support for ProblemDetails to handle failed requests
@@ -16,4 +40,6 @@ internal static class DependencyInjection
 
         return services;
     }
+
+    #endregion
 }
