@@ -6,7 +6,10 @@
         v-for="group in groupsData?.groups"
         :key="group.id"
       >
-        {{ group.name }} ({{ group.id }})
+        <router-link :to="{ name: 'GroupDetail', params: { id: group.id } }">
+          {{ group.name }}
+        </router-link>
+        ({{ group.id }})
       </li>
     </ul>
   </section>

@@ -3,7 +3,7 @@ using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Application.Modules.Groups;
 
-internal sealed record GroupDto
+public record GroupDto
 {
     private readonly Group _group;
 
@@ -43,7 +43,7 @@ internal sealed record GroupDto
 
     #region Members
 
-    internal sealed record MemberDto
+    public sealed record MemberDto
     {
         private readonly Group _group;
         private readonly Member _member;
@@ -100,7 +100,7 @@ internal sealed record GroupDto
 
     #region Expenses
 
-    internal sealed record ExpenseDto(
+    public sealed record ExpenseDto(
         Guid Id,
         string Description,
         decimal Amount,
@@ -122,7 +122,7 @@ internal sealed record GroupDto
         {
         }
 
-        internal sealed record ExpenseParticipantDto(
+        public sealed record ExpenseParticipantDto(
             Guid MemberId,
             int? PercentualShare,
             decimal? ExactShare
@@ -143,7 +143,7 @@ internal sealed record GroupDto
 
     #region Payments
 
-    internal sealed record PaymentDto(
+    public sealed record PaymentDto(
         Guid Id,
         Guid SendingMemberId,
         Guid ReceivingMemberId,

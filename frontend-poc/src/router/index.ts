@@ -9,6 +9,16 @@ const router = createRouter({
       name: 'home',
       component: MainPage,
     },
+    {
+      path: '/groups',
+      children: [
+        {
+          path: ':id',
+          name: 'GroupDetail',
+          component: () => import('@/pages/group-detail/GroupDetail.vue'),
+        },
+      ],
+    },
   ],
 });
 
