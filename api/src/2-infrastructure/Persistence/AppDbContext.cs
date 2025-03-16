@@ -3,7 +3,6 @@ using SplitTheBill.Application.Common.Constants;
 using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Domain.Models.Groups;
 using SplitTheBill.Domain.Models.Members;
-using SplitTheBill.Persistence.Common;
 
 namespace SplitTheBill.Persistence;
 

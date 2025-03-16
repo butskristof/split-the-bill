@@ -1,7 +1,7 @@
 using Shouldly;
 using SplitTheBill.Application.Modules.Groups;
-using SplitTheBill.Application.UnitTests.TestData;
-using SplitTheBill.Application.UnitTests.TestData.Builders;
+using SplitTheBill.Application.Tests.Shared.TestData;
+using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.UnitTests.Modules.Groups;

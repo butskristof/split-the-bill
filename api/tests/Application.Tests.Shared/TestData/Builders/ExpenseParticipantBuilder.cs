@@ -1,8 +1,8 @@
 using SplitTheBill.Domain.Models.Groups;
 
-namespace SplitTheBill.Application.UnitTests.TestData.Builders;
+namespace SplitTheBill.Application.Tests.Shared.TestData.Builders;
 
-internal sealed class ExpenseParticipantBuilder
+public sealed class ExpenseParticipantBuilder
 {
     private Guid _expenseId;
     private Guid _memberId;
@@ -10,31 +10,31 @@ internal sealed class ExpenseParticipantBuilder
     private int? _percentualShare = null;
     private decimal? _exactShare = null;
 
-    internal ExpenseParticipantBuilder WithExpenseId(Guid expenseId)
+    public ExpenseParticipantBuilder WithExpenseId(Guid expenseId)
     {
         _expenseId = expenseId;
         return this;
     }
 
-    internal ExpenseParticipantBuilder WithMemberId(Guid memberId)
+    public ExpenseParticipantBuilder WithMemberId(Guid memberId)
     {
         _memberId = memberId;
         return this;
     }
 
-    internal ExpenseParticipantBuilder WithPercentualShare(int? percentualShare)
+    public ExpenseParticipantBuilder WithPercentualShare(int? percentualShare)
     {
         _percentualShare = percentualShare;
         return this;
     }
 
-    internal ExpenseParticipantBuilder WithExactShare(decimal? exactShare)
+    public ExpenseParticipantBuilder WithExactShare(decimal? exactShare)
     {
         _exactShare = exactShare;
         return this;
     }
 
-    internal ExpenseParticipant Build() => new()
+    public ExpenseParticipant Build() => new()
     {
         ExpenseId = _expenseId,
         MemberId = _memberId,

@@ -8,21 +8,19 @@ namespace SplitTheBill.Persistence;
 
 public static class DependencyInjection
 {
+    internal static Action<NpgsqlDbContextOptionsBuilder> GetDbContextOptionsBuilder()
+        => optionsBuilder => { optionsBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); };
+
     public static IServiceCollection AddPersistence(this IServiceCollection services, string? connectionString = null,
         DbConnection? connection = null)
     {
         services
             .AddDbContext<AppDbContext>(builder =>
             {
-                Action<NpgsqlDbContextOptionsBuilder> sqlServerOptionsAction = optionsBuilder =>
-                {
-                    optionsBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-                };
-
                 if (connectionString is not null)
-                    builder.UseNpgsql(connectionString, sqlServerOptionsAction);
+                    builder.UseNpgsql(connectionString, GetDbContextOptionsBuilder());
                 else if (connection is not null)
-                    builder.UseNpgsql(connection, sqlServerOptionsAction);
+                    builder.UseNpgsql(connection, GetDbContextOptionsBuilder());
                 else
                     throw new ArgumentException("Missing connection details to set up persistence");
             })

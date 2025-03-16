@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>SplitTheBill.Application.Tests.Shared</AssemblyName>
+        <RootNamespace>SplitTheBill.Application.Tests.Shared</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\1-core\Domain\Domain.csproj" />
+    </ItemGroup>
+
+</Project>
