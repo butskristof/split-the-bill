@@ -32,6 +32,15 @@ internal static class FluentValidationExtensions
                     .GreaterThan(0))
             .WithMessage(ErrorCodes.Invalid);
 
+    internal static IRuleBuilderOptions<T, decimal> PositiveDecimal<T>(this IRuleBuilder<T, decimal> ruleBuilder,
+        bool zeroInclusive)
+        => (zeroInclusive
+                ? ruleBuilder
+                    .GreaterThanOrEqualTo(0)
+                : ruleBuilder
+                    .GreaterThan(0))
+            .WithMessage(ErrorCodes.Invalid);
+
     internal static IRuleBuilderOptions<T, string> Url<T>(this IRuleBuilder<T, string> ruleBuilder)
         => ruleBuilder
             .Must(value => Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
