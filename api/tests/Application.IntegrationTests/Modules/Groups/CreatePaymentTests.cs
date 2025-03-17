@@ -17,14 +17,14 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     {
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(Guid.Empty)
-            .WithSendingMemberId(Guid.Empty)
+            .WithSendingMemberId(null)
             .WithReceivingMemberId(Guid.Empty)
-            .WithAmount(0m)
+            .WithAmount(-1)
             .Build();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList.Count.ShouldBeGreaterThanOrEqualTo(4);
+        result.ErrorsOrEmptyList.Count.ShouldBe(4);
         result.ErrorsOrEmptyList
             .ShouldContain(r =>
                 r.Type == ErrorType.Validation &&
@@ -34,7 +34,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             .ShouldContain(r =>
                 r.Type == ErrorType.Validation &&
                 r.Code == nameof(request.SendingMemberId) &&
-                r.Description == ErrorCodes.Invalid);
+                r.Description == ErrorCodes.Required);
         result.ErrorsOrEmptyList
             .ShouldContain(r =>
                 r.Type == ErrorType.Validation &&
