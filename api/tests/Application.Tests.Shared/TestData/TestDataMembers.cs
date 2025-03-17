@@ -2,7 +2,7 @@ using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Application.Tests.Shared.TestData;
 
-public static class Members
+public static class TestDataMembers
 {
     public static class Alice
     {

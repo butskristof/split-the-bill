@@ -4,6 +4,7 @@ using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Application.IntegrationTests.Common;
 using SplitTheBill.Application.Modules.Groups;
 using SplitTheBill.Application.Tests.Shared.Builders;
+using SplitTheBill.Application.Tests.Shared.TestData;
 using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 using SplitTheBill.Domain.Models.Groups;
 using SplitTheBill.Domain.Models.Members;
@@ -52,8 +53,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     {
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(new Guid("82A68AD6-5027-4DDD-9F61-C840126B4242"))
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+            .WithSendingMemberId(TestDataMembers.Alice.Id)
+            .WithReceivingMemberId(TestDataMembers.Bob.Id)
             .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
@@ -79,7 +80,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(new Guid("1B3E5153-0074-4D82-864C-9AE68EEC041D"))
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+            .WithReceivingMemberId(TestDataMembers.Bob.Id)
             .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
@@ -113,7 +114,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(member.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+            .WithReceivingMemberId(TestDataMembers.Bob.Id)
             .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
@@ -134,13 +135,13 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMember(Tests.Shared.TestData.Members.Alice.Entity())
+                .WithMember(TestDataMembers.Alice.Entity())
                 .Build()
         );
 
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
+            .WithSendingMemberId(TestDataMembers.Alice.Id)
             .WithReceivingMemberId(new Guid("91444437-C508-45CA-874B-9C777A77E9DF"))
             .WithAmount(100m)
             .Build();
@@ -169,13 +170,13 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMember(Tests.Shared.TestData.Members.Alice.Entity())
+                .WithMember(TestDataMembers.Alice.Entity())
                 .Build()
         );
 
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
+            .WithSendingMemberId(TestDataMembers.Alice.Id)
             .WithReceivingMemberId(member.Id)
             .WithAmount(100m)
             .Build();
@@ -198,16 +199,16 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice.Entity(),
-                    Tests.Shared.TestData.Members.Bob.Entity()
+                    TestDataMembers.Alice.Entity(),
+                    TestDataMembers.Bob.Entity()
                 ])
                 .Build()
         );
 
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+            .WithSendingMemberId(TestDataMembers.Alice.Id)
+            .WithReceivingMemberId(TestDataMembers.Bob.Id)
             .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
@@ -224,16 +225,16 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice.Entity(),
-                    Tests.Shared.TestData.Members.Bob.Entity()
+                    TestDataMembers.Alice.Entity(),
+                    TestDataMembers.Bob.Entity()
                 ])
                 .Build()
         );
 
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+            .WithSendingMemberId(TestDataMembers.Alice.Id)
+            .WithReceivingMemberId(TestDataMembers.Bob.Id)
             .WithAmount(100m)
             .Build();
         await Application.SendAsync(request);
@@ -246,8 +247,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         group!.Payments
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                p => p.SendingMemberId.ShouldBe(Tests.Shared.TestData.Members.Alice.Id),
-                p => p.ReceivingMemberId.ShouldBe(Tests.Shared.TestData.Members.Bob.Id),
+                p => p.SendingMemberId.ShouldBe(TestDataMembers.Alice.Id),
+                p => p.ReceivingMemberId.ShouldBe(TestDataMembers.Bob.Id),
                 p => p.Amount.ShouldBe(100)
             );
     }
@@ -260,16 +261,16 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice.Entity(),
-                    Tests.Shared.TestData.Members.Bob.Entity()
+                    TestDataMembers.Alice.Entity(),
+                    TestDataMembers.Bob.Entity()
                 ])
                 .Build()
         );
 
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+            .WithSendingMemberId(TestDataMembers.Alice.Id)
+            .WithReceivingMemberId(TestDataMembers.Bob.Id)
             .WithAmount(100m)
             .Build();
         await Application.SendAsync(request);
@@ -280,8 +281,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         response.Payments
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                p => p.SendingMemberId.ShouldBe(Tests.Shared.TestData.Members.Alice.Id),
-                p => p.ReceivingMemberId.ShouldBe(Tests.Shared.TestData.Members.Bob.Id),
+                p => p.SendingMemberId.ShouldBe(TestDataMembers.Alice.Id),
+                p => p.ReceivingMemberId.ShouldBe(TestDataMembers.Bob.Id),
                 p => p.Amount.ShouldBe(100)
             );
     }

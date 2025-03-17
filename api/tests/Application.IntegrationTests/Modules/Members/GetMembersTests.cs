@@ -1,6 +1,7 @@
 using Shouldly;
 using SplitTheBill.Application.IntegrationTests.Common;
 using SplitTheBill.Application.Modules.Members;
+using SplitTheBill.Application.Tests.Shared.TestData;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Members;
 
@@ -21,7 +22,7 @@ internal sealed class GetMembersTests : ApplicationTestBase
     public async Task SingleEntity_ReturnsMappedEntity()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity()
+            TestDataMembers.Alice.Entity()
         );
 
         var result = await Application.SendAsync(new GetMembers.Request());
@@ -31,8 +32,8 @@ internal sealed class GetMembersTests : ApplicationTestBase
         response.ShouldNotBeNull();
         response.Members.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                m => m.Id.ShouldBe(Tests.Shared.TestData.Members.Alice.Id),
-                m => m.Name.ShouldBe(Tests.Shared.TestData.Members.Alice.Name)
+                m => m.Id.ShouldBe(TestDataMembers.Alice.Id),
+                m => m.Name.ShouldBe(TestDataMembers.Alice.Name)
             );
     }
 
@@ -40,8 +41,8 @@ internal sealed class GetMembersTests : ApplicationTestBase
     public async Task MultipleEntities_ReturnsMappedEntities()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            TestDataMembers.Alice.Entity(),
+            TestDataMembers.Bob.Entity()
         );
 
         var result = await Application.SendAsync(new GetMembers.Request());
@@ -51,10 +52,10 @@ internal sealed class GetMembersTests : ApplicationTestBase
         response.ShouldNotBeNull();
         response.Members.Count.ShouldBe(2);
         response.Members.ShouldContain(m =>
-            m.Id == Tests.Shared.TestData.Members.Alice.Id &&
-            m.Name == Tests.Shared.TestData.Members.Alice.Name);
+            m.Id == TestDataMembers.Alice.Id &&
+            m.Name == TestDataMembers.Alice.Name);
         response.Members.ShouldContain(m =>
-            m.Id == Tests.Shared.TestData.Members.Bob.Id &&
-            m.Name == Tests.Shared.TestData.Members.Bob.Name);
+            m.Id == TestDataMembers.Bob.Id &&
+            m.Name == TestDataMembers.Bob.Name);
     }
 }
