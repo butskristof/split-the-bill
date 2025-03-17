@@ -10,6 +10,19 @@ internal sealed class CreatePaymentValidatorTests
     private readonly CreatePayment.Validator _sut = new();
 
     [Test]
+    public void NullGroupId_Fails()
+    {
+        var request = new CreatePaymentRequestBuilder()
+            .WithGroupId(null)
+            .Build();
+        var result = _sut.TestValidate(request);
+
+        result
+            .ShouldHaveValidationErrorFor(r => r.GroupId)
+            .WithErrorMessage(ErrorCodes.Required);
+    }
+
+    [Test]
     public void EmptyGroupId_Fails()
     {
         var request = new CreatePaymentRequestBuilder()
@@ -32,6 +45,19 @@ internal sealed class CreatePaymentValidatorTests
 
         result
             .ShouldNotHaveValidationErrorFor(r => r.GroupId);
+    }
+    
+    [Test]
+    public void NullSendingMemberId_Fails()
+    {
+        var request = new CreatePaymentRequestBuilder()
+            .WithSendingMemberId(null)
+            .Build();
+        var result = _sut.TestValidate(request);
+
+        result
+            .ShouldHaveValidationErrorFor(r => r.SendingMemberId)
+            .WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
@@ -57,6 +83,19 @@ internal sealed class CreatePaymentValidatorTests
 
         result
             .ShouldNotHaveValidationErrorFor(r => r.SendingMemberId);
+    }
+    
+    [Test]
+    public void NullReceivingMemberId_Fails()
+    {
+        var request = new CreatePaymentRequestBuilder()
+            .WithReceivingMemberId(null)
+            .Build();
+        var result = _sut.TestValidate(request);
+
+        result
+            .ShouldHaveValidationErrorFor(r => r.ReceivingMemberId)
+            .WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
@@ -97,6 +136,19 @@ internal sealed class CreatePaymentValidatorTests
         result
             .ShouldHaveValidationErrorFor(r => r.ReceivingMemberId)
             .WithErrorMessage(ErrorCodes.NotUnique);
+    }
+    
+    [Test]
+    public void NullAmount_Fails()
+    {
+        var request = new CreatePaymentRequestBuilder()
+            .WithAmount(null)
+            .Build();
+        var result = _sut.TestValidate(request);
+
+        result
+            .ShouldHaveValidationErrorFor(r => r.Amount)
+            .WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]

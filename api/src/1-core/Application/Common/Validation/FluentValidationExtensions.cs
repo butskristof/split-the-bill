@@ -5,11 +5,29 @@ namespace SplitTheBill.Application.Common.Validation;
 
 internal static class FluentValidationExtensions
 {
+    internal static IRuleBuilderOptions<T, TProperty?> NotNullWithErrorCode<T, TProperty>(
+        this IRuleBuilder<T, TProperty?> ruleBuilder, string errorCode = ErrorCodes.Required)
+        => ruleBuilder
+            .NotNull()
+            .WithMessage(errorCode);
+
     internal static IRuleBuilderOptions<T, TProperty> NotEmptyWithErrorCode<T, TProperty>(
         this IRuleBuilder<T, TProperty> ruleBuilder, string errorCode = ErrorCodes.Required)
         => ruleBuilder
             .NotEmpty()
             .WithMessage(errorCode);
+
+    internal static IRuleBuilderOptions<T, Guid?> NotNullOrEmptyWithErrorCode<T>(
+        this IRuleBuilder<T, Guid?> ruleBuilder, 
+        string errorCodeWhenNull = ErrorCodes.Required,
+        string errorCodeWhenEmpty = ErrorCodes.Invalid)
+    {
+        return ruleBuilder
+            .NotNull()
+            .WithMessage(errorCodeWhenNull)
+            .Must(v => v.HasValue && v.Value != Guid.Empty)
+            .WithMessage(errorCodeWhenEmpty);
+    }
 
     internal static IRuleBuilderOptions<T, string?> ValidString<T>(this IRuleBuilder<T, string?> ruleBuilder,
         bool required,
@@ -32,7 +50,7 @@ internal static class FluentValidationExtensions
                     .GreaterThan(0))
             .WithMessage(ErrorCodes.Invalid);
 
-    internal static IRuleBuilderOptions<T, decimal> PositiveDecimal<T>(this IRuleBuilder<T, decimal> ruleBuilder,
+    internal static IRuleBuilderOptions<T, decimal?> PositiveDecimal<T>(this IRuleBuilder<T, decimal?> ruleBuilder,
         bool zeroInclusive)
         => (zeroInclusive
                 ? ruleBuilder

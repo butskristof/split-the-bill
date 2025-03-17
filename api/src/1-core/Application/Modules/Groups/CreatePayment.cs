@@ -11,26 +11,29 @@ namespace SplitTheBill.Application.Modules.Groups;
 
 public static class CreatePayment
 {
-    public sealed record Request(
-        Guid GroupId,
-        Guid SendingMemberId,
-        Guid ReceivingMemberId,
-        decimal Amount
-    ) : IRequest<ErrorOr<Created>>;
+    public sealed record Request : IRequest<ErrorOr<Created>>
+    {
+        public Guid? GroupId { get; init; }
+        public Guid? SendingMemberId { get; init; }
+        public Guid? ReceivingMemberId { get; init; }
+        public decimal? Amount { get; init; }
+    }
 
     internal sealed class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
             RuleFor(r => r.GroupId)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid);
+                .NotNullOrEmptyWithErrorCode();
             RuleFor(r => r.SendingMemberId)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid);
+                .NotNullOrEmptyWithErrorCode();
             RuleFor(r => r.ReceivingMemberId)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid)
+                .NotNullOrEmptyWithErrorCode()
                 .NotEqual(r => r.SendingMemberId)
                 .WithMessage(ErrorCodes.NotUnique);
             RuleFor(r => r.Amount)
+                .NotNullWithErrorCode(ErrorCodes.Required)
                 .PositiveDecimal(false);
         }
     }
@@ -86,9 +89,9 @@ public static class CreatePayment
             group.Payments
                 .Add(new Payment
                 {
-                    SendingMemberId = request.SendingMemberId,
-                    ReceivingMemberId = request.ReceivingMemberId,
-                    Amount = request.Amount,
+                    SendingMemberId = request.SendingMemberId!.Value,
+                    ReceivingMemberId = request.ReceivingMemberId!.Value,
+                    Amount = request.Amount!.Value,
                 });
             _logger.LogDebug("Mapped request to entity and added to Group's Payments collection");
             await _dbContext.SaveChangesAsync(CancellationToken.None);
