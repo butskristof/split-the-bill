@@ -33,7 +33,6 @@ public sealed class CreatePaymentRequestBuilder
         return this;
     }
 
-    // public CreatePayment.Request Build() => new(_groupId, _sendingMemberId, _receivingMemberId, _amount);
     public CreatePayment.Request Build() => new()
     {
         GroupId = _groupId,
