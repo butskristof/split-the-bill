@@ -11,7 +11,7 @@ public static class GetGroups
     public sealed record Request : IRequest<ErrorOr<Response>>;
 
     public sealed record Response(
-        List<Application.Common.Dto.GroupDto> Groups
+        List<Common.Dto.GroupDto> Groups
     );
 
     internal sealed class Handler : IRequestHandler<Request, ErrorOr<Response>>
@@ -39,7 +39,7 @@ public static class GetGroups
             var groups = await _dbContext
                 .Groups
                 .AsNoTracking()
-                .Select(g => new Application.Common.Dto.GroupDto(g.Id, g.Name))
+                .Select(g => new Common.Dto.GroupDto(g.Id, g.Name))
                 .ToListAsync(cancellationToken);
             _logger.LogDebug("Fetched mapped Group entities from database");
 

@@ -44,7 +44,7 @@ type PaymentDto = {
   amount: number;
 };
 
-enum ExpenseSplitType {
+export enum ExpenseSplitType {
   Equal = 0,
   Percentual = 1,
   Exact = 2,

@@ -1,24 +1,26 @@
 <template>
-  <h2>Payments</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Sender</th>
-        <th>Receiver</th>
-        <th>Amount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="payment in payments"
-        :key="payment.id"
-      >
-        <td>{{ memberNames[payment.sendingMemberId] }}</td>
-        <td>{{ memberNames[payment.receivingMemberId] }}</td>
-        <td>{{ payment.amount }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="payments">
+    <h2>Payments</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Sender</th>
+          <th>Receiver</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="payment in payments"
+          :key="payment.id"
+        >
+          <td>{{ memberNames[payment.sendingMemberId] }}</td>
+          <td>{{ memberNames[payment.receivingMemberId] }}</td>
+          <td>{{ payment.amount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -42,6 +44,9 @@ const memberNames = computed(() =>
 </script>
 
 <style scoped>
+.payments {
+  margin-bottom: 1rem;
+}
 table {
   border-collapse: collapse;
 }

@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Application.Common.Validation;
-using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.Modules.Groups;
 
