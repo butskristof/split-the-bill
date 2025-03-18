@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SplitTheBill.Api.Extensions;
 using SplitTheBill.Application.Modules.Groups;
+using SplitTheBill.Application.Modules.Groups.Payments;
 
 namespace SplitTheBill.Api.Modules;
 

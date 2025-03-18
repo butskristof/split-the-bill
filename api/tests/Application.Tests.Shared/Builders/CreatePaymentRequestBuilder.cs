@@ -1,4 +1,4 @@
-using SplitTheBill.Application.Modules.Groups;
+using SplitTheBill.Application.Modules.Groups.Payments;
 
 namespace SplitTheBill.Application.Tests.Shared.Builders;
 

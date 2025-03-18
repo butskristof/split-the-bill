@@ -4,6 +4,7 @@ using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Application.IntegrationTests.Common;
 using SplitTheBill.Application.Modules.Members;
 using SplitTheBill.Application.Tests.Shared.TestData;
+using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Members;
@@ -83,5 +84,28 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
         alice.ShouldBeNull();
         var bob = await Application.FindAsync<Member>(m => m.Id == TestDataMembers.Bob.Id);
         bob.ShouldNotBeNull();
+    }
+
+    [Test]
+    public async Task MemberWithGroups_CannotBeDeleted()
+    {
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithMember(TestDataMembers.Alice.Entity())
+                .Build()
+        );
+
+        var result = await Application.SendAsync(
+            new DeleteMember.Request(TestDataMembers.Alice.Id)
+        );
+
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.Validation),
+                e => e.Code.ShouldBe(nameof(Member.Id)),
+                e => e.Description.ShouldBe("MemberIsInGroups")
+            );
     }
 }

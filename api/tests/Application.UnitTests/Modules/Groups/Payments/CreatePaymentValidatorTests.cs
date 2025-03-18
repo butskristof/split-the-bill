@@ -1,9 +1,9 @@
 using FluentValidation.TestHelper;
 using SplitTheBill.Application.Common.Validation;
-using SplitTheBill.Application.Modules.Groups;
+using SplitTheBill.Application.Modules.Groups.Payments;
 using SplitTheBill.Application.Tests.Shared.Builders;
 
-namespace SplitTheBill.Application.UnitTests.Modules.Groups;
+namespace SplitTheBill.Application.UnitTests.Modules.Groups.Payments;
 
 internal sealed class CreatePaymentValidatorTests
 {
