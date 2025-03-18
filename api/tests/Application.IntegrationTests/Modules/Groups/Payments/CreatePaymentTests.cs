@@ -8,7 +8,7 @@ using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 using SplitTheBill.Domain.Models.Groups;
 using SplitTheBill.Domain.Models.Members;
 
-namespace SplitTheBill.Application.IntegrationTests.Modules.Groups;
+namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Payments;
 
 internal sealed class CreatePaymentTests : ApplicationTestBase
 {
