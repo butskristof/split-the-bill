@@ -19,11 +19,10 @@ public static class CreatePayment
         public decimal? Amount { get; init; }
     }
 
-    internal sealed class Validator : AbstractValidator<Request>
+    internal sealed class Validator : BaseValidator<Request>
     {
         public Validator()
         {
-            RuleLevelCascadeMode = CascadeMode.Stop;
             RuleFor(r => r.GroupId)
                 .NotNullOrEmptyWithErrorCode();
             RuleFor(r => r.SendingMemberId)
