@@ -22,6 +22,9 @@ internal static class GroupsModule
             .MapGet("{id:guid}", GetGroup);
 
         group
+            .MapPost("", CreateGroup);
+
+        group
             .MapPost("{groupId:guid}/payments", CreatePayment);
 
         return endpoints;
@@ -40,10 +43,17 @@ internal static class GroupsModule
         => sender.Send(new GetGroup.Request(id))
             .MapToOkOrProblem();
 
+    internal static Task<IResult> CreateGroup(
+        [FromBody] CreateGroup.Request request,
+        [FromServices] ISender sender
+    )
+        => sender.Send(request)
+            .MapToCreatedOrProblem(r => $"/{GroupName}/{r.Id}");
+
     internal static Task<IResult> CreatePayment(
-        [FromRoute] Guid groupId, 
+        [FromRoute] Guid groupId,
         [FromBody] CreatePayment.Request request,
-        [FromServices] ISender sender) 
+        [FromServices] ISender sender)
         => sender.Send(request with { GroupId = groupId })
             .MapToCreatedOrProblem(r => $"/{GroupName}/{groupId}");
 }
