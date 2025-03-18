@@ -7,7 +7,7 @@ using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Domain.Models.Groups;
 
-namespace SplitTheBill.Application.Modules.Groups;
+namespace SplitTheBill.Application.Modules.Groups.Payments;
 
 public static class CreatePayment
 {
