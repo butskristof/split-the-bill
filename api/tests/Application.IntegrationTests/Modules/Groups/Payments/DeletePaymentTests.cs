@@ -34,8 +34,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            Tests.Shared.TestData.Members.Alice,
+            Tests.Shared.TestData.Members.Bob
         );
         await Application.AddAsync(new GroupBuilder()
             .WithId(new Guid("C612FC70-90C6-4D9B-ACEB-8BF81429F6B4"))
@@ -72,8 +72,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     {
         var groupId = new Guid("C612FC70-90C6-4D9B-ACEB-8BF81429F6B4");
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            Tests.Shared.TestData.Members.Alice,
+            Tests.Shared.TestData.Members.Bob
         );
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
@@ -111,8 +111,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var paymentId = new Guid("141D6CE0-A335-42BB-87DA-9681C5A7EC53");
         var groupId = new Guid("FAE2C9EF-9872-468B-90DD-A902EA034880");
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            Tests.Shared.TestData.Members.Alice,
+            Tests.Shared.TestData.Members.Bob
         );
         await Application.AddAsync(new GroupBuilder()
             .WithId(new Guid("B9FC4E75-E737-4497-AF5E-4FA6EF05DDBC"))
@@ -154,8 +154,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var paymentId = new Guid("6F0B484F-1880-4287-83C9-32EE0D7F925F");
 
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            Tests.Shared.TestData.Members.Alice,
+            Tests.Shared.TestData.Members.Bob
         );
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
@@ -190,8 +190,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var payment2Id = new Guid("829001F8-786B-470D-BF3F-FDC9FCFE23E3");
 
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            Tests.Shared.TestData.Members.Alice,
+            Tests.Shared.TestData.Members.Bob
         );
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
@@ -229,8 +229,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var payment2Id = new Guid("845BEA12-F5DB-40D8-B87C-C69BF0EF11E9");
 
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            Tests.Shared.TestData.Members.Alice,
+            Tests.Shared.TestData.Members.Bob
         );
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)

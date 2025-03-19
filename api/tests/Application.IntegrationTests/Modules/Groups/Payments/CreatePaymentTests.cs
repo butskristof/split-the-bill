@@ -134,7 +134,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMembers([Tests.Shared.TestData.Members.Alice.Entity()])
+                .WithMembers([Tests.Shared.TestData.Members.Alice])
                 .Build()
         );
 
@@ -169,7 +169,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMembers([Tests.Shared.TestData.Members.Alice.Entity()])
+                .WithMembers([Tests.Shared.TestData.Members.Alice])
                 .Build()
         );
 
@@ -198,8 +198,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice.Entity(),
-                    Tests.Shared.TestData.Members.Bob.Entity()
+                    Tests.Shared.TestData.Members.Alice,
+                    Tests.Shared.TestData.Members.Bob
                 ])
                 .Build()
         );
@@ -224,8 +224,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice.Entity(),
-                    Tests.Shared.TestData.Members.Bob.Entity()
+                    Tests.Shared.TestData.Members.Alice,
+                    Tests.Shared.TestData.Members.Bob
                 ])
                 .Build()
         );
@@ -260,8 +260,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice.Entity(),
-                    Tests.Shared.TestData.Members.Bob.Entity()
+                    Tests.Shared.TestData.Members.Alice,
+                    Tests.Shared.TestData.Members.Bob
                 ])
                 .Build()
         );

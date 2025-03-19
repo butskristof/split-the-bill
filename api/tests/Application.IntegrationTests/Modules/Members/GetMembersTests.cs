@@ -21,7 +21,7 @@ internal sealed class GetMembersTests : ApplicationTestBase
     public async Task SingleEntity_ReturnsMappedEntity()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity()
+            Tests.Shared.TestData.Members.Alice
         );
 
         var result = await Application.SendAsync(new GetMembers.Request());
@@ -40,8 +40,8 @@ internal sealed class GetMembersTests : ApplicationTestBase
     public async Task MultipleEntities_ReturnsMappedEntities()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            Tests.Shared.TestData.Members.Alice,
+            Tests.Shared.TestData.Members.Bob
         );
 
         var result = await Application.SendAsync(new GetMembers.Request());

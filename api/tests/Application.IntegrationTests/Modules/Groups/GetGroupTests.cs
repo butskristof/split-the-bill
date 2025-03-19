@@ -52,16 +52,16 @@ internal sealed class GetGroupTests : ApplicationTestBase
                 .WithId(groupId)
                 .WithName(groupName)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice.Entity(),
-                    Tests.Shared.TestData.Members.Bob.Entity()
+                    Tests.Shared.TestData.Members.Alice,
+                    Tests.Shared.TestData.Members.Bob
                 ])
                 .WithExpenses([
                     new ExpenseBuilder()
                         .WithAmount(100)
                         .WithPaidByMemberId(Tests.Shared.TestData.Members.Alice.Id)
                         .WithParticipants([
-                            Tests.Shared.TestData.Members.Alice.Entity(),
-                            Tests.Shared.TestData.Members.Bob.Entity()
+                            Tests.Shared.TestData.Members.Alice,
+                            Tests.Shared.TestData.Members.Bob
                         ])
                 ])
                 .AddPayment(new PaymentBuilder()

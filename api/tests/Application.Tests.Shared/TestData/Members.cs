@@ -4,59 +4,35 @@ namespace SplitTheBill.Application.Tests.Shared.TestData;
 
 public static class Members
 {
-    public static class Alice
+    public static Member Alice => new()
     {
-        public static readonly Guid Id = new("C8FE2024-32FB-49D7-A92B-5E56D8AE8360");
-        public const string Name = nameof(Alice);
+        Id = new Guid("C8FE2024-32FB-49D7-A92B-5E56D8AE8360"),
+        Name = nameof(Alice)
+    };
 
-        public static Member Entity() => new()
-        {
-            Id = Id,
-            Name = Name
-        };
-    }
-
-    public static class Bob
+    public static Member Bob => new()
     {
-        public static readonly Guid Id = new("347D012C-AFE9-404D-80B2-47E57AB3EACA");
-        public const string Name = nameof(Bob);
+        Id = new Guid("347D012C-AFE9-404D-80B2-47E57AB3EACA"),
+        Name = nameof(Bob),
+    };
 
-        public static Member Entity() => new()
-        {
-            Id = Id,
-            Name = Name
-        };
-    }
-
-    public static class Charlie
+    public static Member Charlie => new()
     {
-        public static readonly Guid Id = new("243C316A-1336-4247-89A7-CACCBF9C6E6E");
-        public const string Name = nameof(Charlie);
+        Id = new Guid("243C316A-1336-4247-89A7-CACCBF9C6E6E"),
+        Name = nameof(Charlie),
+    };
 
-        public static Member Entity() => new()
-        {
-            Id = Id,
-            Name = Name
-        };
-    }
-
-    public static class David
+    public static Member David => new()
     {
-        public static readonly Guid Id = new("66559461-E123-4233-9B57-4D8E715AA19F");
-        public const string Name = nameof(David);
+        Id =new Guid("66559461-E123-4233-9B57-4D8E715AA19F") ,
+        Name = nameof(David),
+    };
 
-        public static Member Entity() => new()
-        {
-            Id = Id,
-            Name = Name
-        };
-    }
-    
     public static IEnumerable<Member> GetAllMembers()
     {
-        yield return Alice.Entity();
-        yield return Bob.Entity();
-        yield return Charlie.Entity();
-        yield return David.Entity();
+        yield return Alice;
+        yield return Bob;
+        yield return Charlie;
+        yield return David;
     }
 }

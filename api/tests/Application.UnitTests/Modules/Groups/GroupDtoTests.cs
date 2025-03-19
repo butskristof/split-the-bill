@@ -27,7 +27,7 @@ internal sealed class GroupDtoTests
     public void GroupDto_MapsMemberProperties()
     {
         var group = new GroupBuilder()
-            .WithMembers([Members.Alice.Entity(), Members.Bob.Entity()])
+            .WithMembers([Members.Alice, Members.Bob])
             .Build();
         var dto = new GroupDto(group);
 
@@ -85,7 +85,7 @@ internal sealed class GroupDtoTests
                 .WithDescription("expense 1")
                 .WithAmount(1)
                 .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([Members.Alice.Entity(), Members.Bob.Entity()])
+                .WithParticipants([Members.Alice, Members.Bob])
                 .WithPaidByMemberId(Members.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
