@@ -32,7 +32,7 @@ public static class CreatePayment
                 .NotEqual(r => r.SendingMemberId)
                 .WithMessage(ErrorCodes.NotUnique);
             RuleFor(r => r.Amount)
-                .NotNullWithErrorCode(ErrorCodes.Required)
+                .NotNullWithErrorCode()
                 .PositiveDecimal(false);
         }
     }

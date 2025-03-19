@@ -1,5 +1,4 @@
 using ErrorOr;
-using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
@@ -22,8 +21,7 @@ public static class CreateGroup
         public Validator()
         {
             RuleFor(r => r.Name)
-                .NotNullWithErrorCode(ErrorCodes.Required)
-                .NotEmptyWithErrorCode(ErrorCodes.Required);
+                .ValidString(true);
         }
     }
 
