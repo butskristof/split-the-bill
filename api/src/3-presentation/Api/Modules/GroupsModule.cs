@@ -25,7 +25,8 @@ internal static class GroupsModule
             .MapGet("{id:guid}", GetGroup)
             .WithName(nameof(GetGroup))
             .ProducesOk<GroupDto>()
-            .ProducesNotFound();
+            .ProducesNotFound()
+            .ProducesValidationProblem();
 
         group
             .MapPost("", CreateGroup)
@@ -44,12 +45,20 @@ internal static class GroupsModule
             .MapDelete("{id:guid}", DeleteGroup)
             .WithName(nameof(DeleteGroup))
             .ProducesNoContent()
-            .ProducesNotFound();
+            .ProducesNotFound()
+            .ProducesValidationProblem();
 
         group
             .MapPost("{groupId:guid}/payments", CreatePayment)
             .WithName(nameof(CreatePayment))
             .ProducesCreated()
+            .ProducesNotFound()
+            .ProducesValidationProblem();
+        
+        group
+            .MapDelete("{groupId:guid}/payments/{paymentId:guid}", DeletePayment)
+            .WithName(nameof(DeletePayment))
+            .ProducesNoContent()
             .ProducesNotFound()
             .ProducesValidationProblem();
 
@@ -97,4 +106,11 @@ internal static class GroupsModule
         [FromServices] ISender sender)
         => sender.Send(request with { GroupId = groupId })
             .MapToCreatedOrProblem(r => $"/{GroupName}/{groupId}");
+
+    internal static Task<IResult> DeletePayment(
+        [FromRoute] Guid groupId,
+        [FromRoute] Guid paymentId,
+        [FromServices] ISender sender)
+        => sender.Send(new DeletePayment.Request(groupId, paymentId))
+            .MapToNoContentOrProblem();
 }
