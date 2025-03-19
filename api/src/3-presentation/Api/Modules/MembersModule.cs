@@ -12,10 +12,13 @@ internal static class MembersModule
     internal static IEndpointRouteBuilder MapMembersEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints
-            .MapGroup($"/{GroupName}");
+            .MapGroup($"/{GroupName}")
+            .WithTags(GroupName);
 
         group
-            .MapGet("", GetMembers);
+            .MapGet("", GetMembers)
+            .WithName(nameof(GetMembers))
+            .ProducesOk<GetMembers.Response>();
 
         return endpoints;
     }
