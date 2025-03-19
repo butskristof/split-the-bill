@@ -38,7 +38,7 @@ internal static class FluentValidationExtensions
 
         return ruleBuilder
             .MaximumLength(maxLength)
-            .WithMessage(ErrorCodes.Invalid);
+            .WithMessage(ErrorCodes.TooLong);
     }
 
     internal static IRuleBuilderOptions<T, int> PositiveInteger<T>(this IRuleBuilder<T, int> ruleBuilder,

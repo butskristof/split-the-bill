@@ -3,6 +3,7 @@ using Shouldly;
 using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Application.IntegrationTests.Common;
 using SplitTheBill.Application.Tests.Shared.Builders;
+using SplitTheBill.Application.Tests.Shared.TestData;
 using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups;
@@ -28,9 +29,28 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     }
 
     [Test]
+    public async Task LongName_ReturnsValidationError()
+    {
+        var name = TestUtilities.GenerateString(513);
+        var request = new CreateGroupRequestBuilder()
+            .WithName(name)
+            .Build();
+        var result = await Application.SendAsync(request);
+
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.Validation),
+                e => e.Code.ShouldBe(nameof(request.Name)),
+                e => e.Description.ShouldBe(ErrorCodes.TooLong)
+            );
+    }
+
+    [Test]
     public async Task ValidRequest_ReturnsResponseWithId()
     {
-        const string name = "group name";
+        var name = TestUtilities.GenerateString(512); // max string length
         var request = new CreateGroupRequestBuilder()
             .WithName(name)
             .Build();
