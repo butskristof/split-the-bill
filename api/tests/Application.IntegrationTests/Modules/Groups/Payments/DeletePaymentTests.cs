@@ -11,6 +11,10 @@ namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Payments;
 
 internal sealed class DeletePaymentTests : ApplicationTestBase
 {
+    public DeletePaymentTests() : base(true)
+    {
+    }
+
     [Test]
     public async Task InvalidRequest_ReturnsValidationError()
     {
@@ -33,10 +37,6 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice,
-            Tests.Shared.TestData.Members.Bob
-        );
         await Application.AddAsync(new GroupBuilder()
             .WithId(Guid.NewGuid())
             .WithPayments([
@@ -45,11 +45,10 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
                     .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
                     .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
             ])
-            .WithName("group name")
             .Build());
 
         var request = new DeletePayment.Request(
-            Guid.NewGuid(), 
+            Guid.NewGuid(),
             Guid.NewGuid()
         );
         var result = await Application.SendAsync(request);
@@ -71,10 +70,6 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     public async Task PaymentDoesNotExist_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
-        await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice,
-            Tests.Shared.TestData.Members.Bob
-        );
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithPayments([
@@ -83,7 +78,6 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
                     .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
                     .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
             ])
-            .WithName("group name")
             .Build());
 
         var request = new DeletePayment.Request(
@@ -111,22 +105,19 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var paymentId = Guid.NewGuid();
         var groupId = Guid.NewGuid();
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice,
-            Tests.Shared.TestData.Members.Bob
-        );
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(Guid.NewGuid())
-            .WithPayments([
-                new PaymentBuilder()
-                    .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-            ])
-            .WithName("group name")
-            .Build(),
+            new GroupBuilder()
+                .WithId(Guid.NewGuid())
+                .WithPayments([
+                    new PaymentBuilder()
+                        .WithId(paymentId)
+                        .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
+                        .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                ])
+                .Build(),
             new GroupBuilder()
                 .WithId(groupId)
-                .Build());
+                .Build()
+        );
 
         var request = new DeletePayment.Request(
             groupId,
@@ -153,10 +144,6 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var groupId = Guid.NewGuid();
         var paymentId = Guid.NewGuid();
 
-        await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice,
-            Tests.Shared.TestData.Members.Bob
-        );
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithPayments([
@@ -189,10 +176,6 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var payment1Id = Guid.NewGuid();
         var payment2Id = Guid.NewGuid();
 
-        await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice,
-            Tests.Shared.TestData.Members.Bob
-        );
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithPayments([
@@ -228,10 +211,6 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var payment1Id = Guid.NewGuid();
         var payment2Id = Guid.NewGuid();
 
-        await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice,
-            Tests.Shared.TestData.Members.Bob
-        );
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithPayments([

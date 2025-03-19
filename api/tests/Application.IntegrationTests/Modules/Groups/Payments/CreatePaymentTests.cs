@@ -12,6 +12,10 @@ namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Payments;
 
 internal sealed class CreatePaymentTests : ApplicationTestBase
 {
+    public CreatePaymentTests() : base(true)
+    {
+    }
+
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
     {
@@ -52,9 +56,6 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     {
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(Guid.NewGuid())
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-            .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
 
@@ -79,8 +80,6 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(Guid.NewGuid())
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-            .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
 
@@ -96,13 +95,6 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     [Test]
     public async Task SendingMemberNotInGroup_ReturnsNotFoundError()
     {
-        var member = new Member
-        {
-            Id = Guid.NewGuid(),
-            Name = "member not in group"
-        };
-        await Application.AddAsync(member);
-
         var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
@@ -112,9 +104,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
 
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
-            .WithSendingMemberId(member.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-            .WithAmount(100m)
+            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
             .Build();
         var result = await Application.SendAsync(request);
 
@@ -134,7 +124,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMembers([Tests.Shared.TestData.Members.Alice])
+                .WithMembers([Tests.Shared.TestData.Members.Alice.Id])
                 .Build()
         );
 
@@ -142,7 +132,6 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             .WithGroupId(groupId)
             .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
             .WithReceivingMemberId(Guid.NewGuid())
-            .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
 
@@ -158,26 +147,18 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     [Test]
     public async Task ReceivingMemberNotInGroup_ReturnsNotFoundError()
     {
-        var member = new Member
-        {
-            Id = Guid.NewGuid(),
-            Name = "member not in group"
-        };
-        await Application.AddAsync(member);
-
         var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMembers([Tests.Shared.TestData.Members.Alice])
+                .WithMembers([Tests.Shared.TestData.Members.Alice.Id])
                 .Build()
         );
 
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-            .WithReceivingMemberId(member.Id)
-            .WithAmount(100m)
+            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
             .Build();
         var result = await Application.SendAsync(request);
 
@@ -198,8 +179,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice,
-                    Tests.Shared.TestData.Members.Bob
+                    Tests.Shared.TestData.Members.Alice.Id,
+                    Tests.Shared.TestData.Members.Bob.Id
                 ])
                 .Build()
         );
@@ -224,8 +205,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice,
-                    Tests.Shared.TestData.Members.Bob
+                    Tests.Shared.TestData.Members.Alice.Id,
+                    Tests.Shared.TestData.Members.Bob.Id
                 ])
                 .Build()
         );
@@ -260,8 +241,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice,
-                    Tests.Shared.TestData.Members.Bob
+                    Tests.Shared.TestData.Members.Alice.Id,
+                    Tests.Shared.TestData.Members.Bob.Id
                 ])
                 .Build()
         );
