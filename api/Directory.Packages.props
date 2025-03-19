@@ -16,6 +16,7 @@
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="1.6.3" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageVersion Include="Respawn" Version="6.2.1" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.1.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
