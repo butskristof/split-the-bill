@@ -4,11 +4,11 @@ namespace SplitTheBill.Application.Tests.Shared.Builders;
 
 public sealed class UpdatePaymentRequestBuilder
 {
-    private Guid? _groupId = null;
-    private Guid? _paymentId = null;
-    private Guid? _sendingMemberId = null;
-    private Guid? _receivingMemberId = null;
-    private decimal? _amount = null;
+    private Guid? _groupId = Guid.NewGuid();
+    private Guid? _paymentId = Guid.NewGuid();
+    private Guid? _sendingMemberId = Guid.NewGuid();
+    private Guid? _receivingMemberId = Guid.NewGuid();
+    private decimal? _amount = 100m;
 
     public UpdatePaymentRequestBuilder WithGroupId(Guid? groupId)
     {
