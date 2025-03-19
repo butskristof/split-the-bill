@@ -39,4 +39,16 @@ public static class Members
             Name = Name
         };
     }
+
+    public static class David
+    {
+        public static readonly Guid Id = new("66559461-E123-4233-9B57-4D8E715AA19F");
+        public const string Name = nameof(David);
+
+        public static Member Entity() => new()
+        {
+            Id = Id,
+            Name = Name
+        };
+    }
 }
