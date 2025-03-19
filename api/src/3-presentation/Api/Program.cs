@@ -1,5 +1,6 @@
 using Serilog;
 using SplitTheBill.Api;
+using SplitTheBill.Api.Extensions;
 using SplitTheBill.Api.Modules;
 using SplitTheBill.Application;
 using SplitTheBill.Application.Common.Constants;
@@ -42,6 +43,7 @@ try
         .UseStatusCodePages();
 
     app.MapHealthChecks("/health");
+    app.MapOpenApiEndpoints();
     app
         .MapMembersEndpoints()
         .MapGroupsEndpoints();

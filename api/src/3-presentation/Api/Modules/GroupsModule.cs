@@ -13,25 +13,45 @@ internal static class GroupsModule
     internal static IEndpointRouteBuilder MapGroupsEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints
-            .MapGroup($"/{GroupName}");
+            .MapGroup($"/{GroupName}")
+            .WithTags(GroupName);
 
         group
-            .MapGet("", GetGroups);
+            .MapGet("", GetGroups)
+            .WithName(nameof(GetGroups))
+            .ProducesOk<GetGroups.Response>();
 
         group
-            .MapGet("{id:guid}", GetGroup);
+            .MapGet("{id:guid}", GetGroup)
+            .WithName(nameof(GetGroup))
+            .ProducesOk<GroupDto>()
+            .ProducesNotFound();
 
         group
-            .MapPost("", CreateGroup);
+            .MapPost("", CreateGroup)
+            .WithName(nameof(CreateGroup))
+            .ProducesCreated<CreateGroup.Response>()
+            .ProducesValidationProblem();
 
         group
-            .MapPut("{id:guid}", UpdateGroup);
+            .MapPut("{id:guid}", UpdateGroup)
+            .WithName(nameof(UpdateGroup))
+            .ProducesNoContent()
+            .ProducesNotFound()
+            .ProducesValidationProblem();
 
         group
-            .MapDelete("{id:guid}", DeleteGroup);
+            .MapDelete("{id:guid}", DeleteGroup)
+            .WithName(nameof(DeleteGroup))
+            .ProducesNoContent()
+            .ProducesNotFound();
 
         group
-            .MapPost("{groupId:guid}/payments", CreatePayment);
+            .MapPost("{groupId:guid}/payments", CreatePayment)
+            .WithName(nameof(CreatePayment))
+            .ProducesCreated()
+            .ProducesNotFound()
+            .ProducesValidationProblem();
 
         return endpoints;
     }
