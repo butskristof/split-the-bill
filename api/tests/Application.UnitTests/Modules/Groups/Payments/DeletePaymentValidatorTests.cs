@@ -13,7 +13,7 @@ internal sealed class DeletePaymentValidatorTests
     {
         var request = new DeletePayment.Request(
             Guid.Empty,
-            new Guid("FF5893B7-B213-4447-A4E3-34B6A2EA67CA")
+            Guid.NewGuid()
         );
         var result = _sut.TestValidate(request);
         result
@@ -25,8 +25,8 @@ internal sealed class DeletePaymentValidatorTests
     public void ValidGroupId_Passes()
     {
         var request = new DeletePayment.Request(
-            new Guid("2606BE3F-01C9-421B-9E6F-0C46EA11A2E2"),
-            new Guid("E8FD313E-31EA-4422-9FB1-7CB75D882E89")
+            Guid.NewGuid(), 
+            Guid.NewGuid()
         );
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveValidationErrorFor(r => r.GroupId);
@@ -36,7 +36,7 @@ internal sealed class DeletePaymentValidatorTests
     public void EmptyPaymentId_Fails()
     {
         var request = new DeletePayment.Request(
-            new Guid("09912688-9C99-4308-8380-C9C86E01B030"),
+            Guid.NewGuid(), 
             Guid.Empty
         );
         var result = _sut.TestValidate(request);
@@ -49,8 +49,8 @@ internal sealed class DeletePaymentValidatorTests
     public void ValidPaymentId_Passes()
     {
         var request = new DeletePayment.Request(
-            new Guid("FD23D959-C710-4EE1-B018-A65BE5D22E6C"),
-            new Guid("67D086CF-71C8-4B8A-8816-FDFA81C99982")
+            Guid.NewGuid(), 
+            Guid.NewGuid()
         );
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveValidationErrorFor(r => r.PaymentId);

@@ -30,10 +30,10 @@ internal sealed class DeleteGroupTests : ApplicationTestBase
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
         await Application.AddAsync(new GroupBuilder()
-            .WithId(new Guid("92C569A3-6AC7-4ABC-B193-5911DFB0EC6A"))
+            .WithId(Guid.NewGuid())
             .WithName("group name")
             .Build());
-        Guid id = new("3B99BDEE-3507-4D28-8593-663405D0CDA6");
+        var id = Guid.NewGuid();
 
         var result = await Application.SendAsync(new DeleteGroup.Request(id));
 
@@ -53,7 +53,7 @@ internal sealed class DeleteGroupTests : ApplicationTestBase
     [Test]
     public async Task DeletesGroup()
     {
-        Guid id = new("061FAF7F-6F9C-46FD-A93D-7DCC7FBD76F6");
+        var id = Guid.NewGuid();
         await Application.AddAsync(new GroupBuilder()
             .WithId(id)
             .WithName("group name")
@@ -72,13 +72,13 @@ internal sealed class DeleteGroupTests : ApplicationTestBase
     [Test]
     public async Task DeletesCorrectGroup()
     {
-        Guid id = new("194D10ED-9222-44BB-8969-938EF19AF241");
+        var id = Guid.NewGuid();
         await Application.AddAsync(new GroupBuilder()
                 .WithId(id)
                 .WithName("group name")
                 .Build(),
             new GroupBuilder()
-                .WithId(new Guid("31C16086-2156-4828-8259-8C9282B23B34"))
+                .WithId(Guid.NewGuid())
                 .WithName("other group name")
                 .Build()
         );

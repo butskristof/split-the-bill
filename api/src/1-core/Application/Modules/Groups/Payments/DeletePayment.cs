@@ -17,7 +17,6 @@ public static class DeletePayment
         {
             RuleFor(r => r.GroupId)
                 .NotEmptyWithErrorCode(ErrorCodes.Invalid);
-            
             RuleFor(r => r.PaymentId)
                 .NotEmptyWithErrorCode(ErrorCodes.Invalid);
         }

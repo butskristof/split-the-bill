@@ -21,7 +21,7 @@ internal sealed class GetGroupsTests : ApplicationTestBase
     [Test]
     public async Task SingleEntity_ReturnsMappedEntity()
     {
-        Guid groupId = new("5AA6E512-58CC-4224-A000-C9198CE5D6F8");
+        var groupId = Guid.NewGuid();
         const string groupName = "group name";
 
         await Application.AddAsync(
@@ -46,9 +46,9 @@ internal sealed class GetGroupsTests : ApplicationTestBase
     [Test]
     public async Task MultipleEntities_ReturnsMappedEntities()
     {
-        Guid groupId1 = new("99E85C3C-8492-4C94-B267-00ACEFFEF8AF");
+        var groupId1 = Guid.NewGuid();
         const string groupName1 = "group name 1";
-        Guid groupId2 = new("37A4B70F-CDB0-49C3-A344-16560BDD15A2");
+        var groupId2 = Guid.NewGuid();
         const string groupName2 = "group name 2";
 
         await Application.AddAsync(

@@ -5,9 +5,10 @@ namespace SplitTheBill.Application.Tests.Shared.TestData.Builders;
 
 public sealed class GroupBuilder
 {
-    private Guid _id = Guid.Empty;
-    private string _name = string.Empty;
-    private List<Member> _members = [];
+    private Guid _id = Guid.NewGuid();
+    private string _name = "group name";
+    private List<Member>? _members = null;
+    private List<Guid>? _memberIds = null;
     private List<Expense> _expenses = [];
     private List<Payment> _payments = [];
 
@@ -22,48 +23,54 @@ public sealed class GroupBuilder
         _name = name;
         return this;
     }
-    
+
     public GroupBuilder WithMembers(List<Member> members)
     {
         _members = members;
         return this;
     }
-    
-    public GroupBuilder WithMember(Member member)
+
+    public GroupBuilder WithMembers(List<Guid> memberIds)
     {
-        _members.Add(member);
+        _memberIds = memberIds;
         return this;
     }
-    
+
     public GroupBuilder WithExpenses(List<Expense> expenses)
     {
         _expenses = expenses;
         return this;
     }
-    
+
     public GroupBuilder AddExpense(Expense expense)
     {
         _expenses.Add(expense);
         return this;
     }
-    
+
     public GroupBuilder WithPayments(List<Payment> payments)
     {
         _payments = payments;
         return this;
     }
-    
+
     public GroupBuilder AddPayment(Payment payment)
     {
         _payments.Add(payment);
         return this;
     }
-    
+
     public Group Build() => new()
     {
         Id = _id,
         Name = _name,
-        Members = _members,
+        // if memberIds is defined, set null, otherwise use members and finally fall back to empty list
+        Members = _memberIds?.Any() == true ? null! : _members ?? [],
+        // not defined -> fall back to null, Members will fall back to empty list
+        GroupMembers = _memberIds?
+                           .Select(id => new GroupMember { MemberId = id })
+                           .ToList()
+                       ?? null!,
         Expenses = _expenses,
         Payments = _payments,
     };

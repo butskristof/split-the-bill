@@ -4,7 +4,7 @@ namespace SplitTheBill.Application.Tests.Shared.Builders;
 
 public sealed class CreateGroupRequestBuilder
 {
-    private string? _name = null;
+    private string? _name = "group name";
 
     public CreateGroupRequestBuilder WithName(string? name)
     {

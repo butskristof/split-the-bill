@@ -21,7 +21,7 @@ internal sealed class DeleteGroupValidatorTests
     [Test]
     public void ValidId_Passes()
     {
-        var request = new DeleteGroup.Request(new Guid("1775C84E-890D-42F4-BC9B-65F0061211EF"));
+        var request = new DeleteGroup.Request(Guid.NewGuid());
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveAnyValidationErrors();
     }

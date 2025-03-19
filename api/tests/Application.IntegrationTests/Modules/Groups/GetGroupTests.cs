@@ -29,7 +29,7 @@ internal sealed class GetGroupTests : ApplicationTestBase
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        Guid id = new("DC6F28A5-41B2-4970-A2DD-02040F4CA593");
+        var id = Guid.NewGuid();
         var result = await Application.SendAsync(new GetGroup.Request(id));
 
         result.IsError.ShouldBeTrue();
@@ -44,7 +44,7 @@ internal sealed class GetGroupTests : ApplicationTestBase
     [Test]
     public async Task ReturnsMappedEntity()
     {
-        Guid groupId = new("5AA6E512-58CC-4224-A000-C9198CE5D6F8");
+        var groupId = Guid.NewGuid();
         const string groupName = "group name";
 
         await Application.AddAsync(
@@ -52,16 +52,16 @@ internal sealed class GetGroupTests : ApplicationTestBase
                 .WithId(groupId)
                 .WithName(groupName)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice.Entity(),
-                    Tests.Shared.TestData.Members.Bob.Entity()
+                    Tests.Shared.TestData.Members.Alice,
+                    Tests.Shared.TestData.Members.Bob
                 ])
                 .WithExpenses([
                     new ExpenseBuilder()
                         .WithAmount(100)
                         .WithPaidByMemberId(Tests.Shared.TestData.Members.Alice.Id)
                         .WithParticipants([
-                            Tests.Shared.TestData.Members.Alice.Entity(),
-                            Tests.Shared.TestData.Members.Bob.Entity()
+                            Tests.Shared.TestData.Members.Alice,
+                            Tests.Shared.TestData.Members.Bob
                         ])
                 ])
                 .AddPayment(new PaymentBuilder()

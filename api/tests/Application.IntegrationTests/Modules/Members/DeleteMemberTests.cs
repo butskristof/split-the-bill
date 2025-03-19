@@ -28,8 +28,8 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     [Test]
     public async Task MemberDoesNotExist_ReturnsNotFoundError()
     {
-        await Application.AddAsync(Tests.Shared.TestData.Members.Alice.Entity());
-        Guid id = new("3B99BDEE-3507-4D28-8593-663405D0CDA6");
+        await Application.AddAsync(Tests.Shared.TestData.Members.Alice);
+        var id = Guid.NewGuid();
 
         var result = await Application.SendAsync(new DeleteMember.Request(id));
 
@@ -49,7 +49,7 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     [Test]
     public async Task DeletesMember()
     {
-        await Application.AddAsync(Tests.Shared.TestData.Members.Alice.Entity());
+        await Application.AddAsync(Tests.Shared.TestData.Members.Alice);
 
         var result = await Application.SendAsync(new DeleteMember.Request(Tests.Shared.TestData.Members.Alice.Id));
 
@@ -64,8 +64,8 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     public async Task DeletesCorrectMember()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice.Entity(),
-            Tests.Shared.TestData.Members.Bob.Entity()
+            Tests.Shared.TestData.Members.Alice,
+            Tests.Shared.TestData.Members.Bob
         );
 
         var result = await Application.SendAsync(

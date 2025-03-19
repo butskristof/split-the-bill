@@ -13,9 +13,9 @@ internal sealed class GroupMemberConfiguration : IEntityTypeConfiguration<GroupM
 
         builder
             .HasOne<Group>()
-            .WithMany()
+            .WithMany(g => g.GroupMembers)
             .HasForeignKey(gm => gm.GroupId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne<Member>()
