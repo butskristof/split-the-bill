@@ -134,7 +134,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMember(Tests.Shared.TestData.Members.Alice.Entity())
+                .WithMembers([Tests.Shared.TestData.Members.Alice.Entity()])
                 .Build()
         );
 
@@ -169,7 +169,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMember(Tests.Shared.TestData.Members.Alice.Entity())
+                .WithMembers([Tests.Shared.TestData.Members.Alice.Entity()])
                 .Build()
         );
 

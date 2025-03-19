@@ -86,7 +86,11 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
         return await query.SingleOrDefaultAsync(identifier);
     }
 
-    public async Task AddAsync<TEntity>(params TEntity[] entities)
+    public Task AddAsync<TEntity>(params TEntity[] entities)
+        where TEntity : class
+        => AddAsync(entities.AsEnumerable());
+
+    public async Task AddAsync<TEntity>(IEnumerable<TEntity> entities)
         where TEntity : class
     {
         using var scope = _scopeFactory.CreateScope();

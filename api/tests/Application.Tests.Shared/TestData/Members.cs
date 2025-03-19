@@ -51,4 +51,12 @@ public static class Members
             Name = Name
         };
     }
+    
+    public static IEnumerable<Member> GetAllMembers()
+    {
+        yield return Alice.Entity();
+        yield return Bob.Entity();
+        yield return Charlie.Entity();
+        yield return David.Entity();
+    }
 }
