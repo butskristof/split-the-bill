@@ -42,6 +42,7 @@ try
         .UseStatusCodePages();
 
     app.MapHealthChecks("/health");
+    app.MapOpenApi();
     app
         .MapMembersEndpoints()
         .MapGroupsEndpoints();
