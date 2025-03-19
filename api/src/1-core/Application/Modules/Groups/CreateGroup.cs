@@ -17,11 +17,10 @@ public static class CreateGroup
 
     public sealed record Response(Guid Id);
 
-    internal sealed class Validator : AbstractValidator<Request>
+    internal sealed class Validator : BaseValidator<Request>
     {
         public Validator()
         {
-            RuleLevelCascadeMode = CascadeMode.Stop;
             RuleFor(r => r.Name)
                 .NotNullWithErrorCode(ErrorCodes.Required)
                 .NotEmptyWithErrorCode(ErrorCodes.Required);

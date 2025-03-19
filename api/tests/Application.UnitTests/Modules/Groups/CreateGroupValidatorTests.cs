@@ -1,4 +1,5 @@
 using FluentValidation.TestHelper;
+using Shouldly;
 using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Application.Modules.Groups;
 using SplitTheBill.Application.Tests.Shared.Builders;
@@ -22,6 +23,19 @@ internal sealed class CreateGroupValidatorTests
         result
             .ShouldHaveValidationErrorFor(r => r.Name)
             .WithErrorMessage(ErrorCodes.Required);
+    }
+
+    [Test]
+    public void EmptyName_OnlyReturnsOneErrorCode()
+    {
+        var request = new CreateGroupRequestBuilder()
+            .WithName(null)
+            .Build();
+        var result = _sut.TestValidate(request);
+
+        result
+            .ShouldHaveValidationErrorFor(r => r.Name)
+            .Count().ShouldBe(1);
     }
     
     [Test]
