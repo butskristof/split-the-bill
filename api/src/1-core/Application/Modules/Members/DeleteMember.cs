@@ -1,5 +1,4 @@
 using ErrorOr;
-using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -12,7 +11,7 @@ public static class DeleteMember
 {
     public sealed record Request(Guid Id) : IRequest<ErrorOr<Deleted>>;
 
-    internal sealed class Validator : AbstractValidator<Request>
+    internal sealed class Validator : BaseValidator<Request>
     {
         public Validator()
         {

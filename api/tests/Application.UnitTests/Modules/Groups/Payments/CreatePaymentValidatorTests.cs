@@ -1,4 +1,5 @@
 using FluentValidation.TestHelper;
+using Shouldly;
 using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Application.Modules.Groups.Payments;
 using SplitTheBill.Application.Tests.Shared.Builders;
@@ -33,6 +34,19 @@ internal sealed class CreatePaymentValidatorTests
         result
             .ShouldHaveValidationErrorFor(r => r.GroupId)
             .WithErrorMessage(ErrorCodes.Invalid);
+    }
+
+    [Test]
+    public void EmptyNullableGuid_OnlyReturnsOneErrorCode()
+    {
+        var request = new CreatePaymentRequestBuilder()
+            .WithGroupId(Guid.Empty)
+            .Build();
+        var result = _sut.TestValidate(request);
+
+        result
+            .ShouldHaveValidationErrorFor(r => r.GroupId)
+            .Count().ShouldBe(1);
     }
 
     [Test]
