@@ -5,13 +5,13 @@ namespace SplitTheBill.Application.Tests.Shared.TestData.Builders;
 
 public sealed class ExpenseBuilder
 {
-    private Guid _id = Guid.Empty;
-    private Guid _groupId = Guid.Empty;
-    private string _description = string.Empty;
-    private decimal _amount = 0;
+    private Guid _id = Guid.NewGuid();
+    private Guid _groupId = Guid.NewGuid();
+    private string _description = "expense description";
+    private decimal _amount = 100;
     private ExpenseSplitType _splitType = ExpenseSplitType.Evenly;
     private List<ExpenseParticipant> _participants = [];
-    private Guid _paidByMemberId = Guid.Empty;
+    private Guid _paidByMemberId = Guid.NewGuid();
 
     public ExpenseBuilder WithId(Guid id)
     {

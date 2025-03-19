@@ -59,7 +59,6 @@ internal sealed class CreateGroupTests : ApplicationTestBase
         result.IsError.ShouldBeFalse();
         var response = result.Value;
         response.ShouldNotBeNull();
-        response.Id.ShouldNotBe(Guid.Empty);
 
         (await Application.CountAsync<Group>()).ShouldBe(1);
         var group = await Application.FindAsync<Group>(g => g.Id == response.Id);

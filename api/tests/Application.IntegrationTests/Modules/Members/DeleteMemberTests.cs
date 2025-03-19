@@ -29,7 +29,7 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     public async Task MemberDoesNotExist_ReturnsNotFoundError()
     {
         await Application.AddAsync(Tests.Shared.TestData.Members.Alice);
-        Guid id = new("3B99BDEE-3507-4D28-8593-663405D0CDA6");
+        var id = Guid.NewGuid();
 
         var result = await Application.SendAsync(new DeleteMember.Request(id));
 

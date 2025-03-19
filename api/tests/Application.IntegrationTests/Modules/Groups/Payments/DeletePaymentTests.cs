@@ -16,7 +16,7 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     {
         var request = new DeletePayment.Request(
             Guid.Empty,
-            new Guid("0295D1E6-2B44-4B1C-BE5C-824D97F13A99")
+            Guid.NewGuid()
         );
         var result = await Application.SendAsync(request);
 
@@ -38,10 +38,10 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
             Tests.Shared.TestData.Members.Bob
         );
         await Application.AddAsync(new GroupBuilder()
-            .WithId(new Guid("C612FC70-90C6-4D9B-ACEB-8BF81429F6B4"))
+            .WithId(Guid.NewGuid())
             .WithPayments([
                 new PaymentBuilder()
-                    .WithId(new Guid("A890E7FB-12BD-4833-A443-20104F713E3B"))
+                    .WithId(Guid.NewGuid())
                     .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
                     .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
             ])
@@ -49,8 +49,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
             .Build());
 
         var request = new DeletePayment.Request(
-            new Guid("7E32246F-5839-40CF-AEB4-D689F058BC9D"),
-            new Guid("F38A683C-E927-45A9-95AB-ABA8E0284D20")
+            Guid.NewGuid(), 
+            Guid.NewGuid()
         );
         var result = await Application.SendAsync(request);
 
@@ -70,7 +70,7 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     [Test]
     public async Task PaymentDoesNotExist_ReturnsNotFoundError()
     {
-        var groupId = new Guid("C612FC70-90C6-4D9B-ACEB-8BF81429F6B4");
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             Tests.Shared.TestData.Members.Alice,
             Tests.Shared.TestData.Members.Bob
@@ -79,7 +79,7 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
             .WithId(groupId)
             .WithPayments([
                 new PaymentBuilder()
-                    .WithId(new Guid("A890E7FB-12BD-4833-A443-20104F713E3B"))
+                    .WithId(Guid.NewGuid())
                     .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
                     .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
             ])
@@ -88,7 +88,7 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
 
         var request = new DeletePayment.Request(
             groupId,
-            new Guid("D836BFD7-02D2-43A0-9132-37EF96CB9800")
+            Guid.NewGuid()
         );
         var result = await Application.SendAsync(request);
 
@@ -108,14 +108,14 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     [Test]
     public async Task PaymentsExistsInOtherGroup_ReturnsNotFoundError()
     {
-        var paymentId = new Guid("141D6CE0-A335-42BB-87DA-9681C5A7EC53");
-        var groupId = new Guid("FAE2C9EF-9872-468B-90DD-A902EA034880");
+        var paymentId = Guid.NewGuid();
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             Tests.Shared.TestData.Members.Alice,
             Tests.Shared.TestData.Members.Bob
         );
         await Application.AddAsync(new GroupBuilder()
-            .WithId(new Guid("B9FC4E75-E737-4497-AF5E-4FA6EF05DDBC"))
+            .WithId(Guid.NewGuid())
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
@@ -150,8 +150,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     [Test]
     public async Task DeletesPayment()
     {
-        var groupId = new Guid("46EEAE40-21F5-4871-92EA-C52B655E7F3D");
-        var paymentId = new Guid("6F0B484F-1880-4287-83C9-32EE0D7F925F");
+        var groupId = Guid.NewGuid();
+        var paymentId = Guid.NewGuid();
 
         await Application.AddAsync(
             Tests.Shared.TestData.Members.Alice,
@@ -185,9 +185,9 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     [Test]
     public async Task DeletesCorrectPayment()
     {
-        var groupId = new Guid("246800F2-B841-4A2C-A220-2BACE1D42B29");
-        var payment1Id = new Guid("C06CFBC2-0136-4303-BD05-112D8461226D");
-        var payment2Id = new Guid("829001F8-786B-470D-BF3F-FDC9FCFE23E3");
+        var groupId = Guid.NewGuid();
+        var payment1Id = Guid.NewGuid();
+        var payment2Id = Guid.NewGuid();
 
         await Application.AddAsync(
             Tests.Shared.TestData.Members.Alice,
@@ -224,9 +224,9 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     [Test]
     public async Task IsRemovedFromGroupDtoAndUpdatesTotals()
     {
-        var groupId = new Guid("77FB26C4-4764-41D5-AB7B-B2D083B5CD40");
-        var payment1Id = new Guid("ED77156D-BD12-4BAF-A68C-1F44C0502DF4");
-        var payment2Id = new Guid("845BEA12-F5DB-40D8-B87C-C69BF0EF11E9");
+        var groupId = Guid.NewGuid();
+        var payment1Id = Guid.NewGuid();
+        var payment2Id = Guid.NewGuid();
 
         await Application.AddAsync(
             Tests.Shared.TestData.Members.Alice,

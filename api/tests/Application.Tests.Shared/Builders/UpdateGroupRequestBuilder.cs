@@ -4,8 +4,8 @@ namespace SplitTheBill.Application.Tests.Shared.Builders;
 
 public sealed class UpdateGroupRequestBuilder
 {
-    private Guid _id = Guid.Empty;
-    private string? _name = null;
+    private Guid _id = Guid.NewGuid();
+    private string? _name = "group name";
 
     public UpdateGroupRequestBuilder WithId(Guid id)
     {

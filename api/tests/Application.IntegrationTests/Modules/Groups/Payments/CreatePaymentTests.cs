@@ -51,7 +51,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
         var request = new CreatePaymentRequestBuilder()
-            .WithGroupId(new Guid("82A68AD6-5027-4DDD-9F61-C840126B4242"))
+            .WithGroupId(Guid.NewGuid())
             .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
             .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
             .WithAmount(100m)
@@ -70,7 +70,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     [Test]
     public async Task SendingMemberDoesNotExist_ReturnsNotFoundError()
     {
-        Guid groupId = new("76D70E99-98D3-43AF-8C46-3C224425EE88");
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
@@ -78,7 +78,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         );
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
-            .WithSendingMemberId(new Guid("1B3E5153-0074-4D82-864C-9AE68EEC041D"))
+            .WithSendingMemberId(Guid.NewGuid())
             .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
             .WithAmount(100m)
             .Build();
@@ -98,12 +98,12 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     {
         var member = new Member
         {
-            Id = new Guid("0E90B2C1-BB41-4D66-A46C-AE3E54BCFA95"),
+            Id = Guid.NewGuid(),
             Name = "member not in group"
         };
         await Application.AddAsync(member);
 
-        Guid groupId = new("76D70E99-98D3-43AF-8C46-3C224425EE88");
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
@@ -130,7 +130,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     [Test]
     public async Task ReceivingMemberDoesNotExist_ReturnsNotFoundError()
     {
-        var groupId = new Guid("A6490FE4-F44C-4521-84D1-6AD0E5F88017");
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
@@ -141,7 +141,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var request = new CreatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-            .WithReceivingMemberId(new Guid("91444437-C508-45CA-874B-9C777A77E9DF"))
+            .WithReceivingMemberId(Guid.NewGuid())
             .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
@@ -160,12 +160,12 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     {
         var member = new Member
         {
-            Id = new Guid("BC1DA672-E528-4C97-8956-FDA652EA8EFC"),
+            Id = Guid.NewGuid(),
             Name = "member not in group"
         };
         await Application.AddAsync(member);
 
-        var groupId = new Guid("A6490FE4-F44C-4521-84D1-6AD0E5F88017");
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
@@ -193,7 +193,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     [Test]
     public async Task ValidPaymentRequest_ReturnsCreated()
     {
-        Guid groupId = new("F8DE68EB-0188-4C49-9CE9-6EE72906C6BC");
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
@@ -219,7 +219,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     [Test]
     public async Task ValidPaymentRequest_PersistsPayment()
     {
-        Guid groupId = new("F8DE68EB-0188-4C49-9CE9-6EE72906C6BC");
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
@@ -255,7 +255,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     [Test]
     public async Task ValidPaymentRequest_IsReturnedInGroupDtoAndUpdatesTotals()
     {
-        Guid groupId = new("F8DE68EB-0188-4C49-9CE9-6EE72906C6BC");
+        var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)

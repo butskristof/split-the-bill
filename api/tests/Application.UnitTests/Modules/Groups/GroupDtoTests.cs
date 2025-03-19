@@ -11,7 +11,7 @@ internal sealed class GroupDtoTests
     [Test]
     public void GroupDto_MapsGroupProperties()
     {
-        var id = new Guid("62F29851-240D-4CAF-8543-7A1DA8EAE192");
+        var id = Guid.NewGuid();
         const string name = "group name";
         var group = new GroupBuilder()
             .WithId(id)
@@ -49,7 +49,7 @@ internal sealed class GroupDtoTests
     [Test]
     public void GroupDto_MapsPaymentProperties()
     {
-        var payment1Id = new Guid("B860D02D-F104-42B6-8D86-7F0700D4A8A3");
+        var payment1Id = Guid.NewGuid();
 
         var group = new GroupBuilder()
             .AddPayment(new PaymentBuilder()
@@ -75,9 +75,9 @@ internal sealed class GroupDtoTests
     [Test]
     public void GroupDto_MapsExpenseProperties()
     {
-        var expense1Id = new Guid("104BF052-7B7F-4F78-8C8A-9BE4B44BD6AD");
-        var expense2Id = new Guid("0A17617A-6909-422F-A3B2-CD126DC86CD2");
-        var expense3Id = new Guid("C2D5EB5E-1E2F-4FBF-BEB1-068F282EE1F0");
+        var expense1Id = Guid.NewGuid();
+        var expense2Id = Guid.NewGuid();
+        var expense3Id = Guid.NewGuid();
 
         var group = new GroupBuilder()
             .AddExpense(new ExpenseBuilder()

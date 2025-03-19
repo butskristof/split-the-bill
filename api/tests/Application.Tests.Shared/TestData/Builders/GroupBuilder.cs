@@ -5,8 +5,8 @@ namespace SplitTheBill.Application.Tests.Shared.TestData.Builders;
 
 public sealed class GroupBuilder
 {
-    private Guid _id = Guid.Empty;
-    private string _name = string.Empty;
+    private Guid _id = Guid.NewGuid();
+    private string _name = "group name";
     private List<Member>? _members = null;
     private List<Guid>? _memberIds = null;
     private List<Expense> _expenses = [];
@@ -64,11 +64,13 @@ public sealed class GroupBuilder
     {
         Id = _id,
         Name = _name,
-        Members = _members ?? null!,
+        // if memberIds is defined, set null, otherwise use members and finally fall back to empty list
+        Members = _memberIds?.Any() == true ? null! : _members ?? [],
+        // not defined -> fall back to null, Members will fall back to empty list
         GroupMembers = _memberIds?
-                      .Select(id => new GroupMember { MemberId = id })
-                      .ToList()
-                  ?? null!,
+                           .Select(id => new GroupMember { MemberId = id })
+                           .ToList()
+                       ?? null!,
         Expenses = _expenses,
         Payments = _payments,
     };

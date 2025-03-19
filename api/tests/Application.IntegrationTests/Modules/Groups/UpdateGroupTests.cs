@@ -58,12 +58,12 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
         await Application.AddAsync(new GroupBuilder()
-            .WithId(new("DA763152-0CED-4CE7-A2A4-82BE905CDC01"))
+            .WithId(Guid.NewGuid())
             .WithName("group name")
             .Build()
         );
         var request = new UpdateGroupRequestBuilder()
-            .WithId(new("6124BCA9-E31A-4A2B-9A7A-DA6A3BDFE78F"))
+            .WithId(Guid.NewGuid())
             .WithName("other group name")
             .Build();
         var result = await Application.SendAsync(request);
@@ -80,7 +80,7 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
     [Test]
     public async Task ValidRequest_ReturnsUpdated()
     {
-        Guid id = new("638C4DA3-8592-4577-AA95-A4D103F5AD2B");
+        var id = Guid.NewGuid();
         await Application.AddAsync(new GroupBuilder()
             .WithId(id)
             .WithName("group name")
@@ -104,7 +104,7 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
     [Test]
     public async Task NoChanges_ReturnsUpdated()
     {
-        Guid id = new("638C4DA3-8592-4577-AA95-A4D103F5AD2B");
+        var id = Guid.NewGuid();
         const string name = "group name";
         await Application.AddAsync(new GroupBuilder()
             .WithId(id)
