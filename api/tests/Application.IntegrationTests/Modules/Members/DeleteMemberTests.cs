@@ -3,6 +3,8 @@ using Shouldly;
 using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Application.IntegrationTests.Common;
 using SplitTheBill.Application.Modules.Members;
+using SplitTheBill.Application.Tests.Shared.TestData;
+using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Members;
@@ -28,7 +30,7 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     [Test]
     public async Task MemberDoesNotExist_ReturnsNotFoundError()
     {
-        await Application.AddAsync(Tests.Shared.TestData.Members.Alice);
+        await Application.AddAsync(Tests.Shared.TestData.TestMembers.Alice);
         var id = Guid.NewGuid();
 
         var result = await Application.SendAsync(new DeleteMember.Request(id));
@@ -49,9 +51,9 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     [Test]
     public async Task DeletesMember()
     {
-        await Application.AddAsync(Tests.Shared.TestData.Members.Alice);
+        await Application.AddAsync(Tests.Shared.TestData.TestMembers.Alice);
 
-        var result = await Application.SendAsync(new DeleteMember.Request(Tests.Shared.TestData.Members.Alice.Id));
+        var result = await Application.SendAsync(new DeleteMember.Request(Tests.Shared.TestData.TestMembers.Alice.Id));
 
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Deleted>();
@@ -64,12 +66,12 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     public async Task DeletesCorrectMember()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice,
-            Tests.Shared.TestData.Members.Bob
+            Tests.Shared.TestData.TestMembers.Alice,
+            Tests.Shared.TestData.TestMembers.Bob
         );
 
         var result = await Application.SendAsync(
-            new DeleteMember.Request(Tests.Shared.TestData.Members.Alice.Id)
+            new DeleteMember.Request(Tests.Shared.TestData.TestMembers.Alice.Id)
         );
 
         result.IsError.ShouldBeFalse();
@@ -78,9 +80,32 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
         // make sure only Alice was deleted
         var memberCount = await Application.CountAsync<Member>();
         memberCount.ShouldBe(1);
-        var alice = await Application.FindAsync<Member>(m => m.Id == Tests.Shared.TestData.Members.Alice.Id);
+        var alice = await Application.FindAsync<Member>(m => m.Id == Tests.Shared.TestData.TestMembers.Alice.Id);
         alice.ShouldBeNull();
-        var bob = await Application.FindAsync<Member>(m => m.Id == Tests.Shared.TestData.Members.Bob.Id);
+        var bob = await Application.FindAsync<Member>(m => m.Id == Tests.Shared.TestData.TestMembers.Bob.Id);
         bob.ShouldNotBeNull();
+    }
+
+    [Test]
+    public async Task MemberWithGroups_CannotBeDeleted()
+    {
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithMembers([TestMembers.Alice])
+                .Build()
+        );
+
+        var result = await Application.SendAsync(
+            new DeleteMember.Request(TestMembers.Alice.Id)
+        );
+
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.Validation),
+                e => e.Code.ShouldBe(nameof(Member.Id)),
+                e => e.Description.ShouldBe("MemberIsInGroups")
+            );
     }
 }

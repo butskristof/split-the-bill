@@ -81,8 +81,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .WithId(groupId)
             .WithPayments([
                 new PaymentBuilder()
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+                    .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
             ])
             .Build()
         );
@@ -117,8 +117,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
                 .WithPayments([
                     new PaymentBuilder()
                         .WithId(paymentId)
-                        .WithSendingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-                        .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                        .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
+                        .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
                 ])
                 .Build(),
             new GroupBuilder()
@@ -155,8 +155,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+                    .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
             ])
             .Build()
         );
@@ -165,7 +165,7 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(Guid.NewGuid())
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+            .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
             .Build();
         var result = await Application.SendAsync(request);
 
@@ -186,14 +186,14 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithMembers([
-                Tests.Shared.TestData.Members.Alice.Id,
-                Tests.Shared.TestData.Members.Bob.Id
+                Tests.Shared.TestData.TestMembers.Alice.Id,
+                Tests.Shared.TestData.TestMembers.Bob.Id
             ])
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+                    .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
             ])
             .Build()
         );
@@ -201,8 +201,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         var request = new UpdatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Charlie.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+            .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Charlie.Id)
+            .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
             .Build();
         var result = await Application.SendAsync(request);
 
@@ -223,14 +223,14 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithMembers([
-                Tests.Shared.TestData.Members.Alice.Id,
-                Tests.Shared.TestData.Members.Bob.Id
+                Tests.Shared.TestData.TestMembers.Alice.Id,
+                Tests.Shared.TestData.TestMembers.Bob.Id
             ])
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+                    .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
             ])
             .Build()
         );
@@ -238,7 +238,7 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         var request = new UpdatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
+            .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
             .WithReceivingMemberId(Guid.NewGuid())
             .Build();
         var result = await Application.SendAsync(request);
@@ -260,14 +260,14 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithMembers([
-                Tests.Shared.TestData.Members.Alice.Id,
-                Tests.Shared.TestData.Members.Bob.Id
+                Tests.Shared.TestData.TestMembers.Alice.Id,
+                Tests.Shared.TestData.TestMembers.Bob.Id
             ])
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+                    .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
             ])
             .Build()
         );
@@ -275,8 +275,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         var request = new UpdatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Charlie.Id)
+            .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+            .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Charlie.Id)
             .Build();
         var result = await Application.SendAsync(request);
 
@@ -297,14 +297,14 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithMembers([
-                Tests.Shared.TestData.Members.Alice.Id,
-                Tests.Shared.TestData.Members.Bob.Id
+                Tests.Shared.TestData.TestMembers.Alice.Id,
+                Tests.Shared.TestData.TestMembers.Bob.Id
             ])
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+                    .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
                     .WithAmount(50m)
             ])
             .Build()
@@ -313,8 +313,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         var request = new UpdatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Alice.Id)
+            .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
+            .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
             .WithAmount(100m)
             .Build();
         var result = await Application.SendAsync(request);
@@ -331,14 +331,14 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithMembers([
-                Tests.Shared.TestData.Members.Alice.Id,
-                Tests.Shared.TestData.Members.Bob.Id
+                Tests.Shared.TestData.TestMembers.Alice.Id,
+                Tests.Shared.TestData.TestMembers.Bob.Id
             ])
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+                    .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
                     .WithAmount(50m)
             ])
             .Build()
@@ -347,8 +347,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         var request = new UpdatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Alice.Id)
+            .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
+            .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
             .WithAmount(100m)
             .Build();
         await Application.SendAsync(request);
@@ -361,8 +361,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         group!.Payments
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                p => p.SendingMemberId.ShouldBe(Tests.Shared.TestData.Members.Bob.Id),
-                p => p.ReceivingMemberId.ShouldBe(Tests.Shared.TestData.Members.Alice.Id),
+                p => p.SendingMemberId.ShouldBe(Tests.Shared.TestData.TestMembers.Bob.Id),
+                p => p.ReceivingMemberId.ShouldBe(Tests.Shared.TestData.TestMembers.Alice.Id),
                 p => p.Amount.ShouldBe(100)
             );
     }
@@ -375,14 +375,14 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithMembers([
-                Tests.Shared.TestData.Members.Alice.Id,
-                Tests.Shared.TestData.Members.Bob.Id
+                Tests.Shared.TestData.TestMembers.Alice.Id,
+                Tests.Shared.TestData.TestMembers.Bob.Id
             ])
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
+                    .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
                     .WithAmount(50m)
             ])
             .Build()
@@ -391,8 +391,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         var request = new UpdatePaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
-            .WithSendingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-            .WithReceivingMemberId(Tests.Shared.TestData.Members.Alice.Id)
+            .WithSendingMemberId(Tests.Shared.TestData.TestMembers.Bob.Id)
+            .WithReceivingMemberId(Tests.Shared.TestData.TestMembers.Alice.Id)
             .WithAmount(100m)
             .Build();
         await Application.SendAsync(request);
@@ -403,8 +403,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
         response.Payments
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                p => p.SendingMemberId.ShouldBe(Tests.Shared.TestData.Members.Bob.Id),
-                p => p.ReceivingMemberId.ShouldBe(Tests.Shared.TestData.Members.Alice.Id),
+                p => p.SendingMemberId.ShouldBe(Tests.Shared.TestData.TestMembers.Bob.Id),
+                p => p.ReceivingMemberId.ShouldBe(Tests.Shared.TestData.TestMembers.Alice.Id),
                 p => p.Amount.ShouldBe(100)
             );
     }

@@ -21,7 +21,7 @@ internal sealed class GetMembersTests : ApplicationTestBase
     public async Task SingleEntity_ReturnsMappedEntity()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice
+            Tests.Shared.TestData.TestMembers.Alice
         );
 
         var result = await Application.SendAsync(new GetMembers.Request());
@@ -31,8 +31,8 @@ internal sealed class GetMembersTests : ApplicationTestBase
         response.ShouldNotBeNull();
         response.Members.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                m => m.Id.ShouldBe(Tests.Shared.TestData.Members.Alice.Id),
-                m => m.Name.ShouldBe(Tests.Shared.TestData.Members.Alice.Name)
+                m => m.Id.ShouldBe(Tests.Shared.TestData.TestMembers.Alice.Id),
+                m => m.Name.ShouldBe(Tests.Shared.TestData.TestMembers.Alice.Name)
             );
     }
 
@@ -40,8 +40,8 @@ internal sealed class GetMembersTests : ApplicationTestBase
     public async Task MultipleEntities_ReturnsMappedEntities()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.Members.Alice,
-            Tests.Shared.TestData.Members.Bob
+            Tests.Shared.TestData.TestMembers.Alice,
+            Tests.Shared.TestData.TestMembers.Bob
         );
 
         var result = await Application.SendAsync(new GetMembers.Request());
@@ -51,10 +51,10 @@ internal sealed class GetMembersTests : ApplicationTestBase
         response.ShouldNotBeNull();
         response.Members.Count.ShouldBe(2);
         response.Members.ShouldContain(m =>
-            m.Id == Tests.Shared.TestData.Members.Alice.Id &&
-            m.Name == Tests.Shared.TestData.Members.Alice.Name);
+            m.Id == Tests.Shared.TestData.TestMembers.Alice.Id &&
+            m.Name == Tests.Shared.TestData.TestMembers.Alice.Name);
         response.Members.ShouldContain(m =>
-            m.Id == Tests.Shared.TestData.Members.Bob.Id &&
-            m.Name == Tests.Shared.TestData.Members.Bob.Name);
+            m.Id == Tests.Shared.TestData.TestMembers.Bob.Id &&
+            m.Name == Tests.Shared.TestData.TestMembers.Bob.Name);
     }
 }
