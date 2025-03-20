@@ -30,7 +30,7 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     [Test]
     public async Task MemberDoesNotExist_ReturnsNotFoundError()
     {
-        await Application.AddAsync(Tests.Shared.TestData.TestMembers.Alice);
+        await Application.AddAsync(TestMembers.Alice);
         var id = Guid.NewGuid();
 
         var result = await Application.SendAsync(new DeleteMember.Request(id));
@@ -51,9 +51,9 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     [Test]
     public async Task DeletesMember()
     {
-        await Application.AddAsync(Tests.Shared.TestData.TestMembers.Alice);
+        await Application.AddAsync(TestMembers.Alice);
 
-        var result = await Application.SendAsync(new DeleteMember.Request(Tests.Shared.TestData.TestMembers.Alice.Id));
+        var result = await Application.SendAsync(new DeleteMember.Request(TestMembers.Alice.Id));
 
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Deleted>();
@@ -66,12 +66,12 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     public async Task DeletesCorrectMember()
     {
         await Application.AddAsync(
-            Tests.Shared.TestData.TestMembers.Alice,
-            Tests.Shared.TestData.TestMembers.Bob
+            TestMembers.Alice,
+            TestMembers.Bob
         );
 
         var result = await Application.SendAsync(
-            new DeleteMember.Request(Tests.Shared.TestData.TestMembers.Alice.Id)
+            new DeleteMember.Request(TestMembers.Alice.Id)
         );
 
         result.IsError.ShouldBeFalse();
@@ -80,9 +80,9 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
         // make sure only Alice was deleted
         var memberCount = await Application.CountAsync<Member>();
         memberCount.ShouldBe(1);
-        var alice = await Application.FindAsync<Member>(m => m.Id == Tests.Shared.TestData.TestMembers.Alice.Id);
+        var alice = await Application.FindAsync<Member>(m => m.Id == TestMembers.Alice.Id);
         alice.ShouldBeNull();
-        var bob = await Application.FindAsync<Member>(m => m.Id == Tests.Shared.TestData.TestMembers.Bob.Id);
+        var bob = await Application.FindAsync<Member>(m => m.Id == TestMembers.Bob.Id);
         bob.ShouldNotBeNull();
     }
 
