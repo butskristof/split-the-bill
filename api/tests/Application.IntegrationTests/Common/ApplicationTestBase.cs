@@ -22,7 +22,7 @@ internal abstract class ApplicationTestBase
         // reset the application state before every single test
         await Application.ResetStateAsync();
         if (_seedMembers)
-            await Application.AddAsync(Members.GetAllMembers());
+            await Application.AddAsync(TestMembers.GetAllMembers());
     }
 }
 

@@ -4,6 +4,7 @@ using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Application.IntegrationTests.Common;
 using SplitTheBill.Application.Modules.Groups;
 using SplitTheBill.Application.Modules.Groups.Payments;
+using SplitTheBill.Application.Tests.Shared.TestData;
 using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 using SplitTheBill.Domain.Models.Groups;
 
@@ -42,8 +43,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(Guid.NewGuid())
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
             .Build());
 
@@ -75,8 +76,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(Guid.NewGuid())
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
             .Build());
 
@@ -110,8 +111,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
                 .WithPayments([
                     new PaymentBuilder()
                         .WithId(paymentId)
-                        .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                        .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                        .WithSendingMemberId(TestMembers.Alice.Id)
+                        .WithReceivingMemberId(TestMembers.Bob.Id)
                 ])
                 .Build(),
             new GroupBuilder()
@@ -149,8 +150,8 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(paymentId)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
             .WithName("group name")
             .Build());
@@ -181,12 +182,12 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
             .WithPayments([
                 new PaymentBuilder()
                     .WithId(payment1Id)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id),
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id),
                 new PaymentBuilder()
                     .WithId(payment2Id)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
             .WithName("group name")
             .Build());
@@ -217,13 +218,13 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
                 new PaymentBuilder()
                     .WithId(payment1Id)
                     .WithAmount(100)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id),
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id),
                 new PaymentBuilder()
                     .WithId(payment2Id)
                     .WithAmount(100)
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Alice.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Bob.Id)
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
             .WithName("group name")
             .Build());

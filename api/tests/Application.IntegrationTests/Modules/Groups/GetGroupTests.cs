@@ -3,6 +3,7 @@ using Shouldly;
 using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Application.IntegrationTests.Common;
 using SplitTheBill.Application.Modules.Groups;
+using SplitTheBill.Application.Tests.Shared.TestData;
 using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 using SplitTheBill.Domain.Models.Groups;
 
@@ -52,21 +53,21 @@ internal sealed class GetGroupTests : ApplicationTestBase
                 .WithId(groupId)
                 .WithName(groupName)
                 .WithMembers([
-                    Tests.Shared.TestData.Members.Alice,
-                    Tests.Shared.TestData.Members.Bob
+                    TestMembers.Alice,
+                    TestMembers.Bob
                 ])
                 .WithExpenses([
                     new ExpenseBuilder()
                         .WithAmount(100)
-                        .WithPaidByMemberId(Tests.Shared.TestData.Members.Alice.Id)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
                         .WithParticipants([
-                            Tests.Shared.TestData.Members.Alice,
-                            Tests.Shared.TestData.Members.Bob
+                            TestMembers.Alice,
+                            TestMembers.Bob
                         ])
                 ])
                 .AddPayment(new PaymentBuilder()
-                    .WithSendingMemberId(Tests.Shared.TestData.Members.Bob.Id)
-                    .WithReceivingMemberId(Tests.Shared.TestData.Members.Alice.Id)
+                    .WithSendingMemberId(TestMembers.Bob.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
                     .WithAmount(100)
                 )
                 .Build()
@@ -88,15 +89,15 @@ internal sealed class GetGroupTests : ApplicationTestBase
         // in-depth testing of the mapping itself is done in the unit tests
         response.Members.Count.ShouldBe(2);
         response.Members
-            .ShouldContain(m => m.Id == Tests.Shared.TestData.Members.Alice.Id);
+            .ShouldContain(m => m.Id == TestMembers.Alice.Id);
         response.Members
-            .ShouldContain(m => m.Id == Tests.Shared.TestData.Members.Bob.Id);
+            .ShouldContain(m => m.Id == TestMembers.Bob.Id);
 
         response.Expenses
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Amount.ShouldBe(100),
-                e => e.PaidByMemberId.ShouldBe(Tests.Shared.TestData.Members.Alice.Id),
+                e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.Participants.Count.ShouldBe(2)
             );
 
@@ -104,8 +105,8 @@ internal sealed class GetGroupTests : ApplicationTestBase
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 p => p.Amount.ShouldBe(100),
-                p => p.SendingMemberId.ShouldBe(Tests.Shared.TestData.Members.Bob.Id),
-                p => p.ReceivingMemberId.ShouldBe(Tests.Shared.TestData.Members.Alice.Id)
+                p => p.SendingMemberId.ShouldBe(TestMembers.Bob.Id),
+                p => p.ReceivingMemberId.ShouldBe(TestMembers.Alice.Id)
             );
     }
 }

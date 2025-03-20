@@ -41,6 +41,7 @@ public static class DeleteMember
 
             var member = await _dbContext
                 .Members
+                .Include(m => m.Groups)
                 .SingleOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
             if (member is null)
             {
@@ -49,6 +50,12 @@ public static class DeleteMember
             }
 
             _logger.LogDebug("Fetched entity to delete from database");
+
+            if (member.Groups.Count > 0)
+            {
+                _logger.LogDebug("Member is part of one or more groups and cannot be deleted");
+                return Error.Validation(nameof(request.Id), $"MemberIsInGroups");
+            }
 
             _dbContext.Members.Remove(member);
             await _dbContext.SaveChangesAsync(CancellationToken.None);

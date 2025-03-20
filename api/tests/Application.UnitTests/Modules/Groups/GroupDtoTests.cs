@@ -27,22 +27,22 @@ internal sealed class GroupDtoTests
     public void GroupDto_MapsMemberProperties()
     {
         var group = new GroupBuilder()
-            .WithMembers([Members.Alice, Members.Bob])
+            .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .Build();
         var dto = new GroupDto(group);
 
         dto.Members.Count.ShouldBe(2);
         dto.Members
-            .Where(m => m.Id == Members.Alice.Id)
+            .Where(m => m.Id == TestMembers.Alice.Id)
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                m => m.Name.ShouldBe(Members.Alice.Name)
+                m => m.Name.ShouldBe(TestMembers.Alice.Name)
             );
         dto.Members
-            .Where(m => m.Id == Members.Bob.Id)
+            .Where(m => m.Id == TestMembers.Bob.Id)
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                m => m.Name.ShouldBe(Members.Bob.Name)
+                m => m.Name.ShouldBe(TestMembers.Bob.Name)
             );
     }
 
@@ -54,8 +54,8 @@ internal sealed class GroupDtoTests
         var group = new GroupBuilder()
             .AddPayment(new PaymentBuilder()
                 .WithId(payment1Id)
-                .WithSendingMemberId(Members.Alice.Id)
-                .WithReceivingMemberId(Members.Bob.Id)
+                .WithSendingMemberId(TestMembers.Alice.Id)
+                .WithReceivingMemberId(TestMembers.Bob.Id)
                 .WithAmount(1m)
             )
             .Build();
@@ -66,8 +66,8 @@ internal sealed class GroupDtoTests
             .Where(p => p.Id == payment1Id)
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
-                p => p.SendingMemberId.ShouldBe(Members.Alice.Id),
-                p => p.ReceivingMemberId.ShouldBe(Members.Bob.Id),
+                p => p.SendingMemberId.ShouldBe(TestMembers.Alice.Id),
+                p => p.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id),
                 p => p.Amount.ShouldBe(1m)
             );
     }
@@ -85,8 +85,8 @@ internal sealed class GroupDtoTests
                 .WithDescription("expense 1")
                 .WithAmount(1)
                 .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([Members.Alice, Members.Bob])
-                .WithPaidByMemberId(Members.Alice.Id)
+                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
+                .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithId(expense2Id)
@@ -94,14 +94,14 @@ internal sealed class GroupDtoTests
                 .WithAmount(2)
                 .WithSplitType(ExpenseSplitType.Percentual)
                 .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(Members.Alice.Id)
+                    .WithMemberId(TestMembers.Alice.Id)
                     .WithPercentualShare(60)
                 )
                 .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(Members.Bob.Id)
+                    .WithMemberId(TestMembers.Bob.Id)
                     .WithPercentualShare(40)
                 )
-                .WithPaidByMemberId(Members.Bob.Id)
+                .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithId(expense3Id)
@@ -109,14 +109,14 @@ internal sealed class GroupDtoTests
                 .WithAmount(3)
                 .WithSplitType(ExpenseSplitType.ExactAmount)
                 .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(Members.Alice.Id)
+                    .WithMemberId(TestMembers.Alice.Id)
                     .WithExactShare(2)
                 )
                 .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(Members.Bob.Id)
+                    .WithMemberId(TestMembers.Bob.Id)
                     .WithExactShare(1)
                 )
-                .WithPaidByMemberId(Members.Charlie.Id)
+                .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             .Build();
         var dto = new GroupDto(group);
@@ -129,13 +129,13 @@ internal sealed class GroupDtoTests
                 e => e.Description.ShouldBe("expense 1"),
                 e => e.Amount.ShouldBe(1),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
-                e => e.PaidByMemberId.ShouldBe(Members.Alice.Id),
+                e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants
-                    .Where(p => p.MemberId == Members.Alice.Id)
+                    .Where(p => p.MemberId == TestMembers.Alice.Id)
                     .ShouldHaveSingleItem(),
                 e => e.Participants
-                    .Where(p => p.MemberId == Members.Bob.Id)
+                    .Where(p => p.MemberId == TestMembers.Bob.Id)
                     .ShouldHaveSingleItem()
             );
         dto.Expenses
@@ -145,16 +145,16 @@ internal sealed class GroupDtoTests
                 e => e.Description.ShouldBe("expense 2"),
                 e => e.Amount.ShouldBe(2),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
-                e => e.PaidByMemberId.ShouldBe(Members.Bob.Id),
+                e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants
-                    .Where(p => p.MemberId == Members.Alice.Id)
+                    .Where(p => p.MemberId == TestMembers.Alice.Id)
                     .ShouldHaveSingleItem()
                     .ShouldSatisfyAllConditions(
                         p => p.PercentualShare.ShouldBe(60)
                     ),
                 e => e.Participants
-                    .Where(p => p.MemberId == Members.Bob.Id)
+                    .Where(p => p.MemberId == TestMembers.Bob.Id)
                     .ShouldHaveSingleItem()
                     .ShouldSatisfyAllConditions(
                         p => p.PercentualShare.ShouldBe(40)
@@ -167,16 +167,16 @@ internal sealed class GroupDtoTests
                 e => e.Description.ShouldBe("expense 3"),
                 e => e.Amount.ShouldBe(3),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
-                e => e.PaidByMemberId.ShouldBe(Members.Charlie.Id),
+                e => e.PaidByMemberId.ShouldBe(TestMembers.Charlie.Id),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants
-                    .Where(p => p.MemberId == Members.Alice.Id)
+                    .Where(p => p.MemberId == TestMembers.Alice.Id)
                     .ShouldHaveSingleItem()
                     .ShouldSatisfyAllConditions(
                         p => p.ExactShare.ShouldBe(2)
                     ),
                 e => e.Participants
-                    .Where(p => p.MemberId == Members.Bob.Id)
+                    .Where(p => p.MemberId == TestMembers.Bob.Id)
                     .ShouldHaveSingleItem()
                     .ShouldSatisfyAllConditions(
                         p => p.ExactShare.ShouldBe(1)
