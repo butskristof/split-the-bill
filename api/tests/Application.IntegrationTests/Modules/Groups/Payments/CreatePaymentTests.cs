@@ -7,7 +7,6 @@ using SplitTheBill.Application.Tests.Shared.Builders;
 using SplitTheBill.Application.Tests.Shared.TestData;
 using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 using SplitTheBill.Domain.Models.Groups;
-using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Payments;
 
