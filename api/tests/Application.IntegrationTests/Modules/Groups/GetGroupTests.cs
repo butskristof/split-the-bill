@@ -60,10 +60,7 @@ internal sealed class GetGroupTests : ApplicationTestBase
                     new ExpenseBuilder()
                         .WithAmount(100)
                         .WithPaidByMemberId(TestMembers.Alice.Id)
-                        .WithParticipants([
-                            TestMembers.Alice,
-                            TestMembers.Bob
-                        ])
+                        .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 ])
                 .AddPayment(new PaymentBuilder()
                     .WithSendingMemberId(TestMembers.Bob.Id)

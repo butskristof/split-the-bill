@@ -8,10 +8,13 @@ public sealed class ExpenseBuilder
     private Guid _id = Guid.NewGuid();
     private Guid _groupId = Guid.NewGuid();
     private string _description = "expense description";
+    private Guid _paidByMemberId = Guid.NewGuid();
     private decimal _amount = 100;
     private ExpenseSplitType _splitType = ExpenseSplitType.Evenly;
-    private List<ExpenseParticipant> _participants = [];
-    private Guid _paidByMemberId = Guid.NewGuid();
+
+    private HashSet<Guid> _evenSplitParticipants = [];
+    private Dictionary<Guid, int> _percentualSplitParticipants = [];
+    private Dictionary<Guid, decimal> _exactAmountSplitParticipants = [];
 
     public ExpenseBuilder WithId(Guid id)
     {
@@ -37,40 +40,24 @@ public sealed class ExpenseBuilder
         return this;
     }
 
-    public ExpenseBuilder WithSplitType(ExpenseSplitType splitType)
+    public ExpenseBuilder WithEvenSplit(HashSet<Guid> participants)
     {
-        _splitType = splitType;
+        _splitType = ExpenseSplitType.Evenly;
+        _evenSplitParticipants = participants;
         return this;
     }
 
-    public ExpenseBuilder WithParticipants(List<ExpenseParticipant> participants)
+    public ExpenseBuilder WithPercentualSplit(Dictionary<Guid, int> participants)
     {
-        _participants = participants;
+        _splitType = ExpenseSplitType.Percentual;
+        _percentualSplitParticipants = participants;
         return this;
     }
 
-    public ExpenseBuilder WithParticipants(List<Member> members)
+    public ExpenseBuilder WithExactAmountSplit(Dictionary<Guid, decimal> participants)
     {
-        _participants = members
-            .Select(p => new ExpenseParticipantBuilder()
-                .WithMemberId(p.Id)
-                .Build()
-            )
-            .ToList();
-        return this;
-    }
-
-    public ExpenseBuilder AddParticipant(ExpenseParticipant participant)
-    {
-        _participants.Add(participant);
-        return this;
-    }
-
-    public ExpenseBuilder AddParticipant(Member member)
-    {
-        _participants.Add(new ExpenseParticipantBuilder()
-            .WithMemberId(member.Id)
-        );
+        _splitType = ExpenseSplitType.ExactAmount;
+        _exactAmountSplitParticipants = participants;
         return this;
     }
 
@@ -86,13 +73,33 @@ public sealed class ExpenseBuilder
         return this;
     }
 
-    public Expense Build() => new()
+    public Expense Build()
     {
-        Id = _id,
-        GroupId = _groupId,
-        Description = _description,
-        PaidByMemberId = _paidByMemberId
-    };
+        var expense = new Expense
+        {
+            Id = _id,
+            GroupId = _groupId,
+            Description = _description,
+            PaidByMemberId = _paidByMemberId
+        };
+
+        switch (_splitType)
+        {
+            case ExpenseSplitType.Evenly:
+                expense.SetAmountAndParticipantsWithEvenSplit(_amount, _evenSplitParticipants);
+                break;
+            case ExpenseSplitType.Percentual:
+                expense.SetAmountAndParticipantsWithPercentualSplit(_amount, _percentualSplitParticipants);
+                break;
+            case ExpenseSplitType.ExactAmount:
+                expense.SetAmountAndParticipantsWithExactSplit(_amount, _exactAmountSplitParticipants);
+                break;
+            default:
+                throw new InvalidOperationException("Unsupported split type");
+        }
+
+        return expense;
+    }
 
     public static implicit operator Expense(ExpenseBuilder builder) => builder.Build();
 }

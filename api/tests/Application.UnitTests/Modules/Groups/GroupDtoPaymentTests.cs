@@ -114,8 +114,7 @@ internal sealed class GroupDtoPaymentTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(100m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddPayment(new PaymentBuilder()
@@ -152,8 +151,7 @@ internal sealed class GroupDtoPaymentTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(100m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddPayment(new PaymentBuilder()
@@ -190,8 +188,7 @@ internal sealed class GroupDtoPaymentTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(100m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddPayment(new PaymentBuilder()
@@ -233,44 +230,29 @@ internal sealed class GroupDtoPaymentTests
             // Expense 1: Alice pays, split evenly
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(300m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             // Expense 2: Bob pays, split percentually
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(400m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(25)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(25)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithPercentualShare(50)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    {TestMembers.Alice.Id, 25},
+                    {TestMembers.Bob.Id, 25},
+                    {TestMembers.Charlie.Id, 50},
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             // Expense 3: Charlie pays, split exact amounts
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(500m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(150)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(150)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithExactShare(200)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 150},
+                    {TestMembers.Bob.Id, 150},
+                    {TestMembers.Charlie.Id, 200},
+                })
                 .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             // Payment 1: Bob pays Alice
@@ -343,8 +325,7 @@ internal sealed class GroupDtoPaymentTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(100m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddPayment(new PaymentBuilder()

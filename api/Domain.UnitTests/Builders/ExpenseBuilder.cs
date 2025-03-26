@@ -9,9 +9,6 @@ public sealed class ExpenseBuilder
     private Guid _groupId = Guid.NewGuid();
     private string _description = "expense description";
     private Guid _paidByMemberId = Guid.NewGuid();
-    // private decimal _amount = 100;
-    // private ExpenseSplitType _splitType = ExpenseSplitType.Evenly;
-    // private List<ExpenseParticipant> _participants = [];
 
     public ExpenseBuilder WithId(Guid id)
     {

@@ -84,38 +84,29 @@ internal sealed class GroupDtoTests
                 .WithId(expense1Id)
                 .WithDescription("expense 1")
                 .WithAmount(1)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithId(expense2Id)
                 .WithDescription("expense 2")
                 .WithAmount(2)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(60)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(40)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    {TestMembers.Alice.Id, 60},
+                    {TestMembers.Bob.Id, 40},
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithId(expense3Id)
                 .WithDescription("expense 3")
                 .WithAmount(3)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(2)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(1)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 2},
+                    {TestMembers.Bob.Id, 1}
+                })
                 .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             .Build();

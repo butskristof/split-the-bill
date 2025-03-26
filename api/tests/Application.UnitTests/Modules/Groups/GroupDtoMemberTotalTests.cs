@@ -19,12 +19,11 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1500m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1500);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -67,25 +66,22 @@ internal sealed class GroupDtoMemberTotalTests
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
-                .WithSplitType(ExpenseSplitType.Evenly)
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithAmount(2000m)
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
-                .WithParticipants([TestMembers.Bob, TestMembers.Charlie])
-                .WithSplitType(ExpenseSplitType.Evenly)
+                .WithEvenSplit([TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithAmount(1000m)
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
-                .WithParticipants([TestMembers.Bob, TestMembers.Charlie])
-                .WithSplitType(ExpenseSplitType.Evenly)
+                .WithEvenSplit([TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithAmount(1000m)
                 .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(4000);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -129,30 +125,26 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(900m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(400m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(600m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(300m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(2200);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -196,18 +188,16 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(2000m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(3000);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -255,19 +245,15 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(50)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(50)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    { TestMembers.Alice.Id, 50 },
+                    { TestMembers.Bob.Id, 50 },
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1000);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -301,19 +287,15 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(10)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(90)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    { TestMembers.Alice.Id, 10 },
+                    { TestMembers.Bob.Id, 90 },
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1000);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -347,19 +329,15 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(10)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(90)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    { TestMembers.Alice.Id, 10 },
+                    { TestMembers.Bob.Id, 90 },
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1000);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -403,36 +381,25 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(10)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(90)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    { TestMembers.Alice.Id, 10 },
+                    { TestMembers.Bob.Id, 90 },
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(123)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(60)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(30)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithPercentualShare(10)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    { TestMembers.Alice.Id, 60 },
+                    { TestMembers.Bob.Id, 30 },
+                    { TestMembers.Charlie.Id, 10 },
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1123);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -475,16 +442,12 @@ internal sealed class GroupDtoMemberTotalTests
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
-                .WithSplitType(ExpenseSplitType.Percentual)
                 .WithAmount(100m)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(100)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int> { { TestMembers.Alice.Id, 100 } })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(100);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -517,16 +480,12 @@ internal sealed class GroupDtoMemberTotalTests
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
-                .WithSplitType(ExpenseSplitType.Percentual)
                 .WithAmount(100m)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(100)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int> { { TestMembers.Alice.Id, 100 } })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(100);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -564,19 +523,15 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(500)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(500)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 500},
+                    {TestMembers.Bob.Id, 500},
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1000);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -610,19 +565,15 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(100)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(900)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 100},
+                    {TestMembers.Bob.Id, 900},
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1000);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -656,19 +607,15 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(100)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(900)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 100},
+                    {TestMembers.Bob.Id, 900},
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1000);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -712,36 +659,25 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(100)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(900)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 100},
+                    {TestMembers.Bob.Id, 900},
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(123)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(73.8m)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(36.9m)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithExactShare(12.3m)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 73.8m},
+                    {TestMembers.Bob.Id, 36.9m},
+                    {TestMembers.Charlie.Id, 12.3m},
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1123);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -784,16 +720,15 @@ internal sealed class GroupDtoMemberTotalTests
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
-                .WithSplitType(ExpenseSplitType.ExactAmount)
                 .WithAmount(100m)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(100)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 100},
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(100);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -826,16 +761,15 @@ internal sealed class GroupDtoMemberTotalTests
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
             .AddExpense(new ExpenseBuilder()
-                .WithSplitType(ExpenseSplitType.ExactAmount)
                 .WithAmount(100m)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(100)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 100},
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(100);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -873,25 +807,20 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(900m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(20)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(80)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    {TestMembers.Alice.Id, 20},
+                    {TestMembers.Bob.Id, 80},
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1900);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -935,29 +864,21 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(600m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(900m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(300)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(400)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithExactShare(200)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 300},
+                    {TestMembers.Bob.Id, 400},
+                    {TestMembers.Charlie.Id, 200},
+                })
                 .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1500);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -1001,36 +922,25 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(300m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(50)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(30)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithPercentualShare(20)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    {TestMembers.Alice.Id, 50},
+                    {TestMembers.Bob.Id, 30},
+                    {TestMembers.Charlie.Id, 20},
+                })
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(500m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(200)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(300)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 200},
+                    {TestMembers.Bob.Id, 300},
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(800);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -1074,46 +984,31 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(300m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(400m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(25)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(25)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithPercentualShare(50)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    { TestMembers.Alice.Id, 25},
+                    { TestMembers.Bob.Id, 25},
+                    { TestMembers.Charlie.Id, 50},
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(500m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(150)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(150)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithExactShare(200)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 150},
+                    {TestMembers.Bob.Id, 150},
+                    {TestMembers.Charlie.Id, 200},
+                })
                 .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(1200);
         dto.TotalPaymentAmount.ShouldBe(0);
@@ -1157,48 +1052,35 @@ internal sealed class GroupDtoMemberTotalTests
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(1000m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Alice, TestMembers.Bob])
+                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(600m)
-                .WithSplitType(ExpenseSplitType.Percentual)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithPercentualShare(30)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(20)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithPercentualShare(50)
-                )
+                .WithPercentualSplit(new Dictionary<Guid, int>
+                {
+                    {TestMembers.Alice.Id, 30},
+                    {TestMembers.Bob.Id, 20},
+                    {TestMembers.Charlie.Id, 50},
+                })
                 .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(750m)
-                .WithSplitType(ExpenseSplitType.ExactAmount)
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(250)
-                )
-                .AddParticipant(new ExpenseParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithExactShare(500)
-                )
+                .WithExactAmountSplit(new Dictionary<Guid, decimal>
+                {
+                    {TestMembers.Alice.Id, 250},
+                    {TestMembers.Charlie.Id, 500},
+                })
                 .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             .AddExpense(new ExpenseBuilder()
                 .WithAmount(450m)
-                .WithSplitType(ExpenseSplitType.Evenly)
-                .WithParticipants([TestMembers.Bob, TestMembers.Charlie])
+                .WithEvenSplit([TestMembers.Bob.Id, TestMembers.Charlie.Id])
                 .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             .Build();
-        var dto =new GroupDto(group);
+        var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(2800);
         dto.TotalPaymentAmount.ShouldBe(0);
