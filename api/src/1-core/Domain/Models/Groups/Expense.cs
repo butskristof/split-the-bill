@@ -4,8 +4,10 @@ public sealed class Expense
 {
     // private default constructor for EF compatibility
     // private Expense() {}
-    public Expense() {}
-    
+    public Expense()
+    {
+    }
+
     public required Guid Id { get; init; }
     public required Guid GroupId { get; init; }
 
@@ -19,6 +21,8 @@ public sealed class Expense
         set
         {
             if (value <= 0) throw new ArgumentException("Amount should be a positive value", nameof(Amount));
+            if (SplitType == ExpenseSplitType.ExactAmount && value != _participants.Sum(p => p.ExactShare))
+                throw new ArgumentException("Amount should equal sum of exact split amounts", nameof(Amount));
             field = value;
         }
     }
@@ -31,21 +35,43 @@ public sealed class Expense
     {
         if (participants.Count == 0)
             throw new ArgumentException("List of participants cannot be empty", nameof(participants));
+
         Amount = amount;
+        SplitType = ExpenseSplitType.Evenly;
         _participants.Clear();
-        _participants.AddRange(participants.Select(id => new ExpenseParticipant { MemberId = id }));
+        _participants.AddRange(
+            participants.Select(id => new ExpenseParticipant { MemberId = id })
+        );
     }
 
     public void SetAmountAndParticipantsWithPercentualSplit(decimal amount, IReadOnlyDictionary<Guid, int> participants)
     {
-        // throw participants.Count 0
-        // throw sum != 100
+        if (participants.Count == 0)
+            throw new ArgumentException("List of participants cannot be empty", nameof(participants));
+        if (participants.Sum(p => p.Value) != 100)
+            throw new ArgumentException("Sum of participant percentages should add up to 100", nameof(participants));
+
+        Amount = amount;
+        SplitType = ExpenseSplitType.Percentual;
+        _participants.Clear();
+        _participants.AddRange(
+            participants.Select(pair => new ExpenseParticipant { MemberId = pair.Key, PercentualShare = pair.Value })
+        );
     }
 
     public void SetAmountAndParticipantsWithExactSplit(decimal amount, IReadOnlyDictionary<Guid, decimal> participants)
     {
-        // throw participants.Count 0
-        // throw sum != amount
+        if (participants.Count == 0)
+            throw new ArgumentException("List of participants cannot be empty", nameof(participants));
+        if (participants.Sum(p => p.Value) != amount)
+            throw new ArgumentException("Sum of participant percentages should add up to 100", nameof(participants));
+
+        Amount = amount;
+        SplitType = ExpenseSplitType.ExactAmount;
+        _participants.Clear();
+        _participants.AddRange(
+            participants.Select(pair => new ExpenseParticipant { MemberId = pair.Key, ExactShare = pair.Value })
+        );
     }
 
     #endregion
