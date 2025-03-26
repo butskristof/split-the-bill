@@ -2,12 +2,6 @@ namespace SplitTheBill.Domain.Models.Groups;
 
 public sealed class Expense
 {
-    // private default constructor for EF compatibility
-    // private Expense() {}
-    public Expense()
-    {
-    }
-
     public required Guid Id { get; init; }
     public required Guid GroupId { get; init; }
 
