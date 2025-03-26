@@ -91,9 +91,6 @@ public sealed class ExpenseBuilder
         Id = _id,
         GroupId = _groupId,
         Description = _description,
-        Amount = _amount,
-        SplitType = _splitType,
-        Participants = _participants,
         PaidByMemberId = _paidByMemberId
     };
 

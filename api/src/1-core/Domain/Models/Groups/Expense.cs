@@ -2,14 +2,53 @@ namespace SplitTheBill.Domain.Models.Groups;
 
 public sealed class Expense
 {
+    // private default constructor for EF compatibility
+    // private Expense() {}
+    public Expense() {}
+    
     public required Guid Id { get; init; }
     public required Guid GroupId { get; init; }
 
     public required string Description { get; set; }
-    public required decimal Amount { get; set; }
 
-    public ExpenseSplitType SplitType { get; set; } = ExpenseSplitType.Evenly;
-    public List<ExpenseParticipant> Participants { get; init; } = [];
+    #region Participants
+
+    public decimal Amount
+    {
+        get;
+        private set
+        {
+            if (value <= 0) throw new ArgumentException("Amount should be a positive value", nameof(Amount));
+            field = value;
+        }
+    }
+
+    public ExpenseSplitType SplitType { get; private set; } = ExpenseSplitType.Evenly;
+    private readonly List<ExpenseParticipant> _participants = [];
+    public IReadOnlyList<ExpenseParticipant> Participants => _participants.AsReadOnly();
+
+    public void SetAmountAndParticipantsWithEvenSplit(decimal amount, IReadOnlySet<Guid> participants)
+    {
+        if (participants.Count == 0)
+            throw new ArgumentException("List of participants cannot be empty", nameof(participants));
+        Amount = amount;
+        _participants.Clear();
+        _participants.AddRange(participants.Select(id => new ExpenseParticipant { MemberId = id }));
+    }
+
+    public void SetAmountAndParticipantsWithPercentualSplit(decimal amount, IReadOnlyDictionary<Guid, int> participants)
+    {
+        // throw participants.Count 0
+        // throw sum != 100
+    }
+
+    public void SetAmountAndParticipantsWithExactSplit(decimal amount, IReadOnlyDictionary<Guid, decimal> participants)
+    {
+        // throw participants.Count 0
+        // throw sum != amount
+    }
+
+    #endregion
 
     public required Guid PaidByMemberId { get; set; }
 

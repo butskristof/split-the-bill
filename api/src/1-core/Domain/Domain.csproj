@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>SplitTheBill.Domain</AssemblyName>
         <RootNamespace>SplitTheBill.Domain</RootNamespace>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
 </Project>
