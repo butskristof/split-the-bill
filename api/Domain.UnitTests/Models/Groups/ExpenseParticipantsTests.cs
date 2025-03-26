@@ -18,21 +18,70 @@ internal sealed class ExpenseParticipantsTests
     #region Amount
 
     [Test]
-    public void SetAmount_NotExactAmountSplit_SetsValue()
+    public void SetAmount_EvenSplit_SetsValue()
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        expense.SetAmountAndParticipantsWithEvenSplit(
+            100,
+            new HashSet<Guid> { Guid.NewGuid(), Guid.NewGuid() }
+        );
+
+        const decimal amount = 200;
+        expense.Amount = amount;
+        expense.Amount.ShouldBe(amount);
+    }
+
+    [Test]
+    public void SetAmount_PercentualSplit_SetsValue()
+    {
+        var expense = ExpenseBuilder.Create();
+        expense.SetAmountAndParticipantsWithPercentualSplit(
+            100,
+            new Dictionary<Guid, int>
+            {
+                { Guid.NewGuid(), 50 },
+                { Guid.NewGuid(), 50 },
+            });
+
+        const decimal amount = 200;
+        expense.Amount = amount;
+        expense.Amount.ShouldBe(amount);
     }
 
     [Test]
     public void SetAmount_ExactAmountSplit_DoesNotMatchSumOfParticipantAmounts_Throws()
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        expense.SetAmountAndParticipantsWithExactSplit(
+            1000,
+            new Dictionary<Guid, decimal>
+            {
+                { Guid.NewGuid(), 500 },
+                { Guid.NewGuid(), 500 },
+            });
+
+        const decimal amount = 1100;
+        Should.Throw<ArgumentException>(() =>
+                expense.Amount = amount
+            )
+            .ParamName.ShouldBe("Amount");
     }
 
     [Test]
     public void SetAmount_ExactAmountSplit_SetsValueIfAmountMatchesParticipants()
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        expense.SetAmountAndParticipantsWithExactSplit(
+            1000,
+            new Dictionary<Guid, decimal>
+            {
+                { Guid.NewGuid(), 500 },
+                { Guid.NewGuid(), 500 },
+            });
+
+        const decimal amount = 1000;
+        expense.Amount = amount;
+        expense.Amount.ShouldBe(amount);
     }
 
     #endregion
@@ -46,8 +95,9 @@ internal sealed class ExpenseParticipantsTests
     {
         var expense = ExpenseBuilder.Create();
         Should.Throw<ArgumentException>(() =>
-            expense.SetAmountAndParticipantsWithEvenSplit(amount, new HashSet<Guid>([Guid.NewGuid()]))
-        );
+                expense.SetAmountAndParticipantsWithEvenSplit(amount, new HashSet<Guid>([Guid.NewGuid()]))
+            )
+            .ParamName.ShouldBe("Amount");
     }
 
     [Test]
@@ -132,11 +182,12 @@ internal sealed class ExpenseParticipantsTests
     {
         var expense = ExpenseBuilder.Create();
         Should.Throw<ArgumentException>(() =>
-            expense.SetAmountAndParticipantsWithPercentualSplit(
-                amount,
-                new Dictionary<Guid, int> { { Guid.NewGuid(), 100 } }
+                expense.SetAmountAndParticipantsWithPercentualSplit(
+                    amount,
+                    new Dictionary<Guid, int> { { Guid.NewGuid(), 100 } }
+                )
             )
-        );
+            .ParamName.ShouldBe("Amount");
     }
 
     [Test]
@@ -144,7 +195,10 @@ internal sealed class ExpenseParticipantsTests
     {
         var expense = ExpenseBuilder.Create();
         Should.Throw<ArgumentException>(() =>
-                expense.SetAmountAndParticipantsWithPercentualSplit(100, new Dictionary<Guid, int>())
+                expense.SetAmountAndParticipantsWithPercentualSplit(
+                    100,
+                    new Dictionary<Guid, int>()
+                )
             )
             .ParamName.ShouldBe("participants");
     }
@@ -164,7 +218,14 @@ internal sealed class ExpenseParticipantsTests
     public void SetAmountAndParticipantsWithPercentualSplit_SumOfPercentagesDoesntAddUpTo100_Throws(
         int[] percentages)
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        Should.Throw<ArgumentException>(() =>
+                expense.SetAmountAndParticipantsWithPercentualSplit(
+                    100,
+                    percentages.ToDictionary(_ => Guid.NewGuid(), v => v)
+                )
+            )
+            .ParamName.ShouldBe("participants");
     }
 
     public static IEnumerable<Func<int[]>> GetValidPercentages() =>
@@ -178,13 +239,47 @@ internal sealed class ExpenseParticipantsTests
     [MethodDataSource(nameof(GetValidPercentages))]
     public void SetAmountAndParticipantsWithPercentualSplit_SetsSplitTypeAndCreatesParticipants(int[] percentages)
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        const decimal amount = 100;
+        var participants = percentages.ToDictionary(_ => Guid.NewGuid(), v => v);
+
+        expense.SetAmountAndParticipantsWithPercentualSplit(amount, participants);
+
+        expense.SplitType.ShouldBe(ExpenseSplitType.Percentual);
+        expense.Amount.ShouldBe(amount);
+        expense.Participants
+            .ShouldAllBe(p => !p.ExactShare.HasValue);
+
+        foreach (var (id, percentage) in participants)
+        {
+            var participant = expense.Participants
+                .Where(p => p.MemberId == id)
+                .ShouldHaveSingleItem();
+            participant.PercentualShare.ShouldBe(percentage);
+            expense.GetExpenseAmountForMember(id)
+                .ShouldBe((percentage / 100.0m) * amount);
+        }
     }
 
     [Test]
     public void SetAmountAndParticipantsWithPercentualSplit_ClearsExistingExactAmountValues()
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        const decimal amount = 200.0m;
+        HashSet<Guid> memberIds = [Guid.NewGuid(), Guid.NewGuid()];
+        expense.SetAmountAndParticipantsWithExactSplit(
+            amount,
+            memberIds.ToDictionary(id => id, _ => 100m)
+        );
+
+        expense.SetAmountAndParticipantsWithPercentualSplit(amount,
+            memberIds.ToDictionary(id => id, _ => 50)
+        );
+
+        expense.Participants
+            .ShouldAllBe(p =>
+                !p.ExactShare.HasValue
+            );
     }
 
     #endregion
@@ -196,33 +291,108 @@ internal sealed class ExpenseParticipantsTests
     [Arguments(0)]
     public void SetAmountAndParticipantsWithExactSplit_NegativeOrZeroAmount_Throws(decimal amount)
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        Should.Throw<ArgumentException>(() =>
+                expense.SetAmountAndParticipantsWithExactSplit(
+                    amount,
+                    new Dictionary<Guid, decimal> { { Guid.NewGuid(), amount } }
+                )
+            )
+            .ParamName.ShouldBe("Amount");
     }
 
     [Test]
     public void SetAmountAndParticipantsWithExactSplit_EmptyParticipants_Throws()
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        Should.Throw<ArgumentException>(() =>
+                expense.SetAmountAndParticipantsWithExactSplit(
+                    100,
+                    new Dictionary<Guid, decimal>()
+                )
+            )
+            .ParamName.ShouldBe("participants");
     }
+
+    public static IEnumerable<Func<(decimal, decimal[])>> GetFailingExactAmounts() =>
+    [
+        () => (1m, [1m, 1m]),
+        () => (1000m, [100m, 100]),
+        () => (1000m, [330m, 330, 330m]),
+        () => (1000m, [100m, 200, 300m]),
+        () => (1000m, [2m, 999m]),
+        () => (1000m, [1m, 998m]),
+    ];
 
     [Test]
-    public void SetAmountAndParticipantsWithExactSplit_SumOfAmountsDoesNotAddUpToAmount_Throws()
+    [MethodDataSource(nameof(GetFailingExactAmounts))]
+    public void SetAmountAndParticipantsWithExactSplit_SumOfAmountsDoesNotAddUpToAmount_Throws(
+        decimal amount,
+        decimal[] participantAmounts
+    )
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        Should.Throw<ArgumentException>(() =>
+                expense.SetAmountAndParticipantsWithExactSplit(
+                    amount,
+                    participantAmounts.ToDictionary(_ => Guid.NewGuid(), v => v)
+                )
+            )
+            .ParamName.ShouldBe("participants");
     }
 
+    public static IEnumerable<Func<(decimal, decimal[])>> GetValidExactAmounts() =>
+    [
+        () => (1000m, [500m, 500m]),
+        () => (1000m, [100m, 900m]),
+        () => (1000m, [333m, 333m, 334m]),
+        () => (1000m, [333m, 667m]),
+        () => (1000m, [1m, 999m]),
+    ];
 
     [Test]
-    public void SetAmountAndParticipantsWithExactSplit_SetsSplitTypeAndCreatesParticipants()
+    [MethodDataSource(nameof(GetValidExactAmounts))]
+    public void SetAmountAndParticipantsWithExactSplit_SetsSplitTypeAndCreatesParticipants(
+        decimal amount,
+        decimal[] participantAmounts)
     {
-        true.ShouldBeFalse();
-    }
+        var expense = ExpenseBuilder.Create();
+        var participants = participantAmounts.ToDictionary(_ => Guid.NewGuid(), v => v);
 
+        expense.SetAmountAndParticipantsWithExactSplit(amount, participants);
+
+        expense.SplitType.ShouldBe(ExpenseSplitType.ExactAmount);
+        expense.Amount.ShouldBe(amount);
+        foreach (var (id, participantAmount) in participants)
+        {
+            var participant = expense.Participants
+                .Where(p => p.MemberId == id)
+                .ShouldHaveSingleItem();
+            participant.ExactShare.ShouldBe(participantAmount);
+            expense.GetExpenseAmountForMember(id)
+                .ShouldBe(participantAmount);
+        }
+    }
 
     [Test]
     public void SetAmountAndParticipantsWithExactSplit_ClearsExistingPercentualValues()
     {
-        true.ShouldBeFalse();
+        var expense = ExpenseBuilder.Create();
+        const decimal amount = 200m;
+        HashSet<Guid> memberIds = [Guid.NewGuid(), Guid.NewGuid()];
+        expense.SetAmountAndParticipantsWithPercentualSplit(
+            amount,
+            memberIds.ToDictionary(id => id, _ => 50)
+        );
+
+        expense.SetAmountAndParticipantsWithExactSplit(amount,
+            memberIds.ToDictionary(id => id, _ => 100m)
+        );
+
+        expense.Participants
+            .ShouldAllBe(p =>
+                !p.PercentualShare.HasValue
+            );
     }
 
     #endregion

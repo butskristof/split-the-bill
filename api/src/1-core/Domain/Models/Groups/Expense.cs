@@ -11,12 +11,12 @@ public sealed class Expense
 
     public required string Description { get; set; }
 
-    #region Participants
+    #region Amount & participants
 
     public decimal Amount
     {
         get;
-        private set
+        set
         {
             if (value <= 0) throw new ArgumentException("Amount should be a positive value", nameof(Amount));
             field = value;
