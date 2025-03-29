@@ -11,10 +11,7 @@ public sealed class CreateExpenseRequestBuilder
     private Guid? _paidByMemberId = Guid.NewGuid();
     private ExpenseSplitType? _splitType = ExpenseSplitType.Evenly;
 
-    private IReadOnlyList<CreateExpense.Request.Participant> _participants =
-    [
-        new() { MemberId = Guid.NewGuid() }
-    ];
+    private IReadOnlyList<CreateExpense.Request.Participant> _participants = [new ParticipantBuilder().Build()];
 
     public CreateExpenseRequestBuilder WithGroupId(Guid? groupId)
     {
