@@ -153,7 +153,6 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
                     .WithSendingMemberId(TestMembers.Alice.Id)
                     .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
-            .WithName("group name")
             .Build());
 
         var request = new DeletePayment.Request(
@@ -189,7 +188,6 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
                     .WithSendingMemberId(TestMembers.Alice.Id)
                     .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
-            .WithName("group name")
             .Build());
 
         var request = new DeletePayment.Request(
