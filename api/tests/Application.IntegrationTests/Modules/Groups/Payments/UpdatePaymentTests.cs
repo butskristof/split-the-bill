@@ -19,13 +19,13 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
     {
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.Empty)
             .WithPaymentId(null)
             .WithSendingMemberId(null)
             .WithReceivingMemberId(Guid.Empty)
             .WithAmount(-1)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -60,9 +60,9 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.NewGuid())
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -88,10 +88,10 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(Guid.NewGuid())
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -127,10 +127,10 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
                 .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -162,12 +162,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(Guid.NewGuid())
             .WithReceivingMemberId(TestMembers.Bob.Id)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -199,12 +199,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Charlie.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -236,12 +236,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(Guid.NewGuid())
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -273,12 +273,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Charlie.Id)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -311,13 +311,13 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Bob.Id)
             .WithReceivingMemberId(TestMembers.Alice.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
@@ -345,13 +345,13 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Bob.Id)
             .WithReceivingMemberId(TestMembers.Alice.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildUpdateRequest();
         await Application.SendAsync(request);
 
         var group = await Application
@@ -389,13 +389,13 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Bob.Id)
             .WithReceivingMemberId(TestMembers.Alice.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildUpdateRequest();
         await Application.SendAsync(request);
 
         var result = await Application.SendAsync(new GetGroup.Request(groupId));

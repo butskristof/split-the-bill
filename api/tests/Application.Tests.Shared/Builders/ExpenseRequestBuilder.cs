@@ -3,9 +3,10 @@ using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.Tests.Shared.Builders;
 
-public sealed class CreateExpenseRequestBuilder
+public sealed class ExpenseRequestBuilder
 {
     private Guid? _groupId = Guid.NewGuid();
+    private Guid? _expenseId = Guid.NewGuid();
     private string? _description = "Test description";
     private decimal? _amount = 100.00m;
     private Guid? _paidByMemberId = Guid.NewGuid();
@@ -13,43 +14,43 @@ public sealed class CreateExpenseRequestBuilder
 
     private IReadOnlyList<CreateExpense.Request.Participant> _participants = [new ParticipantBuilder().Build()];
 
-    public CreateExpenseRequestBuilder WithGroupId(Guid? groupId)
+    public ExpenseRequestBuilder WithGroupId(Guid? groupId)
     {
         _groupId = groupId;
         return this;
     }
 
-    public CreateExpenseRequestBuilder WithDescription(string? description)
+    public ExpenseRequestBuilder WithDescription(string? description)
     {
         _description = description;
         return this;
     }
 
-    public CreateExpenseRequestBuilder WithPaidByMemberId(Guid? paidByMemberId)
+    public ExpenseRequestBuilder WithPaidByMemberId(Guid? paidByMemberId)
     {
         _paidByMemberId = paidByMemberId;
         return this;
     }
 
-    public CreateExpenseRequestBuilder WithAmount(decimal? amount)
+    public ExpenseRequestBuilder WithAmount(decimal? amount)
     {
         _amount = amount;
         return this;
     }
 
-    public CreateExpenseRequestBuilder WithSplitType(ExpenseSplitType? splitType)
+    public ExpenseRequestBuilder WithSplitType(ExpenseSplitType? splitType)
     {
         _splitType = splitType;
         return this;
     }
 
-    public CreateExpenseRequestBuilder WithParticipants(IReadOnlyList<CreateExpense.Request.Participant> participants)
+    public ExpenseRequestBuilder WithParticipants(IReadOnlyList<CreateExpense.Request.Participant> participants)
     {
         _participants = participants;
         return this;
     }
 
-    public CreateExpense.Request Build() => new()
+    public CreateExpense.Request BuildCreateRequest() => new()
     {
         GroupId = _groupId,
         Description = _description,
@@ -59,7 +60,22 @@ public sealed class CreateExpenseRequestBuilder
         Participants = _participants,
     };
 
-    public static implicit operator CreateExpense.Request(CreateExpenseRequestBuilder builder) => builder.Build();
+    public static implicit operator CreateExpense.Request(ExpenseRequestBuilder builder) =>
+        builder.BuildCreateRequest();
+
+    public UpdateExpense.Request BuildUpdateRequest() => new()
+    {
+        GroupId = _groupId,
+        ExpenseId = _expenseId,
+        // Description = _description,
+        // PaidByMemberId = _paidByMemberId,
+        // Amount = _amount,
+        // SplitType = _splitType,
+        // Participants = _participants,
+    };
+
+    public static implicit operator UpdateExpense.Request(ExpenseRequestBuilder builder) =>
+        builder.BuildUpdateRequest();
 
     public sealed class ParticipantBuilder
     {

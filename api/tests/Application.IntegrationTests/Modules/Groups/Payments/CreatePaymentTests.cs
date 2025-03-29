@@ -15,12 +15,12 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.Empty)
             .WithSendingMemberId(null)
             .WithReceivingMemberId(Guid.Empty)
             .WithAmount(-1)
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -50,9 +50,9 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.NewGuid())
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -73,10 +73,10 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .WithId(groupId)
                 .Build()
         );
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(Guid.NewGuid())
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -98,10 +98,10 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .Build()
         );
 
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(TestMembers.Alice.Id)
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -124,11 +124,11 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .Build()
         );
 
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(Guid.NewGuid())
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -151,11 +151,11 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .Build()
         );
 
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -181,12 +181,12 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .Build()
         );
 
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
@@ -207,12 +207,12 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .Build()
         );
 
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildCreateRequest();
         await Application.SendAsync(request);
 
         var group = await Application
@@ -243,12 +243,12 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .Build()
         );
 
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildCreateRequest();
         await Application.SendAsync(request);
 
         var result = await Application.SendAsync(new GetGroup.Request(groupId));
