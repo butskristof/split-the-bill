@@ -1,4 +1,5 @@
 using ErrorOr;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Validation;
@@ -30,6 +31,100 @@ public static class UpdateExpense
     {
         public Validator()
         {
+            RuleFor(r => r.GroupId)
+                .NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.ExpenseId)
+                .NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.Description)
+                .ValidString(true);
+            RuleFor(r => r.PaidByMemberId)
+                .NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.Amount)
+                .NotNullWithErrorCode()
+                .PositiveDecimal(false);
+            RuleFor(r => r.SplitType)
+                .NotNullWithErrorCode()
+                .IsInEnum()
+                .WithMessage(ErrorCodes.Invalid);
+
+            RuleFor(r => r.Participants)
+                .NotEmpty()
+                .WithMessage(ErrorCodes.Required)
+                .Must(participants =>
+                    participants.Count == 1 ||
+                    participants.DistinctBy(p => p?.MemberId).Count() == participants.Count
+                )
+                .WithMessage(ErrorCodes.NotUnique);
+
+            RuleForEach(r => r.Participants)
+                .NotNullWithErrorCode(ErrorCodes.Invalid)
+                .ChildRules(v =>
+                {
+                    v.RuleFor(p => p!.MemberId)
+                        .NotNullOrEmptyWithErrorCode();
+                });
+
+            When(r => r.SplitType == ExpenseSplitType.Evenly, () =>
+            {
+                RuleForEach(r => r.Participants)
+                    .ChildRules(v =>
+                    {
+                        v.RuleFor(p => p!.PercentualShare)
+                            .Null()
+                            .WithMessage(ErrorCodes.Invalid);
+                        v.RuleFor(p => p!.ExactShare)
+                            .Null()
+                            .WithMessage(ErrorCodes.Invalid);
+                    });
+            });
+
+            When(r => r.SplitType == ExpenseSplitType.Percentual, () =>
+                {
+                    RuleForEach(r => r.Participants)
+                        .ChildRules(v =>
+                        {
+                            v.RuleFor(p => p!.PercentualShare)
+                                .NotNullWithErrorCode(ErrorCodes.Required)
+                                .PositiveInteger(true);
+                        });
+                    RuleFor(r => r.Participants)
+                        .Must(c => c.Sum(p => p!.PercentualShare) == 100)
+                        .WithMessage(ErrorCodes.Invalid);
+                })
+                .Otherwise(() =>
+                {
+                    RuleForEach(r => r.Participants)
+                        .ChildRules(v =>
+                        {
+                            v.RuleFor(p => p!.PercentualShare)
+                                .Null()
+                                .WithMessage(ErrorCodes.Invalid);
+                        });
+                });
+
+            When(r => r.SplitType == ExpenseSplitType.ExactAmount, () =>
+                {
+                    RuleForEach(r => r.Participants)
+                        .ChildRules(v =>
+                        {
+                            v.RuleFor(p => p!.ExactShare)
+                                .NotNullWithErrorCode(ErrorCodes.Required)
+                                .PositiveDecimal(true);
+                        });
+                    RuleFor(r => r.Participants)
+                        .Must((rr, c) => c.Sum(p => p!.ExactShare) == rr.Amount)
+                        .WithMessage(ErrorCodes.Invalid);
+                })
+                .Otherwise(() =>
+                {
+                    RuleForEach(r => r.Participants)
+                        .ChildRules(v =>
+                        {
+                            v.RuleFor(p => p!.ExactShare)
+                                .Null()
+                                .WithMessage(ErrorCodes.Invalid);
+                        });
+                });
         }
     }
 

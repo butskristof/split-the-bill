@@ -76,7 +76,6 @@ internal sealed class CreateExpenseValidatorTests
         var request = new ExpenseRequestBuilder()
             .WithDescription(name)
             .BuildCreateRequest();
-
         var result = _sut.TestValidate(request);
 
         result
@@ -101,9 +100,9 @@ internal sealed class CreateExpenseValidatorTests
     [Test]
     public void DescriptionTooLong_Fails()
     {
-        var name = TestUtilities.GenerateString(513);
+        var description = TestUtilities.GenerateString(513);
         var request = new ExpenseRequestBuilder()
-            .WithDescription(name)
+            .WithDescription(description)
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -118,9 +117,9 @@ internal sealed class CreateExpenseValidatorTests
     [Arguments(512)]
     public void DescriptionValidLength_Passes(int length)
     {
-        var name = TestUtilities.GenerateString(length);
+        var description = TestUtilities.GenerateString(length);
         var request = new ExpenseRequestBuilder()
-            .WithDescription(name)
+            .WithDescription(description)
             .BuildCreateRequest();
 
         var result = _sut.TestValidate(request);
@@ -267,7 +266,7 @@ internal sealed class CreateExpenseValidatorTests
     public void EmptyParticipants_Fails()
     {
         var request = new ExpenseRequestBuilder()
-            .WithParticipants([])
+            .WithParticipants(new List<CreateExpense.Request.Participant>())
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -280,13 +279,34 @@ internal sealed class CreateExpenseValidatorTests
     public void NullParticipant_Fails()
     {
         var request = new ExpenseRequestBuilder()
-            .WithParticipants([null!])
+            .WithParticipants(new List<CreateExpense.Request.Participant> { null! })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
             .ShouldHaveValidationErrorFor($"{nameof(request.Participants)}[0]")
             .WithErrorMessage(ErrorCodes.Invalid);
+    }
+
+    [Test]
+    public void DuplicateParticipants_Fails()
+    {
+        var id = Guid.NewGuid();
+        var participant1 = new ExpenseRequestBuilder.ParticipantBuilder()
+            .WithMemberId(id)
+            .BuildCreateParticipant();
+        var participant2 = new ExpenseRequestBuilder.ParticipantBuilder()
+            .WithMemberId(id)
+            .BuildCreateParticipant();
+
+        var request = new ExpenseRequestBuilder()
+            .WithParticipants([participant1, participant2])
+            .BuildCreateRequest();
+        var result = _sut.TestValidate(request);
+
+        result
+            .ShouldHaveValidationErrorFor(nameof(request.Participants))
+            .WithErrorMessage(ErrorCodes.NotUnique);
     }
 
     #region MemberId
@@ -296,7 +316,7 @@ internal sealed class CreateExpenseValidatorTests
     {
         var participant = new ExpenseRequestBuilder.ParticipantBuilder()
             .WithMemberId(null)
-            .Build();
+            .BuildCreateParticipant();
 
         var request = new ExpenseRequestBuilder()
             .WithParticipants([participant])
@@ -315,7 +335,7 @@ internal sealed class CreateExpenseValidatorTests
     {
         var participant = new ExpenseRequestBuilder.ParticipantBuilder()
             .WithMemberId(Guid.Empty)
-            .Build();
+            .BuildCreateParticipant();
 
         var request = new ExpenseRequestBuilder()
             .WithParticipants([participant])
@@ -334,7 +354,7 @@ internal sealed class CreateExpenseValidatorTests
     {
         var participant = new ExpenseRequestBuilder.ParticipantBuilder()
             .WithMemberId(Guid.NewGuid())
-            .Build();
+            .BuildCreateParticipant();
 
         var request = new ExpenseRequestBuilder()
             .WithParticipants([participant])
@@ -356,11 +376,12 @@ internal sealed class CreateExpenseValidatorTests
     {
         var request = new ExpenseRequestBuilder()
             .WithSplitType(ExpenseSplitType.Evenly)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithPercentualShare(null)
                     .WithExactShare(null)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -383,10 +404,11 @@ internal sealed class CreateExpenseValidatorTests
     {
         var request = new ExpenseRequestBuilder()
             .WithSplitType(ExpenseSplitType.Percentual)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithPercentualShare(null)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -402,10 +424,11 @@ internal sealed class CreateExpenseValidatorTests
     {
         var request = new ExpenseRequestBuilder()
             .WithSplitType(ExpenseSplitType.Percentual)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithPercentualShare(-1)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -433,7 +456,7 @@ internal sealed class CreateExpenseValidatorTests
             .WithParticipants(percentageShares
                 .Select(p => new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithPercentualShare(p)
-                    .Build()
+                    .BuildCreateParticipant()
                 )
                 .ToList()
             )
@@ -450,10 +473,11 @@ internal sealed class CreateExpenseValidatorTests
     {
         var request = new ExpenseRequestBuilder()
             .WithSplitType(splitType)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithPercentualShare(10)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -471,12 +495,13 @@ internal sealed class CreateExpenseValidatorTests
     {
         var request = new ExpenseRequestBuilder()
             .WithSplitType(ExpenseSplitType.Percentual)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithPercentualShare(percentage1),
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithPercentualShare(percentage2)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -494,10 +519,11 @@ internal sealed class CreateExpenseValidatorTests
     {
         var request = new ExpenseRequestBuilder()
             .WithSplitType(ExpenseSplitType.ExactAmount)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithExactShare(null)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -513,10 +539,11 @@ internal sealed class CreateExpenseValidatorTests
     {
         var request = new ExpenseRequestBuilder()
             .WithSplitType(ExpenseSplitType.ExactAmount)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithExactShare(-1)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -545,7 +572,7 @@ internal sealed class CreateExpenseValidatorTests
             .WithParticipants(exactShares
                 .Select(v => new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithExactShare(v)
-                    .Build()
+                    .BuildCreateParticipant()
                 )
                 .ToList()
             )
@@ -562,10 +589,11 @@ internal sealed class CreateExpenseValidatorTests
     {
         var request = new ExpenseRequestBuilder()
             .WithSplitType(splitType)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithExactShare(10)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -584,12 +612,13 @@ internal sealed class CreateExpenseValidatorTests
         var request = new ExpenseRequestBuilder()
             .WithAmount(1000)
             .WithSplitType(ExpenseSplitType.Percentual)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithExactShare(exactShare1),
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithExactShare(exactShare2)
-            ])
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
@@ -657,12 +686,13 @@ internal sealed class CreateExpenseValidatorTests
             .WithDescription("Expense description")
             .WithAmount(200m)
             .WithPaidByMemberId(Guid.NewGuid())
-            .WithSplitType(ExpenseSplitType.Evenly)
-            .WithParticipants([
+            .WithSplitType(ExpenseSplitType.Percentual)
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(Guid.NewGuid())
-                    .WithPercentualShare(50)
-            ])
+                    .WithPercentualShare(100)
+            })
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveAnyValidationErrors();

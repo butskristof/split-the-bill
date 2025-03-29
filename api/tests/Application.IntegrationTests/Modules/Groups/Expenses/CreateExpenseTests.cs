@@ -115,10 +115,11 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithPaidByMemberId(TestMembers.Alice.Id)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(Guid.NewGuid())
-            ])
+            })
             .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
@@ -146,10 +147,11 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithPaidByMemberId(TestMembers.Alice.Id)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(TestMembers.Bob.Id)
-            ])
+            })
             .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
@@ -164,7 +166,43 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
             );
     }
 
-    // even split
+    [Test]
+    public async Task DuplicateParticipants_ReturnsValidationError()
+    {
+        var groupId = Guid.NewGuid();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .Build()
+        );
+
+        var request = new ExpenseRequestBuilder()
+            .WithGroupId(groupId)
+            .WithAmount(200)
+            .WithSplitType(ExpenseSplitType.ExactAmount)
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
+                new ExpenseRequestBuilder.ParticipantBuilder()
+                    .WithMemberId(TestMembers.Alice.Id)
+                    .WithExactShare(80),
+                new ExpenseRequestBuilder.ParticipantBuilder()
+                    .WithMemberId(TestMembers.Alice.Id)
+                    .WithExactShare(120)
+            })
+            .BuildCreateRequest();
+        var result = await Application.SendAsync(request);
+
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.Validation),
+                e => e.Code.ShouldBe(nameof(request.Participants)),
+                e => e.Description.ShouldBe(ErrorCodes.NotUnique)
+            );
+    }
+
     [Test]
     public async Task ValidExpenseRequest_SplitTypeEvenly()
     {
@@ -184,12 +222,13 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
             .WithPaidByMemberId(TestMembers.Alice.Id)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.Evenly)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(TestMembers.Alice.Id),
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(TestMembers.Bob.Id)
-            ])
+            })
             .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
@@ -249,14 +288,15 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
             .WithPaidByMemberId(TestMembers.Alice.Id)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.Percentual)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(TestMembers.Alice.Id)
                     .WithPercentualShare(60),
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(TestMembers.Bob.Id)
                     .WithPercentualShare(40)
-            ])
+            })
             .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
@@ -320,14 +360,15 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
             .WithPaidByMemberId(TestMembers.Alice.Id)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.ExactAmount)
-            .WithParticipants([
+            .WithParticipants(new List<CreateExpense.Request.Participant>
+            {
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(TestMembers.Alice.Id)
                     .WithExactShare(120),
                 new ExpenseRequestBuilder.ParticipantBuilder()
                     .WithMemberId(TestMembers.Bob.Id)
                     .WithExactShare(80)
-            ])
+            })
             .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 

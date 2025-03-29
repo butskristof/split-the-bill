@@ -48,7 +48,12 @@ public static class CreateExpense
 
             RuleFor(r => r.Participants)
                 .NotEmpty()
-                .WithMessage(ErrorCodes.Required);
+                .WithMessage(ErrorCodes.Required)
+                .Must(participants =>
+                    participants.Count == 1 ||
+                    participants.DistinctBy(p => p?.MemberId).Count() == participants.Count
+                )
+                .WithMessage(ErrorCodes.NotUnique);
 
             RuleForEach(r => r.Participants)
                 .NotNullWithErrorCode(ErrorCodes.Invalid)
@@ -184,19 +189,19 @@ public static class CreateExpense
                 case ExpenseSplitType.Evenly:
                     expense.SetAmountAndParticipantsWithEvenSplit(
                         request.Amount!.Value,
-                        request.Participants.Select(p => p.MemberId!.Value).ToHashSet()
+                        request.Participants.Select(p => p!.MemberId!.Value).ToHashSet()
                     );
                     break;
                 case ExpenseSplitType.Percentual:
                     expense.SetAmountAndParticipantsWithPercentualSplit(
                         request.Amount!.Value,
-                        request.Participants.ToDictionary(p => p.MemberId!.Value, p => p.PercentualShare!.Value)
+                        request.Participants.ToDictionary(p => p!.MemberId!.Value, p => p!.PercentualShare!.Value)
                     );
                     break;
                 case ExpenseSplitType.ExactAmount:
                     expense.SetAmountAndParticipantsWithExactSplit(
                         request.Amount!.Value,
-                        request.Participants.ToDictionary(p => p.MemberId!.Value, p => p.ExactShare!.Value)
+                        request.Participants.ToDictionary(p => p!.MemberId!.Value, p => p!.ExactShare!.Value)
                     );
                     break;
                 default:
