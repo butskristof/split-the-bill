@@ -1,7 +1,9 @@
 using ErrorOr;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Application.Common.Validation;
 using SplitTheBill.Domain.Models.Groups;
 
@@ -9,14 +11,14 @@ namespace SplitTheBill.Application.Modules.Groups.Expenses;
 
 public static class CreateExpense
 {
-    public sealed record Request : IRequest<ErrorOr<Response>>
+    public sealed record Request : IRequest<ErrorOr<Created>>
     {
         public Guid? GroupId { get; init; }
         public string? Description { get; init; }
         public Guid? PaidByMemberId { get; init; }
         public decimal? Amount { get; init; }
         public ExpenseSplitType? SplitType { get; init; } = ExpenseSplitType.Evenly;
-        public IReadOnlyCollection<Participant?> Participants { get; init; } = [];
+        public IReadOnlyList<Participant?> Participants { get; init; } = [];
 
         public sealed record Participant
         {
@@ -25,8 +27,6 @@ public static class CreateExpense
             public decimal? ExactShare { get; init; }
         }
     }
-
-    public sealed record Response(Guid Id);
 
     internal sealed class Validator : BaseValidator<Request>
     {
@@ -95,7 +95,7 @@ public static class CreateExpense
                                 .WithMessage(ErrorCodes.Invalid);
                         });
                 });
-            
+
             When(r => r.SplitType == ExpenseSplitType.ExactAmount, () =>
                 {
                     RuleForEach(r => r.Participants)
@@ -122,22 +122,94 @@ public static class CreateExpense
         }
     }
 
-    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Response>>
+    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Created>>
     {
         #region construction
 
         private readonly ILogger<Handler> _logger;
+        private readonly IAppDbContext _dbContext;
 
-        public Handler(ILogger<Handler> logger)
+        public Handler(ILogger<Handler> logger, IAppDbContext dbContext)
         {
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         #endregion
 
-        public Task<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
+        public async Task<ErrorOr<Created>> Handle(Request request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            _logger.LogDebug("Adding new Expense to Group with id {GroupId}", request.GroupId);
+
+            var group = await _dbContext
+                .Groups
+                .Include(g => g.Expenses)
+                .Include(g => g.Members)
+                .SingleOrDefaultAsync(g => g.Id == request.GroupId, cancellationToken);
+            if (group is null)
+            {
+                _logger.LogDebug("No group with id {Id} found in database", request.GroupId);
+                return Error.NotFound(nameof(request.GroupId), $"Could not find group with id {request.GroupId}");
+            }
+
+            _logger.LogDebug("Fetched Group to add Expense to from database with related navigation properties");
+
+            if (group.Members.All(m => m.Id != request.PaidByMemberId))
+            {
+                _logger.LogDebug("No member found in group with id {Id}", request.PaidByMemberId);
+                return Error.NotFound(nameof(request.PaidByMemberId),
+                    $"Could not find member with id {request.PaidByMemberId} in group with id {request.GroupId}");
+            }
+
+            for (var i = 0; i < request.Participants.Count; ++i)
+            {
+                var participant = request.Participants[i];
+                if (group.Members.All(m => m.Id != participant!.MemberId))
+                {
+                    _logger.LogDebug("No member found in group with id {Id}", participant!.MemberId);
+                    return Error.NotFound($"{nameof(request.Participants)}[{i}].{nameof(participant.MemberId)}",
+                        $"Could not find member with id {participant.MemberId} in group with id {request.GroupId}");
+                }
+            }
+
+            _logger.LogDebug("Verified existence of members related to expense in group");
+
+            var expense = new Expense
+            {
+                Description = request.Description!,
+                PaidByMemberId = request.PaidByMemberId!.Value,
+            };
+            switch (request.SplitType)
+            {
+                case ExpenseSplitType.Evenly:
+                    expense.SetAmountAndParticipantsWithEvenSplit(
+                        request.Amount!.Value,
+                        request.Participants.Select(p => p.MemberId!.Value).ToHashSet()
+                    );
+                    break;
+                case ExpenseSplitType.Percentual:
+                    expense.SetAmountAndParticipantsWithPercentualSplit(
+                        request.Amount!.Value,
+                        request.Participants.ToDictionary(p => p.MemberId!.Value, p => p.PercentualShare!.Value)
+                    );
+                    break;
+                case ExpenseSplitType.ExactAmount:
+                    expense.SetAmountAndParticipantsWithExactSplit(
+                        request.Amount!.Value,
+                        request.Participants.ToDictionary(p => p.MemberId!.Value, p => p.ExactShare!.Value)
+                    );
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(request.SplitType));
+            }
+
+            group.Expenses.Add(expense);
+            _logger.LogDebug("Mapped request to entity and added to Group's Expenses collection");
+
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
+            _logger.LogDebug("Persisted changes to database");
+
+            return Result.Created;
         }
     }
 }

@@ -196,11 +196,12 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Created>();
 
-        var group = await Application
-            .FindAsync<Group>(g => g.Id == groupId,
-                g => g.Expenses);
-        group!.Expenses
-            .ShouldHaveSingleItem()
+        var expense = await Application
+            .FindAsync<Expense>(g => g.GroupId == groupId,
+                g => g.Participants
+            );
+        expense
+            .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),
@@ -262,11 +263,12 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Created>();
 
-        var group = await Application
-            .FindAsync<Group>(g => g.Id == groupId,
-                g => g.Expenses);
-        group!.Expenses
-            .ShouldHaveSingleItem()
+        var expense = await Application
+            .FindAsync<Expense>(g => g.GroupId == groupId,
+                g => g.Participants
+            );
+        expense
+            .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),
@@ -332,11 +334,12 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Created>();
 
-        var group = await Application
-            .FindAsync<Group>(g => g.Id == groupId,
-                g => g.Expenses);
-        group!.Expenses
-            .ShouldHaveSingleItem()
+        var expense = await Application
+            .FindAsync<Expense>(g => g.GroupId == groupId,
+                g => g.Participants
+            );
+        expense
+            .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),

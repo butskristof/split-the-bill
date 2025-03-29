@@ -10,14 +10,18 @@ public sealed class CreateExpenseRequestBuilder
     private decimal? _amount = 100.00m;
     private Guid? _paidByMemberId = Guid.NewGuid();
     private ExpenseSplitType? _splitType = ExpenseSplitType.Evenly;
-    private IReadOnlyCollection<CreateExpense.Request.Participant> _participants = [];
+
+    private IReadOnlyList<CreateExpense.Request.Participant> _participants =
+    [
+        new() { MemberId = Guid.NewGuid() }
+    ];
 
     public CreateExpenseRequestBuilder WithGroupId(Guid? groupId)
     {
         _groupId = groupId;
         return this;
     }
-    
+
     public CreateExpenseRequestBuilder WithDescription(string? description)
     {
         _description = description;
@@ -29,7 +33,7 @@ public sealed class CreateExpenseRequestBuilder
         _paidByMemberId = paidByMemberId;
         return this;
     }
-    
+
     public CreateExpenseRequestBuilder WithAmount(decimal? amount)
     {
         _amount = amount;
@@ -42,7 +46,7 @@ public sealed class CreateExpenseRequestBuilder
         return this;
     }
 
-    public CreateExpenseRequestBuilder WithParticipants(IReadOnlyCollection<CreateExpense.Request.Participant> participants)
+    public CreateExpenseRequestBuilder WithParticipants(IReadOnlyList<CreateExpense.Request.Participant> participants)
     {
         _participants = participants;
         return this;
@@ -91,6 +95,7 @@ public sealed class CreateExpenseRequestBuilder
             ExactShare = _exactShare
         };
 
-        public static implicit operator CreateExpense.Request.Participant(ParticipantBuilder builder) => builder.Build();
+        public static implicit operator CreateExpense.Request.Participant(ParticipantBuilder builder) =>
+            builder.Build();
     }
 }
