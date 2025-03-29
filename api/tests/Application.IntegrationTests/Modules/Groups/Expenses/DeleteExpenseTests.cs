@@ -37,8 +37,9 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         var expense = new ExpenseBuilder()
             .WithId(Guid.NewGuid())
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        expense.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
         await Application.AddAsync(new GroupBuilder()
             .WithId(Guid.NewGuid())
             .WithMembers([TestMembers.Alice.Id])
@@ -62,6 +63,8 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         // verify expenses are untouched
         var expenseCount = await Application.CountAsync<Expense>();
         expenseCount.ShouldBe(1);
+        var expenseParticipantCount = await Application.CountAsync<ExpenseParticipant>();
+        expenseParticipantCount.ShouldBe(1);
     }
 
     [Test]
@@ -70,8 +73,9 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         var expense = new ExpenseBuilder()
             .WithId(Guid.NewGuid())
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        expense.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
         var group = new GroupBuilder()
             .WithId(Guid.NewGuid())
             .WithMembers([TestMembers.Alice.Id])
@@ -96,6 +100,8 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         // verify expenses are untouched
         var expenseCount = await Application.CountAsync<Expense>();
         expenseCount.ShouldBe(1);
+        var expenseParticipantCount = await Application.CountAsync<ExpenseParticipant>();
+        expenseParticipantCount.ShouldBe(1);
     }
 
     [Test]
@@ -104,8 +110,9 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         var expense = new ExpenseBuilder()
             .WithId(Guid.NewGuid())
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        expense.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
         var group1 = new GroupBuilder()
             .WithId(Guid.NewGuid())
             .WithMembers([TestMembers.Alice.Id])
@@ -134,6 +141,8 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         // verify expenses are untouched
         var expenseCount = await Application.CountAsync<Expense>();
         expenseCount.ShouldBe(1);
+        var expenseParticipantCount = await Application.CountAsync<ExpenseParticipant>();
+        expenseParticipantCount.ShouldBe(1);
     }
 
     [Test]
@@ -143,8 +152,9 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         var expense = new ExpenseBuilder()
             .WithId(Guid.NewGuid())
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        expense.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithMembers([TestMembers.Alice.Id])
@@ -164,6 +174,8 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         // verify expense is deleted
         var expenseCount = await Application.CountAsync<Expense>();
         expenseCount.ShouldBe(0);
+        var expenseParticipantCount = await Application.CountAsync<ExpenseParticipant>();
+        expenseParticipantCount.ShouldBe(0);
     }
 
     [Test]
@@ -173,13 +185,15 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         var expense1 = new ExpenseBuilder()
             .WithId(Guid.NewGuid())
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        expense1.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
         var expense2 = new ExpenseBuilder()
             .WithId(Guid.NewGuid())
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        expense2.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithMembers([TestMembers.Alice.Id])
@@ -210,11 +224,14 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
         var expense1 = new ExpenseBuilder()
             .WithId(Guid.NewGuid())
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        expense1.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
         var expense2 = new ExpenseBuilder()
             .WithId(Guid.NewGuid())
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
         expense2.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
         await Application.AddAsync(new GroupBuilder()
