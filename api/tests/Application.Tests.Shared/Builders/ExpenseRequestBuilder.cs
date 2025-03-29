@@ -19,6 +19,12 @@ public sealed class ExpenseRequestBuilder
         _groupId = groupId;
         return this;
     }
+    
+    public ExpenseRequestBuilder WithExpenseId(Guid? expenseId)
+    {
+        _expenseId = expenseId;
+        return this;
+    }
 
     public ExpenseRequestBuilder WithDescription(string? description)
     {
