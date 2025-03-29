@@ -10,12 +10,8 @@ using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Payments;
 
-internal sealed class CreatePaymentTests : ApplicationTestBase
+internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
 {
-    public CreatePaymentTests() : base(true)
-    {
-    }
-
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
     {

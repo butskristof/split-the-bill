@@ -2,8 +2,8 @@ namespace SplitTheBill.Domain.Models.Groups;
 
 public sealed class Expense
 {
-    public required Guid Id { get; init; }
-    public required Guid GroupId { get; init; }
+    public Guid Id { get; init; }
+    public Guid GroupId { get; init; }
 
     public required string Description { get; set; }
 
@@ -42,6 +42,8 @@ public sealed class Expense
     {
         if (participants.Count == 0)
             throw new ArgumentException("List of participants cannot be empty", nameof(participants));
+        if (participants.Any(p => p.Value < 0))
+            throw new ArgumentException("All participant percentages should be at least 0", nameof(participants));
         if (participants.Sum(p => p.Value) != 100)
             throw new ArgumentException("Sum of participant percentages should add up to 100", nameof(participants));
 
@@ -57,8 +59,10 @@ public sealed class Expense
     {
         if (participants.Count == 0)
             throw new ArgumentException("List of participants cannot be empty", nameof(participants));
+        if (participants.Any(p => p.Value < 0))
+            throw new ArgumentException("All participant shares should be at least 0", nameof(participants));
         if (participants.Sum(p => p.Value) != amount)
-            throw new ArgumentException("Sum of participant percentages should add up to 100", nameof(participants));
+            throw new ArgumentException("Sum of participant shares should add up to amount", nameof(participants));
 
         Amount = amount;
         SplitType = ExpenseSplitType.ExactAmount;

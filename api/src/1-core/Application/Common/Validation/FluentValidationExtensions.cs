@@ -41,7 +41,7 @@ internal static class FluentValidationExtensions
             .WithMessage(ErrorCodes.TooLong);
     }
 
-    internal static IRuleBuilderOptions<T, int> PositiveInteger<T>(this IRuleBuilder<T, int> ruleBuilder,
+    internal static IRuleBuilderOptions<T, int?> PositiveInteger<T>(this IRuleBuilder<T, int?> ruleBuilder,
         bool zeroInclusive)
         => (zeroInclusive
                 ? ruleBuilder

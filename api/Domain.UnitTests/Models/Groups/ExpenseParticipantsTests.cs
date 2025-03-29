@@ -228,11 +228,29 @@ internal sealed class ExpenseParticipantsTests
             .ParamName.ShouldBe("participants");
     }
 
+    [Test]
+    public void SetAmountAndParticipantsWithPercentualSplit_NegativePercentage_Throws()
+    {
+        var expense = ExpenseBuilder.Create();
+        Should.Throw<ArgumentException>(() =>
+                expense.SetAmountAndParticipantsWithPercentualSplit(
+                    100,
+                    new Dictionary<Guid, int>
+                    {
+                        { Guid.NewGuid(), 101 },
+                        { Guid.NewGuid(), -1 },
+                    }
+                )
+            )
+            .ParamName.ShouldBe("participants");
+    }
+
     public static IEnumerable<Func<int[]>> GetValidPercentages() =>
     [
         () => [33, 33, 34],
         () => [33, 67],
         () => [65, 35],
+        () => [65, 35, 0],
     ];
 
     [Test]
@@ -297,8 +315,7 @@ internal sealed class ExpenseParticipantsTests
                     amount,
                     new Dictionary<Guid, decimal> { { Guid.NewGuid(), amount } }
                 )
-            )
-            .ParamName.ShouldBe("Amount");
+            );
     }
 
     [Test]
@@ -341,6 +358,23 @@ internal sealed class ExpenseParticipantsTests
             .ParamName.ShouldBe("participants");
     }
 
+    [Test]
+    public void SetAmountAndParticipantsWithExactSplit_NegativeAmount_Throws()
+    {
+        var expense = ExpenseBuilder.Create();
+        Should.Throw<ArgumentException>(() =>
+                expense.SetAmountAndParticipantsWithExactSplit(
+                    1000,
+                    new Dictionary<Guid, decimal>
+                    {
+                        { Guid.NewGuid(), 1001 },
+                        { Guid.NewGuid(), -1 },
+                    }
+                )
+            )
+            .ParamName.ShouldBe("participants");
+    }
+
     public static IEnumerable<Func<(decimal, decimal[])>> GetValidExactAmounts() =>
     [
         () => (1000m, [500m, 500m]),
@@ -348,6 +382,7 @@ internal sealed class ExpenseParticipantsTests
         () => (1000m, [333m, 333m, 334m]),
         () => (1000m, [333m, 667m]),
         () => (1000m, [1m, 999m]),
+        () => (1000m, [1m, 999m, 0m]),
     ];
 
     [Test]

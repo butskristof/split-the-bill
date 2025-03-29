@@ -23,7 +23,7 @@ internal static class MembersModule
         return endpoints;
     }
 
-    internal static Task<IResult> GetMembers(
+    private static Task<IResult> GetMembers(
         [FromServices] ISender sender
     )
         => sender.Send(new GetMembers.Request())
