@@ -236,8 +236,8 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
         result.Value.ShouldBeOfType<Created>();
 
         var expense = await Application
-            .FindAsync<Expense>(g => g.GroupId == groupId,
-                g => g.Participants
+            .FindAsync<Expense>(e => e.GroupId == groupId,
+                e => e.Participants
             );
         expense
             .ShouldNotBeNull()

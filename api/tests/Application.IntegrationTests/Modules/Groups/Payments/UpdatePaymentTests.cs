@@ -74,10 +74,13 @@ internal sealed class UpdatePaymentTests() : ApplicationTestBase(true)
     public async Task PaymentDoesNotExist_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
+        var paymentId = Guid.NewGuid();
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithPayments([
                 new PaymentBuilder()
+                    .WithId(paymentId)
+                    .WithAmount(200m)
                     .WithSendingMemberId(TestMembers.Alice.Id)
                     .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
@@ -87,6 +90,9 @@ internal sealed class UpdatePaymentTests() : ApplicationTestBase(true)
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(Guid.NewGuid())
+            .WithAmount(300m)
+            .WithSendingMemberId(TestMembers.Bob.Id)
+            .WithSendingMemberId(TestMembers.Alice.Id)
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
@@ -98,9 +104,12 @@ internal sealed class UpdatePaymentTests() : ApplicationTestBase(true)
                 e => e.Code.ShouldBe(nameof(request.PaymentId))
             );
 
-        // verify payments are untouched
-        var paymentCount = await Application.CountAsync<Payment>();
-        paymentCount.ShouldBe(1);
+        // verify payment is untouched
+        var payment = await Application.FindAsync<Payment>(p => p.Id == paymentId);
+        payment.ShouldNotBeNull();
+        payment.Amount.ShouldBe(200m);
+        payment.SendingMemberId.ShouldBe(TestMembers.Alice.Id);
+        payment.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id);
     }
 
     [Test]
@@ -114,7 +123,8 @@ internal sealed class UpdatePaymentTests() : ApplicationTestBase(true)
                 .WithPayments([
                     new PaymentBuilder()
                         .WithId(paymentId)
-                        .WithSendingMemberId(TestMembers.Bob.Id)
+                        .WithAmount(200m)
+                        .WithSendingMemberId(TestMembers.Alice.Id)
                         .WithReceivingMemberId(TestMembers.Bob.Id)
                 ])
                 .Build(),
@@ -126,6 +136,9 @@ internal sealed class UpdatePaymentTests() : ApplicationTestBase(true)
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
+            .WithAmount(300m)
+            .WithSendingMemberId(TestMembers.Bob.Id)
+            .WithReceivingMemberId(TestMembers.Alice.Id)
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
@@ -137,9 +150,12 @@ internal sealed class UpdatePaymentTests() : ApplicationTestBase(true)
                 e => e.Code.ShouldBe(nameof(request.PaymentId))
             );
 
-        // verify payments are untouched
-        var paymentCount = await Application.CountAsync<Payment>();
-        paymentCount.ShouldBe(1);
+        // verify payment is untouched
+        var payment = await Application.FindAsync<Payment>(p => p.Id == paymentId);
+        payment.ShouldNotBeNull();
+        payment.Amount.ShouldBe(200m);
+        payment.SendingMemberId.ShouldBe(TestMembers.Alice.Id);
+        payment.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id);
     }
 
     [Test]

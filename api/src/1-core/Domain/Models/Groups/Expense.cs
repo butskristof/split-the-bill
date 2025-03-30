@@ -30,8 +30,8 @@ public sealed class Expense
         if (participants.Count == 0)
             throw new ArgumentException("List of participants cannot be empty", nameof(participants));
 
-        Amount = amount;
         SplitType = ExpenseSplitType.Evenly;
+        Amount = amount;
         _participants.Clear();
         _participants.AddRange(
             participants.Select(id => new ExpenseParticipant { MemberId = id })
@@ -47,8 +47,8 @@ public sealed class Expense
         if (participants.Sum(p => p.Value) != 100)
             throw new ArgumentException("Sum of participant percentages should add up to 100", nameof(participants));
 
-        Amount = amount;
         SplitType = ExpenseSplitType.Percentual;
+        Amount = amount;
         _participants.Clear();
         _participants.AddRange(
             participants.Select(pair => new ExpenseParticipant { MemberId = pair.Key, PercentualShare = pair.Value })
@@ -64,8 +64,8 @@ public sealed class Expense
         if (participants.Sum(p => p.Value) != amount)
             throw new ArgumentException("Sum of participant shares should add up to amount", nameof(participants));
 
-        Amount = amount;
         SplitType = ExpenseSplitType.ExactAmount;
+        Amount = amount;
         _participants.Clear();
         _participants.AddRange(
             participants.Select(pair => new ExpenseParticipant { MemberId = pair.Key, ExactShare = pair.Value })

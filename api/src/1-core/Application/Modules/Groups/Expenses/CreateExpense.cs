@@ -179,6 +179,7 @@ public static class CreateExpense
 
             _logger.LogDebug("Verified existence of members related to expense in group");
 
+            // request values are non-null confirmed by validator
             var expense = new Expense
             {
                 Description = request.Description!,
