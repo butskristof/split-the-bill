@@ -65,11 +65,12 @@ public sealed class Expense
             throw new ArgumentException("Sum of participant shares should add up to amount", nameof(participants));
 
         SplitType = ExpenseSplitType.ExactAmount;
-        Amount = amount;
         _participants.Clear();
         _participants.AddRange(
             participants.Select(pair => new ExpenseParticipant { MemberId = pair.Key, ExactShare = pair.Value })
         );
+        // set amount last, otherwise validation on sum of exact shares will fail
+        Amount = amount;
     }
 
     #endregion

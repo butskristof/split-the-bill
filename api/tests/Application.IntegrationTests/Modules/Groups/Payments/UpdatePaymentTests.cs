@@ -92,7 +92,7 @@ internal sealed class UpdatePaymentTests() : ApplicationTestBase(true)
             .WithPaymentId(Guid.NewGuid())
             .WithAmount(300m)
             .WithSendingMemberId(TestMembers.Bob.Id)
-            .WithSendingMemberId(TestMembers.Alice.Id)
+            .WithReceivingMemberId(TestMembers.Alice.Id)
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
