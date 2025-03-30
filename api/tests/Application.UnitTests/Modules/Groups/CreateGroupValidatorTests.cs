@@ -17,9 +17,9 @@ internal sealed class CreateGroupValidatorTests
     [MethodDataSource(typeof(TestValues), nameof(TestValues.EmptyStrings))]
     public void NullOrEmptyName_Fails(string? name)
     {
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -30,9 +30,9 @@ internal sealed class CreateGroupValidatorTests
     [Test]
     public void EmptyName_OnlyReturnsOneErrorCode()
     {
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(null)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -44,9 +44,9 @@ internal sealed class CreateGroupValidatorTests
     public void NameTooLong_Fails()
     {
         var name = TestUtilities.GenerateString(513);
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -61,9 +61,9 @@ internal sealed class CreateGroupValidatorTests
     public void NameValidLength_Passes(int length)
     {
         var name = TestUtilities.GenerateString(length);
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -77,9 +77,9 @@ internal sealed class CreateGroupValidatorTests
     [Test]
     public void ValidRequest_Passes()
     {
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName("group name")
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result.ShouldNotHaveAnyValidationErrors();

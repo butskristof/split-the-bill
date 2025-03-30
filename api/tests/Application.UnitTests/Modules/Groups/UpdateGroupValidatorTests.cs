@@ -16,9 +16,9 @@ internal sealed class UpdateGroupValidatorTests
     [Test]
     public void EmptyId_Fails()
     {
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithId(Guid.Empty)
-            .Build();
+            .BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
@@ -30,9 +30,9 @@ internal sealed class UpdateGroupValidatorTests
     [Test]
     public void ValidId_Passes()
     {
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithId(Guid.NewGuid())
-            .Build();
+            .BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
@@ -47,9 +47,9 @@ internal sealed class UpdateGroupValidatorTests
     [MethodDataSource(typeof(TestValues), nameof(TestValues.EmptyStrings))]
     public void NullOrEmptyName_Fails(string? name)
     {
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
@@ -61,9 +61,9 @@ internal sealed class UpdateGroupValidatorTests
     [Test]
     public void EmptyName_OnlyReturnsOneErrorCode()
     {
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(null)
-            .Build();
+            .BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
@@ -76,9 +76,9 @@ internal sealed class UpdateGroupValidatorTests
     public void NameTooLong_Fails()
     {
         var name = TestUtilities.GenerateString(513);
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -93,9 +93,9 @@ internal sealed class UpdateGroupValidatorTests
     public void NameValidLength_Passes(int length)
     {
         var name = TestUtilities.GenerateString(length);
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
@@ -109,10 +109,10 @@ internal sealed class UpdateGroupValidatorTests
     [Test]
     public void ValidRequest_Passes()
     {
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithId(Guid.NewGuid())
             .WithName("group name")
-            .Build();
+            .BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 

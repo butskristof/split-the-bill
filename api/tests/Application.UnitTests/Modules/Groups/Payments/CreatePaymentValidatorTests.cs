@@ -13,9 +13,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void NullGroupId_Fails()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(null)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -26,9 +26,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void EmptyGroupId_Fails()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.Empty)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -39,9 +39,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void EmptyNullableGuid_OnlyReturnsOneErrorCode()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.Empty)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -52,9 +52,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void NonEmptyGroupId_Passes()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.NewGuid())
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -64,9 +64,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void NullSendingMemberId_Fails()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithSendingMemberId(null)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -77,9 +77,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void EmptySendingMemberId_Fails()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithSendingMemberId(Guid.Empty)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -90,9 +90,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void NonEmptySendingMemberId_Passes()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithSendingMemberId(Guid.NewGuid())
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -102,9 +102,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void NullReceivingMemberId_Fails()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithReceivingMemberId(null)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -115,9 +115,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void EmptyReceivingMemberId_Fails()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithReceivingMemberId(Guid.Empty)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -128,9 +128,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void NonEmptyReceivingMemberId_Passes()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithReceivingMemberId(Guid.NewGuid())
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -141,10 +141,10 @@ internal sealed class CreatePaymentValidatorTests
     public void SameSendingAndReceivingMemberId_Fails()
     {
         var id = Guid.NewGuid();
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithSendingMemberId(id)
             .WithReceivingMemberId(id)
-            .Build();
+            .BuildCreateRequest();
 
         var result = _sut.TestValidate(request);
         result
@@ -155,9 +155,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void NullAmount_Fails()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithAmount(null)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -170,9 +170,9 @@ internal sealed class CreatePaymentValidatorTests
     [Arguments(0)]
     public void NegativeOrZeroAmount_Fails(decimal amount)
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithAmount(amount)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -183,9 +183,9 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void PositiveAmount_Passes()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithAmount(1.0m)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -195,12 +195,12 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void ValidRequest_Passes()
     {
-        var request = new CreatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.NewGuid())
             .WithSendingMemberId(Guid.NewGuid())
             .WithReceivingMemberId(Guid.NewGuid())
             .WithAmount(100m)
-            .Build();
+            .BuildCreateRequest();
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveAnyValidationErrors();
     }

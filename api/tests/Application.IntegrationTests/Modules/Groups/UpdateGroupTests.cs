@@ -14,10 +14,10 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
     {
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithId(Guid.Empty)
             .WithName(null)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -38,9 +38,9 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
     public async Task LongName_ReturnsValidationError()
     {
         var name = TestUtilities.GenerateString(513);
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -62,10 +62,10 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
             .WithName("group name")
             .Build()
         );
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithId(Guid.NewGuid())
             .WithName("other group name")
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -88,10 +88,10 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
         );
         
         var name = TestUtilities.GenerateString(512); // max string length
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithId(id)
             .WithName(name)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
         
         result.IsError.ShouldBeFalse();
@@ -112,10 +112,10 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
             .Build()
         );
         
-        var request = new UpdateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithId(id)
             .WithName(name)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
         
         result.IsError.ShouldBeFalse();

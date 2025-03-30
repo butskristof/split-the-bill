@@ -10,22 +10,18 @@ using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Payments;
 
-internal sealed class UpdatePaymentTests : ApplicationTestBase
+internal sealed class UpdatePaymentTests() : ApplicationTestBase(true)
 {
-    public UpdatePaymentTests() : base(true)
-    {
-    }
-
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
     {
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.Empty)
             .WithPaymentId(null)
             .WithSendingMemberId(null)
             .WithReceivingMemberId(Guid.Empty)
             .WithAmount(-1)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -60,9 +56,9 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(Guid.NewGuid())
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -78,20 +74,26 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
     public async Task PaymentDoesNotExist_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
+        var paymentId = Guid.NewGuid();
         await Application.AddAsync(new GroupBuilder()
             .WithId(groupId)
             .WithPayments([
                 new PaymentBuilder()
+                    .WithId(paymentId)
+                    .WithAmount(200m)
                     .WithSendingMemberId(TestMembers.Alice.Id)
                     .WithReceivingMemberId(TestMembers.Bob.Id)
             ])
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(Guid.NewGuid())
-            .Build();
+            .WithAmount(300m)
+            .WithSendingMemberId(TestMembers.Bob.Id)
+            .WithReceivingMemberId(TestMembers.Alice.Id)
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -102,9 +104,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
                 e => e.Code.ShouldBe(nameof(request.PaymentId))
             );
 
-        // verify payments are untouched
-        var paymentCount = await Application.CountAsync<Payment>();
-        paymentCount.ShouldBe(1);
+        // verify payment is untouched
+        var payment = await Application.FindAsync<Payment>(p => p.Id == paymentId);
+        payment.ShouldNotBeNull();
+        payment.Amount.ShouldBe(200m);
+        payment.SendingMemberId.ShouldBe(TestMembers.Alice.Id);
+        payment.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id);
     }
 
     [Test]
@@ -118,7 +123,8 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
                 .WithPayments([
                     new PaymentBuilder()
                         .WithId(paymentId)
-                        .WithSendingMemberId(TestMembers.Bob.Id)
+                        .WithAmount(200m)
+                        .WithSendingMemberId(TestMembers.Alice.Id)
                         .WithReceivingMemberId(TestMembers.Bob.Id)
                 ])
                 .Build(),
@@ -127,10 +133,13 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
                 .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
-            .Build();
+            .WithAmount(300m)
+            .WithSendingMemberId(TestMembers.Bob.Id)
+            .WithReceivingMemberId(TestMembers.Alice.Id)
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -141,9 +150,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
                 e => e.Code.ShouldBe(nameof(request.PaymentId))
             );
 
-        // verify payments are untouched
-        var paymentCount = await Application.CountAsync<Payment>();
-        paymentCount.ShouldBe(1);
+        // verify payment is untouched
+        var payment = await Application.FindAsync<Payment>(p => p.Id == paymentId);
+        payment.ShouldNotBeNull();
+        payment.Amount.ShouldBe(200m);
+        payment.SendingMemberId.ShouldBe(TestMembers.Alice.Id);
+        payment.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id);
     }
 
     [Test]
@@ -162,12 +174,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(Guid.NewGuid())
             .WithReceivingMemberId(TestMembers.Bob.Id)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -199,12 +211,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Charlie.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -236,12 +248,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(Guid.NewGuid())
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -273,12 +285,12 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Charlie.Id)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -311,13 +323,13 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Bob.Id)
             .WithReceivingMemberId(TestMembers.Alice.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
@@ -345,13 +357,13 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Bob.Id)
             .WithReceivingMemberId(TestMembers.Alice.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildUpdateRequest();
         await Application.SendAsync(request);
 
         var group = await Application
@@ -389,13 +401,13 @@ internal sealed class UpdatePaymentTests : ApplicationTestBase
             .Build()
         );
 
-        var request = new UpdatePaymentRequestBuilder()
+        var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithPaymentId(paymentId)
             .WithSendingMemberId(TestMembers.Bob.Id)
             .WithReceivingMemberId(TestMembers.Alice.Id)
             .WithAmount(100m)
-            .Build();
+            .BuildUpdateRequest();
         await Application.SendAsync(request);
 
         var result = await Application.SendAsync(new GetGroup.Request(groupId));

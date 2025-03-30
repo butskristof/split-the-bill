@@ -106,6 +106,7 @@ public static class UpdatePayment
             _logger.LogDebug("Mapped values from request to entity");
 
             await _dbContext.SaveChangesAsync(CancellationToken.None);
+            _logger.LogDebug("Persisted changes to database");
 
             return Result.Updated;
         }

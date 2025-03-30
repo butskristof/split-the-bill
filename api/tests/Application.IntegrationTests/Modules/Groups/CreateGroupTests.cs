@@ -13,9 +13,9 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
     {
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(string.Empty)
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -32,9 +32,9 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     public async Task LongName_ReturnsValidationError()
     {
         var name = TestUtilities.GenerateString(513);
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
@@ -51,9 +51,9 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     public async Task ValidRequest_ReturnsResponseWithId()
     {
         var name = TestUtilities.GenerateString(512); // max string length
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName(name)
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
@@ -70,9 +70,9 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     [Skip("Auth not implemented yet")]
     public async Task ValidRequest_AddsCurrentMemberToGroup()
     {
-        var request = new CreateGroupRequestBuilder()
+        var request = new GroupRequestBuilder()
             .WithName("group name")
-            .Build();
+            .BuildCreateRequest();
         var result = await Application.SendAsync(request);
         var id = result.Value.Id;
 
