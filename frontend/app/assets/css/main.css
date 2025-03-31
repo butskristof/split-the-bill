@@ -2,5 +2,6 @@
 @import '@nuxt/ui';
 
 :root {
-    --ui-radius: 0.25rem;
+  --ui-radius: 0.25rem;
+  --ui-header-height: calc(var(--spacing) * 16);
 }
