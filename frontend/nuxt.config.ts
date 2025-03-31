@@ -5,5 +5,14 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint'],
+  modules: ['@nuxt/eslint', '@nuxt/ui'],
+  css: ['~/assets/css/main.css'],
+  icon: {
+    customCollections: [
+      {
+        prefix: 'stb',
+        dir: '~/assets/icons',
+      },
+    ],
+  },
 });
