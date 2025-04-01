@@ -2,7 +2,6 @@ using ErrorOr;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SplitTheBill.Application.Common.Dto;
 using SplitTheBill.Application.Common.Persistence;
 
 namespace SplitTheBill.Application.Modules.Members;
@@ -12,8 +11,11 @@ public static class GetMembers
     public sealed record Request : IRequest<ErrorOr<Response>>;
 
     public sealed record Response(
-        List<MemberDto> Members
-    );
+        List<Response.MemberDto> Members
+    )
+    {
+        public sealed record MemberDto(Guid Id, string Name);
+    }
 
     internal sealed class Handler : IRequestHandler<Request, ErrorOr<Response>>
     {
@@ -40,7 +42,7 @@ public static class GetMembers
             var members = await _dbContext
                 .Members
                 .AsNoTracking()
-                .Select(m => new MemberDto(m.Id, m.Name))
+                .Select(m => new Response.MemberDto(m.Id, m.Name))
                 .ToListAsync(cancellationToken);
             _logger.LogDebug("Fetched mapped Member entities from database");
 
