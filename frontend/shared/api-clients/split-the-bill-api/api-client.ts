@@ -3,7 +3,10 @@ import type { components, paths } from '~~/shared/api-clients/split-the-bill-api
 
 const createSplitTheBillApiClient = () => createClient<paths>({ baseUrl: 'http://localhost:5222' });
 
-export const getMembers = () => createSplitTheBillApiClient().GET('/Members');
+export const getMembers = () =>
+  createSplitTheBillApiClient()
+    .GET('/Members')
+    .then((r) => r.data);
 
 export const getGroups = () => createSplitTheBillApiClient().GET('/Groups');
 
