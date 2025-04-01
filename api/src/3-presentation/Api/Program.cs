@@ -42,6 +42,8 @@ try
         // it reaches it
         .UseStatusCodePages();
 
+    app.UseCors();
+
     app.MapHealthChecks("/health");
     app.MapOpenApiEndpoints();
     app

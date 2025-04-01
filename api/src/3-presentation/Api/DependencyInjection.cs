@@ -1,5 +1,7 @@
+using Microsoft.Extensions.Options;
 using SplitTheBill.Api.Constants;
 using SplitTheBill.Api.Extensions;
+using SplitTheBill.Application.Common.Configuration;
 
 namespace SplitTheBill.Api;
 
@@ -9,8 +11,13 @@ internal static class DependencyInjection
 
     internal static IServiceCollection AddConfiguration(this IServiceCollection services)
     {
+        services.AddValidatedSettings<CorsSettings>();
         return services;
     }
+
+    private static IServiceCollection AddValidatedSettings<TOptions>(this IServiceCollection services)
+        where TOptions : class, ISettings
+        => services.AddValidatedSettings<TOptions>(TOptions.SectionName);
 
     private static IServiceCollection AddValidatedSettings<TOptions>(this IServiceCollection services,
         string sectionName)
@@ -55,6 +62,22 @@ internal static class DependencyInjection
 
         services
             .AddHealthChecks();
+
+        // TODO remove after BFF/Proxy setup
+        services.AddCors(options =>
+        {
+            using var serviceProvider = services.BuildServiceProvider();
+            var settings = serviceProvider
+                .GetRequiredService<IOptions<CorsSettings>>()
+                .Value;
+            if (!settings.AllowCors) return;
+
+            options.AddDefaultPolicy(policy => policy
+                .WithOrigins(settings.AllowedOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+            );
+        });
 
         return services;
     }
