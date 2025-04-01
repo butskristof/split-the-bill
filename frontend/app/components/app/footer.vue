@@ -5,14 +5,7 @@
     </div>
 
     <div class="right">
-      <UButton
-        :icon="colorModeIcon"
-        aria-label="Toggle color mode"
-        color="neutral"
-        variant="ghost"
-        @click="toggleColorMode"
-      />
-
+      <AppColorModeButton />
       <UButton
         to="https://github.com/butskristof/split-the-bill"
         target="_blank"
@@ -24,20 +17,6 @@
     </div>
   </footer>
 </template>
-
-<script setup lang="ts">
-//#region color mode
-
-const colorMode = useColorMode();
-const colorModeIcon = computed(() =>
-  colorMode.value === 'dark' ? 'i-mynaui-sun' : 'i-mynaui-moon',
-);
-const toggleColorMode = () => {
-  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
-};
-
-//#endregion
-</script>
 
 <style scoped>
 footer {

@@ -1,5 +1,7 @@
-using Microsoft.AspNetCore.OpenApi;
+using Microsoft.Extensions.Options;
 using SplitTheBill.Api.Constants;
+using SplitTheBill.Api.Extensions;
+using SplitTheBill.Application.Common.Configuration;
 
 namespace SplitTheBill.Api;
 
@@ -9,8 +11,13 @@ internal static class DependencyInjection
 
     internal static IServiceCollection AddConfiguration(this IServiceCollection services)
     {
+        services.AddValidatedSettings<CorsSettings>();
         return services;
     }
+
+    private static IServiceCollection AddValidatedSettings<TOptions>(this IServiceCollection services)
+        where TOptions : class, ISettings
+        => services.AddValidatedSettings<TOptions>(TOptions.SectionName);
 
     private static IServiceCollection AddValidatedSettings<TOptions>(this IServiceCollection services,
         string sectionName)
@@ -34,38 +41,16 @@ internal static class DependencyInjection
         // add runtime-generated OpenAPI documentation
         services.AddOpenApi(ApiConstants.OpenApiDocumentName, options =>
         {
-            // since almost all the in- and outgoing types are named Request and Response, we'll use 
-            // the full name of the type as schema ID 
-            // start by using the default implementation and only replace the value if it is not null 
-            // (this will exclude primitive types which shouldn't explicitly be listed in the specification)
-            options.CreateSchemaReferenceId = type =>
+            options.CustomSchemaIds(type =>
             {
-                var defaultSchemaReferenceId = OpenApiOptions.CreateDefaultSchemaReferenceId(type);
-                if (string.IsNullOrWhiteSpace(defaultSchemaReferenceId)) return null;
-                var schemaReferenceId = type.Type.FullName;
-                if (string.IsNullOrWhiteSpace(schemaReferenceId)) return null;
+                // build the full type name by traversing up its declaring types, this will result in e.g.
+                // "CreateExpense.Request.Participant"
+                var schemaId = type.Name;
+                for (Type current = type; current.DeclaringType is not null; current = current.DeclaringType)
+                    schemaId = $"{current.DeclaringType.Name}.{schemaId}";
 
-                // inner classes such as request are joined with + instead of .
-                schemaReferenceId = schemaReferenceId.Replace('+', '.');
-                // remove common prefixes (SplitTheBill.Application.Modules e.g.)
-                // by splitting them into parts, we can progressively shorten the result and given we 
-                // hold to a similar structure (e.g. Application/Modules and Api/Modules), this can
-                // effectively result in a uniform collection of schema IDs
-                string[] prefixesToDelete =
-                [
-                    nameof(SplitTheBill),
-                    nameof(Application),
-                    nameof(Api),
-                    nameof(Modules)
-                ];
-                foreach (var prefix in prefixesToDelete)
-                {
-                    if (schemaReferenceId.StartsWith(prefix + "."))
-                        schemaReferenceId = schemaReferenceId.Remove(0, prefix.Length + 1);
-                }
-
-                return schemaReferenceId;
-            };
+                return schemaId;
+            });
         });
 
         // add support for ProblemDetails to handle failed requests
@@ -77,6 +62,22 @@ internal static class DependencyInjection
 
         services
             .AddHealthChecks();
+
+        // TODO remove after BFF/Proxy setup
+        services.AddCors(options =>
+        {
+            using var serviceProvider = services.BuildServiceProvider();
+            var settings = serviceProvider
+                .GetRequiredService<IOptions<CorsSettings>>()
+                .Value;
+            if (!settings.AllowCors) return;
+
+            options.AddDefaultPolicy(policy => policy
+                .WithOrigins(settings.AllowedOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+            );
+        });
 
         return services;
     }
