@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Hello, world!</h1>
+    <UButton to="/other">To other page</UButton>
     <MembersList />
     <GroupsList />
     <div
@@ -61,3 +62,4 @@
     </div>
   </div>
 </template>
+<script setup lang="ts"></script>
