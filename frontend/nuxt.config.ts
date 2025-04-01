@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint', '@nuxt/ui'],
+  modules: ['@nuxt/eslint', '@nuxt/ui', 'nuxt-open-fetch'],
   css: ['~/assets/css/main.css'],
   icon: {
     customCollections: [
@@ -14,5 +14,12 @@ export default defineNuxtConfig({
         dir: '~/assets/icons',
       },
     ],
+  },
+  openFetch: {
+    clients: {
+      splitTheBillApi: {
+        baseURL: 'http://localhost:5222',
+      },
+    },
   },
 });
