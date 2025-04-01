@@ -1,6 +1,5 @@
 <template>
   <div class="groups">
-    <h2>Groups</h2>
     <p v-if="isPending">Loading...</p>
     <p v-if="error">{{ error }}</p>
     <ul v-else>
@@ -8,7 +7,9 @@
         v-for="group in groups"
         :key="group.id"
       >
-        {{ group.name }} ({{ group.id }})
+        <NuxtLink :to="{ name: 'groups-id', params: { id: group.id } }">
+          {{ group.name }}
+        </NuxtLink>
       </li>
     </ul>
   </div>
