@@ -1,6 +1,6 @@
 namespace SplitTheBill.Application.Common.Configuration;
 
-public sealed class CorsSettings : ISettings
+public sealed record CorsSettings : ISettings
 {
     public static string SectionName => "Cors";
 
