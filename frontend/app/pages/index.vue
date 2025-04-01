@@ -2,7 +2,7 @@
   <div>
     <h1>Hello, world!</h1>
     <div
-      v-if="true"
+      v-if="false"
       class="content"
     >
       <p>Hello, world!</p>
