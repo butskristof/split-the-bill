@@ -9,6 +9,7 @@ public sealed class PaymentRequestBuilder
     private Guid? _sendingMemberId = Guid.NewGuid();
     private Guid? _receivingMemberId = Guid.NewGuid();
     private decimal? _amount = 100m;
+    private DateTimeOffset? _timestamp = DateTimeOffset.UtcNow;
 
     public PaymentRequestBuilder WithGroupId(Guid? groupId)
     {
@@ -39,6 +40,12 @@ public sealed class PaymentRequestBuilder
         _amount = amount;
         return this;
     }
+    
+    public PaymentRequestBuilder WithTimestamp(DateTimeOffset? timestamp)
+    {
+        _timestamp = timestamp;
+        return this;
+    }
 
     public UpdatePayment.Request BuildUpdateRequest() => new()
     {
@@ -46,7 +53,8 @@ public sealed class PaymentRequestBuilder
         PaymentId = _paymentId,
         SendingMemberId = _sendingMemberId,
         ReceivingMemberId = _receivingMemberId,
-        Amount = _amount
+        Amount = _amount,
+        Timestamp = _timestamp,
     };
 
     public static implicit operator UpdatePayment.Request(PaymentRequestBuilder builder) =>
@@ -57,7 +65,8 @@ public sealed class PaymentRequestBuilder
         GroupId = _groupId,
         SendingMemberId = _sendingMemberId,
         ReceivingMemberId = _receivingMemberId,
-        Amount = _amount
+        Amount = _amount,
+        Timestamp = _timestamp,
     };
 
     public static implicit operator CreatePayment.Request(PaymentRequestBuilder builder) =>

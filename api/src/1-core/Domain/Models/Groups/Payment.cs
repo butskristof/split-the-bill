@@ -9,4 +9,6 @@ public sealed class Payment
     public required Guid ReceivingMemberId { get; set; }
     
     public required decimal Amount { get; set; }
+    
+    public required DateTimeOffset Timestamp { get; set; }
 }

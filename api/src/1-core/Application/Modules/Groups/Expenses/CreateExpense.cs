@@ -16,6 +16,7 @@ public static class CreateExpense
         public Guid? GroupId { get; init; }
         public string? Description { get; init; }
         public Guid? PaidByMemberId { get; init; }
+        public DateTimeOffset? Timestamp { get; init; }
         public decimal? Amount { get; init; }
         public ExpenseSplitType? SplitType { get; init; } = ExpenseSplitType.Evenly;
         public IReadOnlyList<Participant?> Participants { get; init; } = [];
@@ -38,6 +39,8 @@ public static class CreateExpense
                 .ValidString(true);
             RuleFor(r => r.PaidByMemberId)
                 .NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.Timestamp)
+                .NotNullWithErrorCode();
             RuleFor(r => r.Amount)
                 .NotNullWithErrorCode()
                 .PositiveDecimal(false);
@@ -184,6 +187,7 @@ public static class CreateExpense
             {
                 Description = request.Description!,
                 PaidByMemberId = request.PaidByMemberId!.Value,
+                Timestamp = request.Timestamp!.Value,
             };
             switch (request.SplitType)
             {

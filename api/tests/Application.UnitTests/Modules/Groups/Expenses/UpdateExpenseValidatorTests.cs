@@ -719,6 +719,35 @@ internal sealed class UpdateExpenseValidatorTests
 
     #endregion
 
+    #region Timestamp
+
+    [Test]
+    public void NullTimestamp_Fails()
+    {
+        var request = new ExpenseRequestBuilder()
+            .WithTimestamp(null)
+            .BuildUpdateRequest();
+        var result = _sut.TestValidate(request);
+        
+        result
+            .ShouldHaveValidationErrorFor(r => r.Timestamp)
+            .WithErrorMessage(ErrorCodes.Required);
+    }
+    
+    [Test]
+    public void ValidTimestamp_Passes()
+    {
+        var request = new ExpenseRequestBuilder()
+            .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 14, 21, TimeSpan.Zero))
+            .BuildUpdateRequest();
+        var result = _sut.TestValidate(request);
+        
+        result
+            .ShouldNotHaveValidationErrorFor(r => r.Timestamp);
+    }
+
+    #endregion
+
     [Test]
     public void ValidRequest_Passes()
     {
@@ -726,8 +755,9 @@ internal sealed class UpdateExpenseValidatorTests
             .WithGroupId(Guid.NewGuid())
             .WithExpenseId(Guid.NewGuid())
             .WithDescription("Expense description")
-            .WithAmount(200m)
             .WithPaidByMemberId(Guid.NewGuid())
+            .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 28, 30, TimeSpan.Zero))
+            .WithAmount(200m)
             .WithSplitType(ExpenseSplitType.Percentual)
             .WithParticipants(new List<UpdateExpense.Request.Participant>
             {

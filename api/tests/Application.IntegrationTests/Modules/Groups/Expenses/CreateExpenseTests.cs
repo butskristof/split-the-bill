@@ -247,12 +247,14 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
+        var timestamp = new DateTimeOffset(2025, 04, 03, 00, 47, 40, TimeSpan.Zero);
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithDescription(description)
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithTimestamp(timestamp)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.Evenly)
             .WithParticipants(new List<CreateExpense.Request.Participant>
@@ -276,8 +278,9 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null && p.ExactShare == null),
@@ -292,8 +295,9 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null && p.ExactShare == null),
@@ -316,10 +320,12 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
 
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
+        var timestamp = new DateTimeOffset(2025, 04, 03, 00, 50, 39, TimeSpan.Zero);
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithDescription(description)
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithTimestamp(timestamp)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.Percentual)
             .WithParticipants(new List<CreateExpense.Request.Participant>
@@ -345,8 +351,9 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.ExactShare == null),
@@ -363,8 +370,9 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.ExactShare == null),
@@ -387,12 +395,14 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
+        var timestamp = new DateTimeOffset(2025, 04, 03, 00, 51, 00, TimeSpan.Zero);
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithDescription(description)
             .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithTimestamp(timestamp)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.ExactAmount)
             .WithParticipants(new List<CreateExpense.Request.Participant>
@@ -418,8 +428,9 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null),
@@ -436,8 +447,9 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null),

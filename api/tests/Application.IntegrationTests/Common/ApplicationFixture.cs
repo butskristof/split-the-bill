@@ -21,7 +21,7 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
 {
     private ITestDatabase _database = null!;
     private FakeTimeProvider _timeProvider = new();
-    private string _userId;
+    private string _userId = TestMembers.Default.UserId!;
 
     private IServiceScopeFactory _scopeFactory = null!;
 
@@ -61,7 +61,7 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
     {
         await _database.ResetAsync();
         _timeProvider = new FakeTimeProvider();
-        _userId = TestMembers.Default.UserId;
+        _userId = TestMembers.Default.UserId!;
     }
 
     public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)

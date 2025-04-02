@@ -217,6 +217,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
             .WithAmount(100m)
+            .WithTimestamp(new DateTimeOffset(2025,4,3,0,36,1,TimeSpan.Zero))
             .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
@@ -239,11 +240,13 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
+        var timestamp = new DateTimeOffset(2025, 4, 3, 0, 32, 1, TimeSpan.Zero);
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
             .WithAmount(100m)
+            .WithTimestamp(timestamp)
             .BuildCreateRequest();
         await Application.SendAsync(request);
 
@@ -257,7 +260,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             .ShouldSatisfyAllConditions(
                 p => p.SendingMemberId.ShouldBe(TestMembers.Alice.Id),
                 p => p.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id),
-                p => p.Amount.ShouldBe(100)
+                p => p.Amount.ShouldBe(100),
+                p => p.Timestamp.ShouldBe(timestamp)
             );
     }
 
@@ -276,11 +280,13 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
+        var timestamp = new DateTimeOffset(2025, 4, 3, 0, 33, 14, TimeSpan.Zero);
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
             .WithAmount(100m)
+            .WithTimestamp(timestamp)
             .BuildCreateRequest();
         await Application.SendAsync(request);
 
@@ -292,7 +298,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             .ShouldSatisfyAllConditions(
                 p => p.SendingMemberId.ShouldBe(TestMembers.Alice.Id),
                 p => p.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id),
-                p => p.Amount.ShouldBe(100)
+                p => p.Amount.ShouldBe(100),
+                p => p.Timestamp.ShouldBe(timestamp)
             );
     }
 }

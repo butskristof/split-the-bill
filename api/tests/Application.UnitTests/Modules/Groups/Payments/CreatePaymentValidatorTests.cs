@@ -193,6 +193,31 @@ internal sealed class CreatePaymentValidatorTests
     }
 
     [Test]
+    public void NullTimestamp_Fails()
+    {
+        var request = new PaymentRequestBuilder()
+            .WithTimestamp(null)
+            .BuildCreateRequest();
+        var result = _sut.TestValidate(request);
+        
+        result
+            .ShouldHaveValidationErrorFor(r => r.Timestamp)
+            .WithErrorMessage(ErrorCodes.Required);
+    }
+    
+    [Test]
+    public void ValidTimestamp_Passes()
+    {
+        var request = new PaymentRequestBuilder()
+            .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 14, 21, TimeSpan.Zero))
+            .BuildCreateRequest();
+        var result = _sut.TestValidate(request);
+        
+        result
+            .ShouldNotHaveValidationErrorFor(r => r.Timestamp);
+    }
+
+    [Test]
     public void ValidRequest_Passes()
     {
         var request = new PaymentRequestBuilder()
@@ -200,6 +225,7 @@ internal sealed class CreatePaymentValidatorTests
             .WithSendingMemberId(Guid.NewGuid())
             .WithReceivingMemberId(Guid.NewGuid())
             .WithAmount(100m)
+            .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 13, 11, TimeSpan.Zero))
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveAnyValidationErrors();
