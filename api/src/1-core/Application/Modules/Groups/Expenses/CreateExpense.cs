@@ -39,6 +39,8 @@ public static class CreateExpense
                 .ValidString(true);
             RuleFor(r => r.PaidByMemberId)
                 .NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.Timestamp)
+                .NotNullWithErrorCode();
             RuleFor(r => r.Amount)
                 .NotNullWithErrorCode()
                 .PositiveDecimal(false);

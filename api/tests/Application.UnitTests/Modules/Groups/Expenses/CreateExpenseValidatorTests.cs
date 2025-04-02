@@ -171,6 +171,35 @@ internal sealed class CreateExpenseValidatorTests
 
     #endregion
 
+    #region Timestamp
+
+    [Test]
+    public void NullTimestamp_Fails()
+    {
+        var request = new ExpenseRequestBuilder()
+            .WithTimestamp(null)
+            .BuildCreateRequest();
+        var result = _sut.TestValidate(request);
+        
+        result
+            .ShouldHaveValidationErrorFor(r => r.Timestamp)
+            .WithErrorMessage(ErrorCodes.Required);
+    }
+    
+    [Test]
+    public void ValidTimestamp_Passes()
+    {
+        var request = new ExpenseRequestBuilder()
+            .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 14, 21, TimeSpan.Zero))
+            .BuildCreateRequest();
+        var result = _sut.TestValidate(request);
+        
+        result
+            .ShouldNotHaveValidationErrorFor(r => r.Timestamp);
+    }
+
+    #endregion
+
     #region Amount
 
     [Test]

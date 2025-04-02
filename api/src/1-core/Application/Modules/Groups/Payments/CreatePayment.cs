@@ -35,6 +35,8 @@ public static class CreatePayment
             RuleFor(r => r.Amount)
                 .NotNullWithErrorCode()
                 .PositiveDecimal(false);
+            RuleFor(r => r.Timestamp)
+                .NotNullWithErrorCode();
         }
     }
 
