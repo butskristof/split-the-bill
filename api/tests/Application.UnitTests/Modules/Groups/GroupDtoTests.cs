@@ -73,6 +73,22 @@ internal sealed class GroupDtoTests
     }
 
     [Test]
+    public void GroupDto_OrdersPaymentsDescending()
+    {
+        var baseTimestamp = DateTimeOffset.UtcNow;
+        var group = new GroupBuilder()
+            .AddPayment(new PaymentBuilder().WithTimestamp(baseTimestamp.AddMinutes(1)))
+            .AddPayment(new PaymentBuilder().WithTimestamp(baseTimestamp.AddMinutes(-1)))
+            .AddPayment(new PaymentBuilder().WithTimestamp(baseTimestamp.AddMinutes(15)))
+            .Build();
+        var dto = new GroupDto(group);
+        
+        dto.Payments
+            .Select(p => p.Timestamp)
+            .ShouldBeInOrder(SortDirection.Descending);
+    }
+
+    [Test]
     public void GroupDto_MapsExpenseProperties()
     {
         var expense1Id = Guid.NewGuid();
@@ -173,5 +189,27 @@ internal sealed class GroupDtoTests
                         p => p.ExactShare.ShouldBe(1)
                     )
             );
+    }
+
+    [Test]
+    public void GroupDto_OrdersExpensesDescending()
+    {
+        var baseTimestamp = DateTimeOffset.UtcNow;
+        var group = new GroupBuilder()
+            .AddExpense(new ExpenseBuilder()
+                .WithEvenSplit([TestMembers.Alice.Id])
+                .WithTimestamp(baseTimestamp.AddMinutes(1)))
+            .AddExpense(new ExpenseBuilder()
+                .WithEvenSplit([TestMembers.Alice.Id])
+                .WithTimestamp(baseTimestamp.AddMinutes(-1)))
+            .AddExpense(new ExpenseBuilder()
+                .WithEvenSplit([TestMembers.Alice.Id])
+                .WithTimestamp(baseTimestamp.AddMinutes(15)))
+            .Build();
+        var dto = new GroupDto(group);
+
+        dto.Expenses
+            .Select(e => e.Timestamp)
+            .ShouldBeInOrder(SortDirection.Descending);
     }
 }
