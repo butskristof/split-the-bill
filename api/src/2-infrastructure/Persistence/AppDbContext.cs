@@ -3,6 +3,7 @@ using SplitTheBill.Application.Common.Constants;
 using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Domain.Models.Groups;
 using SplitTheBill.Domain.Models.Members;
+using SplitTheBill.Persistence.Common;
 
 namespace SplitTheBill.Persistence;
 
@@ -47,12 +48,12 @@ internal sealed class AppDbContext : DbContext, IAppDbContext
         // it should be used in a future version
         base.OnModelCreating(modelBuilder);
 
-        // modelBuilder.HasCollation(
-        //     PersistenceConstants.CaseInsensitiveCollation,
-        //     locale: "en-u-ks-primary",
-        //     provider: "icu",
-        //     deterministic: false
-        // );
+        modelBuilder.HasCollation(
+            PersistenceConstants.CaseInsensitiveCollation,
+            locale: "en-u-ks-primary",
+            provider: "icu",
+            deterministic: false
+        );
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 

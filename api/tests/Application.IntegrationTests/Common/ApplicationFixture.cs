@@ -18,6 +18,7 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
 {
     private ITestDatabase _database = null!;
     private FakeTimeProvider _timeProvider = new();
+    private string? _userId = null;
 
     private IServiceScopeFactory _scopeFactory = null!;
 
@@ -107,6 +108,11 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
         return await context.Set<TEntity>().CountAsync();
     }
 
+    public void SetDateTime(DateTimeOffset dateTime)
+        => _timeProvider.SetUtcNow(dateTime);
+
+    public string? GetUserId() => _userId;
+    public void SetUserId(string? userId) => _userId = userId;
 
     public async ValueTask DisposeAsync()
     {

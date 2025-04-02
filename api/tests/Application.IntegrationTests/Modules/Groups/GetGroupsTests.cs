@@ -1,6 +1,7 @@
 using Shouldly;
 using SplitTheBill.Application.IntegrationTests.Common;
 using SplitTheBill.Application.Modules.Groups;
+using SplitTheBill.Application.Tests.Shared.TestData;
 using SplitTheBill.Application.Tests.Shared.TestData.Builders;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups;
@@ -72,5 +73,70 @@ internal sealed class GetGroupsTests : ApplicationTestBase
             m.Id == groupId1 && m.Name == groupName1);
         response.Groups.ShouldContain(m =>
             m.Id == groupId2 && m.Name == groupName2);
+    }
+
+    [Test]
+    public async Task ReturnsOnlyGroupsWhereUserIdIsGroupMember()
+    {
+        var group1Id = Guid.NewGuid();
+        var group2Id = Guid.NewGuid();
+
+        await SeedMembersAsync();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(group1Id)
+                .WithMembers([TestMembers.Alice.Id])
+                .Build(),
+            new GroupBuilder()
+                .WithId(group2Id)
+                .WithMembers([TestMembers.Bob.Id])
+                .Build()
+        );
+
+        Application.SetUserId(TestMembers.Bob.UserId);
+        var result = await Application.SendAsync(new GetGroups.Request());
+        var response = result.Value;
+
+        response.Groups
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                g => g.Id.ShouldBe(group2Id)
+            );
+    }
+
+    [Test]
+    public async Task NoGroupsForUserId_ReturnsEmptyList()
+    {
+        var groupId = Guid.NewGuid();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .Build()
+        );
+
+        Application.SetUserId(TestMembers.Alice.UserId);
+        var result = await Application.SendAsync(new GetGroups.Request());
+        result.IsError.ShouldBeFalse();
+        result.Value
+            .Groups
+            .ShouldBeEmpty();
+    }
+
+    [Test]
+    public async Task NoUserId_ReturnsEmptyList()
+    {
+        var groupId = Guid.NewGuid();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .Build()
+        );
+
+        Application.SetUserId(null);
+        var result = await Application.SendAsync(new GetGroups.Request());
+        result.IsError.ShouldBeFalse();
+        result.Value
+            .Groups
+            .ShouldBeEmpty();
     }
 }

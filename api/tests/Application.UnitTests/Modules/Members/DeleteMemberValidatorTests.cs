@@ -21,7 +21,7 @@ internal sealed class DeleteMemberValidatorTests
     [Test]
     public void NonEmptyId_Passes()
     {
-        var request = new DeleteMember.Request(new Guid("475C15AA-05AB-4030-B44E-CCB077E220E1"));
+        var request = new DeleteMember.Request(Guid.NewGuid());
         var result = _sut.TestValidate(request);
 
         result
