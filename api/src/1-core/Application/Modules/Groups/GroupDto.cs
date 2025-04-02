@@ -23,10 +23,12 @@ public record GroupDto
 
     public List<ExpenseDto> Expenses => _group.Expenses
         .Select(e => new ExpenseDto(e))
+        .OrderByDescending(e => e.Timestamp)
         .ToList();
 
     public List<PaymentDto> Payments => _group.Payments
         .Select(p => new PaymentDto(p))
+        .OrderByDescending(p => p.Timestamp)
         .ToList();
 
     #endregion
