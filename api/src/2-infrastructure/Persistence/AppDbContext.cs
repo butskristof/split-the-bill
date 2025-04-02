@@ -6,6 +6,7 @@ using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Domain.Models.Groups;
 using SplitTheBill.Domain.Models.Members;
 using SplitTheBill.Persistence.Common;
+using SplitTheBill.Persistence.ValueConverters;
 
 namespace SplitTheBill.Persistence;
 
@@ -72,7 +73,9 @@ internal sealed class AppDbContext : DbContext, IAppDbContext
             .Properties<decimal>()
             .HavePrecision(18, 6);
 
-        // TODO DateTimeOffset
+		configurationBuilder
+			.Properties<DateTimeOffset>()
+			.HaveConversion<DateTimeOffsetValueConverter>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
