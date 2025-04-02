@@ -40,8 +40,7 @@ public static class GetGroups
             _logger.LogDebug("Fetching all groups from database");
 
             var groups = await _dbContext
-                .Groups
-                .AsNoTracking()
+                .CurrentUserGroups(false)
                 .Select(g => new Response.GroupDto(g.Id, g.Name))
                 .ToListAsync(cancellationToken);
             _logger.LogDebug("Fetched mapped Group entities from database");

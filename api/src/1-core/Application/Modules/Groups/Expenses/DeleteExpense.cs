@@ -43,7 +43,7 @@ public static class DeleteExpense
                 request.ExpenseId, request.GroupId);
 
             var group = await _dbContext
-                .Groups
+                .CurrentUserGroups(true)
                 .Include(g => g.Expenses)
                 .SingleOrDefaultAsync(g => g.Id == request.GroupId, cancellationToken);
             if (group is null)

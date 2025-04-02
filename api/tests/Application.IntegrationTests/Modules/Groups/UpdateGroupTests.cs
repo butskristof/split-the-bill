@@ -78,11 +78,36 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
     }
 
     [Test]
+    public async Task UserIdNotAGroupMember_ReturnsNotFoundError()
+    {
+        var groupId = Guid.NewGuid();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .Build()
+        );
+        Application.SetUserId(TestMembers.Bob.UserId);
+
+        var request = new GroupRequestBuilder()
+            .WithId(groupId)
+            .BuildUpdateRequest();
+        var result = await Application.SendAsync(request);
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.NotFound),
+                e => e.Code.ShouldBe(nameof(Group.Id))
+            );
+    }
+
+    [Test]
     public async Task ValidRequest_ReturnsUpdated()
     {
         var id = Guid.NewGuid();
         await Application.AddAsync(new GroupBuilder()
             .WithId(id)
+            .WithDefaultMember()
             .WithName("group name")
             .Build()
         );
@@ -108,6 +133,7 @@ internal sealed class UpdateGroupTests : ApplicationTestBase
         const string name = "group name";
         await Application.AddAsync(new GroupBuilder()
             .WithId(id)
+            .WithDefaultMember()
             .WithName(name)
             .Build()
         );

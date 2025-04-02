@@ -60,7 +60,7 @@ public static class UpdatePayment
                 request.PaymentId, request.GroupId);
 
             var group = await _dbContext
-                .Groups
+                .CurrentUserGroups(true)
                 .Include(g => g.Payments)
                 .Include(g => g.Members)
                 .SingleOrDefaultAsync(g => g.Id == request.GroupId, cancellationToken);

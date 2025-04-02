@@ -9,7 +9,7 @@ using SplitTheBill.Domain.Models.Members;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Members;
 
-internal sealed class DeleteMemberTests : ApplicationTestBase
+internal sealed class DeleteMemberTests() : ApplicationTestBase(false)
 {
     [Test]
     public async Task InvalidRequest_ReturnsValidationError()
@@ -89,11 +89,13 @@ internal sealed class DeleteMemberTests : ApplicationTestBase
     [Test]
     public async Task MemberWithGroups_CannotBeDeleted()
     {
+        await SeedMembersAsync();
         await Application.AddAsync(
             new GroupBuilder()
-                .WithMembers([TestMembers.Alice])
+                .WithMembers([TestMembers.Alice.Id])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Bob.UserId);
 
         var result = await Application.SendAsync(
             new DeleteMember.Request(TestMembers.Alice.Id)

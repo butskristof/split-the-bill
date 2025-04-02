@@ -29,9 +29,17 @@ public static class TestMembers
 
     public static Member David => new()
     {
-        Id =new Guid("66559461-E123-4233-9B57-4D8E715AA19F") ,
+        Id = new Guid("66559461-E123-4233-9B57-4D8E715AA19F"),
         Name = nameof(David),
         Username = "david",
+    };
+
+    public static Member Default = new()
+    {
+        Id = new Guid("E32FCC00-F768-43E8-9162-5421393EB970"),
+        Name = nameof(Default),
+        Username = "default",
+        UserId = "default",
     };
 
     public static IEnumerable<Member> GetAllMembers()
@@ -40,5 +48,6 @@ public static class TestMembers
         yield return Bob;
         yield return Charlie;
         yield return David;
+        yield return Default;
     }
 }

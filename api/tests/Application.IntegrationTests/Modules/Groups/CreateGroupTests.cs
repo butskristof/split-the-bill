@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using ErrorOr;
 using Shouldly;
 using SplitTheBill.Application.Common.Validation;
@@ -67,9 +68,19 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     }
 
     [Test]
-    [Skip("Auth not implemented yet")]
-    public async Task ValidRequest_AddsCurrentMemberToGroup()
+    public async Task NoMemberForUserId_Throws()
     {
+        Application.SetUserId("NotAMember");
+        var request = new GroupRequestBuilder()
+            .BuildCreateRequest();
+        await Should.ThrowAsync<AuthenticationException>(async () => await Application.SendAsync(request));
+    }
+
+    [Test]
+    public async Task AddsCurrentMemberToGroup()
+    {
+        Application.SetUserId(TestMembers.Alice.UserId);
+        
         var request = new GroupRequestBuilder()
             .WithName("group name")
             .BuildCreateRequest();
@@ -78,6 +89,10 @@ internal sealed class CreateGroupTests : ApplicationTestBase
 
         var group = await Application.FindAsync<Group>(g => g.Id == id, g => g.Members);
         group!.Members
-            .ShouldHaveSingleItem();
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                m => m.Id.ShouldBe(TestMembers.Alice.Id)
+            );
     }
+
 }

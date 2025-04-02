@@ -1,4 +1,6 @@
+using System.Security.Authentication;
 using Microsoft.EntityFrameworkCore;
+using SplitTheBill.Application.Common.Authentication;
 using SplitTheBill.Application.Common.Constants;
 using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Domain.Models.Groups;
@@ -9,9 +11,17 @@ namespace SplitTheBill.Persistence;
 
 internal sealed class AppDbContext : DbContext, IAppDbContext
 {
-    public AppDbContext(DbContextOptions options) : base(options)
+    #region construction
+
+    private readonly IAuthenticationInfo _authenticationInfo;
+
+    public AppDbContext(DbContextOptions options, IAuthenticationInfo authenticationInfo)
+        : base(options)
     {
+        _authenticationInfo = authenticationInfo;
     }
+
+    #endregion
 
     #region Entities
 
@@ -19,6 +29,29 @@ internal sealed class AppDbContext : DbContext, IAppDbContext
     public DbSet<Group> Groups { get; set; }
 
     #endregion
+
+    public IQueryable<Group> CurrentUserGroups(bool tracking)
+    {
+        var query = Groups
+            .Where(g => g.Members.Any(m => m.UserId == _authenticationInfo.UserId));
+
+        if (!tracking)
+            query = query.AsNoTracking();
+
+        return query;
+    }
+
+    public async Task<Member> GetMemberForCurrentUserAsync(bool tracking = false,
+        CancellationToken cancellationToken = default)
+    {
+        var query = Members
+            .Where(m => m.UserId == _authenticationInfo.UserId);
+        if (!tracking)
+            query = query.AsNoTracking();
+
+        return await query.SingleOrDefaultAsync(cancellationToken)
+               ?? throw new AuthenticationException("Could not find Member for currently authenticated user");
+    }
 
     #region Configuration
 
@@ -38,7 +71,7 @@ internal sealed class AppDbContext : DbContext, IAppDbContext
         configurationBuilder
             .Properties<decimal>()
             .HavePrecision(18, 6);
-        
+
         // TODO DateTimeOffset
     }
 

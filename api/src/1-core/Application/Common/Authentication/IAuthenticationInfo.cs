@@ -2,5 +2,5 @@ namespace SplitTheBill.Application.Common.Authentication;
 
 public interface IAuthenticationInfo
 {
-    string? UserId { get; }
+    string UserId { get; }
 }

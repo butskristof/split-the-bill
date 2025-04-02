@@ -43,6 +43,27 @@ internal sealed class GetGroupTests : ApplicationTestBase
     }
 
     [Test]
+    public async Task UserIdNotAGroupMember_ReturnsNotFoundError()
+    {
+        var groupId = Guid.NewGuid();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .Build()
+        );
+        Application.SetUserId(TestMembers.Bob.UserId);
+
+        var result = await Application.SendAsync(new GetGroup.Request(groupId));
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.NotFound),
+                e => e.Code.ShouldBe(nameof(Group.Id))
+            );
+    }
+
+    [Test]
     public async Task ReturnsMappedEntity()
     {
         var groupId = Guid.NewGuid();
@@ -52,10 +73,7 @@ internal sealed class GetGroupTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithName(groupName)
-                .WithMembers([
-                    TestMembers.Alice,
-                    TestMembers.Bob
-                ])
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .WithExpenses([
                     new ExpenseBuilder()
                         .WithAmount(100)
@@ -69,6 +87,7 @@ internal sealed class GetGroupTests : ApplicationTestBase
                 )
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var result = await Application.SendAsync(new GetGroup.Request(groupId));
 

@@ -2,8 +2,10 @@ using System.Data;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using NSubstitute;
 using Respawn;
 using Respawn.Graph;
+using SplitTheBill.Application.Common.Authentication;
 using SplitTheBill.Persistence;
 using Testcontainers.PostgreSql;
 
@@ -39,7 +41,7 @@ internal sealed class TestcontainersTestDatabase : ITestDatabase
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql(_connectionString, Persistence.DependencyInjection.GetDbContextOptionsBuilder())
             .Options;
-        var context = new AppDbContext(options);
+        var context = new AppDbContext(options, Substitute.For<IAuthenticationInfo>());
         await context.Database.MigrateAsync();
 
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions

@@ -151,7 +151,7 @@ public static class UpdateExpense
                 request.ExpenseId, request.GroupId);
 
             var group = await _dbContext
-                .Groups
+                .CurrentUserGroups(true)
                 .Include(g => g.Expenses)
                 .ThenInclude(e => e.Participants)
                 .Include(g => g.Members)

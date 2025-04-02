@@ -10,7 +10,7 @@ using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Payments;
 
-internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
+internal sealed class CreatePaymentTests : ApplicationTestBase
 {
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
@@ -65,12 +65,39 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
     }
 
     [Test]
+    public async Task UserIdNotAGroupMember_ReturnsNotFoundError()
+    {
+        var groupId = Guid.NewGuid();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id])
+                .Build()
+        );
+        Application.SetUserId(TestMembers.Bob.UserId);
+        
+        var request = new PaymentRequestBuilder()
+            .WithGroupId(groupId)
+            .BuildCreateRequest();
+        var result = await Application.SendAsync(request);
+
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.NotFound),
+                e => e.Code.ShouldBe(nameof(request.GroupId))
+            );
+    }
+
+    [Test]
     public async Task SendingMemberDoesNotExist_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .Build()
         );
         var request = new PaymentRequestBuilder()
@@ -95,6 +122,7 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .Build()
         );
 
@@ -123,6 +151,7 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .WithMembers([TestMembers.Alice.Id])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
@@ -150,6 +179,7 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 .WithMembers([TestMembers.Alice.Id])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
@@ -180,6 +210,7 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 ])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
@@ -206,6 +237,7 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 ])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
@@ -242,6 +274,7 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 ])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
@@ -262,6 +295,4 @@ internal sealed class CreatePaymentTests() : ApplicationTestBase(true)
                 p => p.Amount.ShouldBe(100)
             );
     }
-
-    // TODO creating member not in group
 }

@@ -40,7 +40,7 @@ public static class DeleteGroup
             _logger.LogDebug("Deleting Group with id {Id}", request.Id);
 
             var group = await _dbContext
-                .Groups
+                .CurrentUserGroups(true)
                 .SingleOrDefaultAsync(g => g.Id == request.Id, cancellationToken);
             if (group is null)
             {

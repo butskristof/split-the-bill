@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Options;
-using SplitTheBill.Api.Common;
+using SplitTheBill.Api.Common.Authentication;
 using SplitTheBill.Api.Constants;
 using SplitTheBill.Api.Extensions;
 using SplitTheBill.Application.Common.Authentication;

@@ -11,7 +11,7 @@ using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Expenses;
 
-internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
+internal sealed class CreateExpenseTests : ApplicationTestBase
 {
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
@@ -54,12 +54,39 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
     }
 
     [Test]
+    public async Task UserIdNotAGroupMember_ReturnsNotFoundError()
+    {
+        var groupId = Guid.NewGuid();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id])
+                .Build()
+        );
+        Application.SetUserId(TestMembers.Bob.UserId);
+        
+        var request = new ExpenseRequestBuilder()
+            .WithGroupId(groupId)
+            .BuildCreateRequest();
+        
+        var result = await Application.SendAsync(request);
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.NotFound),
+                e => e.Code.ShouldBe(nameof(request.GroupId))
+            );
+    }
+
+    [Test]
     public async Task PaidByMemberDoesNotExist_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .Build()
         );
         var request = new ExpenseRequestBuilder()
@@ -84,6 +111,7 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .Build()
         );
 
@@ -112,6 +140,8 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
                 .WithMembers([TestMembers.Alice.Id])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
+        
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithPaidByMemberId(TestMembers.Alice.Id)
@@ -144,6 +174,8 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
                 .WithMembers([TestMembers.Alice.Id])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
+        
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithPaidByMemberId(TestMembers.Alice.Id)
@@ -213,6 +245,7 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
@@ -279,6 +312,7 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
@@ -351,6 +385,7 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
@@ -412,7 +447,4 @@ internal sealed class CreateExpenseTests() : ApplicationTestBase(true)
                     .ShouldContain(p => p.MemberId == TestMembers.Bob.Id && p.ExactShare == 80)
             );
     }
-
-
-    // TODO creating member not in group
 }

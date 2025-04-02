@@ -10,7 +10,7 @@ using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Expenses;
 
-internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
+internal sealed class DeleteExpenseTests : ApplicationTestBase
 {
     [Test]
     public async Task InvalidRequest_ReturnsValidationError()
@@ -82,6 +82,7 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
             .WithExpenses([expense])
             .Build();
         await Application.AddAsync(group);
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new DeleteExpense.Request(
             group.Id,
@@ -115,13 +116,16 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
             .Build();
         var group1 = new GroupBuilder()
             .WithId(Guid.NewGuid())
+            .WithDefaultMember()
             .WithMembers([TestMembers.Alice.Id])
             .WithExpenses([expense])
             .Build();
         var group2Id = Guid.NewGuid();
         await Application.AddAsync(
             group1,
-            new GroupBuilder().WithId(group2Id)
+            new GroupBuilder()
+                .WithId(group2Id)
+                .WithDefaultMember()
         );
 
         var request = new DeleteExpense.Request(
@@ -146,6 +150,39 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
     }
 
     [Test]
+    public async Task UserIdNotAGroupMember_ReturnsNotFoundError()
+    {
+        var groupId = Guid.NewGuid();
+        var expense = new ExpenseBuilder()
+            .WithId(Guid.NewGuid())
+            .WithPaidByMemberId(TestMembers.Alice.Id)
+            .WithAmount(100m)
+            .WithEvenSplit([TestMembers.Alice.Id])
+            .Build();
+        await Application.AddAsync(new GroupBuilder()
+            .WithId(groupId)
+            .WithMembers([TestMembers.Alice.Id])
+            .WithExpenses([expense])
+            .Build()
+        );
+        Application.SetUserId(TestMembers.Bob.UserId);
+        
+        var request = new DeleteExpense.Request(
+            groupId,
+            expense.Id
+        );
+        var result = await Application.SendAsync(request);
+
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.NotFound),
+                e => e.Code.ShouldBe(nameof(request.GroupId))
+            );
+    }
+
+    [Test]
     public async Task DeletesExpense()
     {
         var groupId = Guid.NewGuid();
@@ -161,6 +198,7 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
             .WithExpenses([expense])
             .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new DeleteExpense.Request(
             groupId,
@@ -200,6 +238,7 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
             .WithExpenses([expense1, expense2])
             .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new DeleteExpense.Request(
             groupId,
@@ -240,6 +279,7 @@ internal sealed class DeleteExpenseTests() : ApplicationTestBase(true)
             .WithExpenses([expense1, expense2])
             .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new DeleteExpense.Request(
             groupId,

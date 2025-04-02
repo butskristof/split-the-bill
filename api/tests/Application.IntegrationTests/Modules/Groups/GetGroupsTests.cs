@@ -28,6 +28,7 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .WithName(groupName)
                 .Build()
         );
@@ -55,10 +56,12 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId1)
+                .WithDefaultMember()
                 .WithName(groupName1)
                 .Build(),
             new GroupBuilder()
                 .WithId(groupId2)
+                .WithDefaultMember()
                 .WithName(groupName2)
                 .Build()
         );
@@ -81,19 +84,17 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         var group1Id = Guid.NewGuid();
         var group2Id = Guid.NewGuid();
 
-        await SeedMembersAsync();
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(group1Id)
-                .WithMembers([TestMembers.Alice.Id])
                 .Build(),
             new GroupBuilder()
                 .WithId(group2Id)
                 .WithMembers([TestMembers.Bob.Id])
                 .Build()
         );
-
         Application.SetUserId(TestMembers.Bob.UserId);
+        
         var result = await Application.SendAsync(new GetGroups.Request());
         var response = result.Value;
 
@@ -115,24 +116,6 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         );
 
         Application.SetUserId(TestMembers.Alice.UserId);
-        var result = await Application.SendAsync(new GetGroups.Request());
-        result.IsError.ShouldBeFalse();
-        result.Value
-            .Groups
-            .ShouldBeEmpty();
-    }
-
-    [Test]
-    public async Task NoUserId_ReturnsEmptyList()
-    {
-        var groupId = Guid.NewGuid();
-        await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .Build()
-        );
-
-        Application.SetUserId(null);
         var result = await Application.SendAsync(new GetGroups.Request());
         result.IsError.ShouldBeFalse();
         result.Value

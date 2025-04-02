@@ -1,7 +1,8 @@
+using System.Security.Authentication;
 using System.Security.Claims;
 using SplitTheBill.Application.Common.Authentication;
 
-namespace SplitTheBill.Api.Common;
+namespace SplitTheBill.Api.Common.Authentication;
 
 internal sealed class ApiAuthenticationInfo : IAuthenticationInfo
 {
@@ -20,5 +21,6 @@ internal sealed class ApiAuthenticationInfo : IAuthenticationInfo
         .HttpContext?
         .User;
 
-    public string? UserId => User?.FindFirstValue(ClaimTypes.NameIdentifier);
+    public string UserId => User?.FindFirstValue(ClaimTypes.NameIdentifier)
+                            ?? throw new AuthenticationException();
 }
