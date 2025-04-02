@@ -17,6 +17,7 @@ public static class CreatePayment
         public Guid? SendingMemberId { get; init; }
         public Guid? ReceivingMemberId { get; init; }
         public decimal? Amount { get; init; }
+        public DateTimeOffset? Timestamp { get; init; }
     }
 
     internal sealed class Validator : BaseValidator<Request>
@@ -91,6 +92,7 @@ public static class CreatePayment
                     SendingMemberId = request.SendingMemberId!.Value,
                     ReceivingMemberId = request.ReceivingMemberId!.Value,
                     Amount = request.Amount!.Value,
+                    Timestamp = request.Timestamp!.Value,
                 });
             _logger.LogDebug("Mapped request to entity and added to Group's Payments collection");
             await _dbContext.SaveChangesAsync(CancellationToken.None);

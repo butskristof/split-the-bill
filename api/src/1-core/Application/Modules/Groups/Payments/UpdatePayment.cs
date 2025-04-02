@@ -17,6 +17,7 @@ public static class UpdatePayment
         public Guid? SendingMemberId { get; init; }
         public Guid? ReceivingMemberId { get; init; }
         public decimal? Amount { get; init; }
+        public DateTimeOffset? Timestamp { get; init; }
     }
 
     internal sealed class Validator : BaseValidator<Request>
@@ -103,6 +104,7 @@ public static class UpdatePayment
             payment.SendingMemberId = request.SendingMemberId!.Value;
             payment.ReceivingMemberId = request.ReceivingMemberId!.Value;
             payment.Amount = request.Amount!.Value;
+            payment.Timestamp = request.Timestamp!.Value;
             _logger.LogDebug("Mapped values from request to entity");
 
             await _dbContext.SaveChangesAsync(CancellationToken.None);

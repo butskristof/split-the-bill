@@ -104,6 +104,7 @@ public record GroupDto
         Guid Id,
         string Description,
         decimal Amount,
+        DateTimeOffset Timestamp,
         ExpenseSplitType SplitType,
         List<ExpenseDto.ExpenseParticipantDto> Participants,
         Guid PaidByMemberId
@@ -113,6 +114,7 @@ public record GroupDto
             expense.Id,
             expense.Description,
             expense.Amount,
+            expense.Timestamp,
             expense.SplitType,
             expense.Participants
                 .Select(p => new ExpenseParticipantDto(p))
@@ -147,11 +149,18 @@ public record GroupDto
         Guid Id,
         Guid SendingMemberId,
         Guid ReceivingMemberId,
-        decimal Amount
+        decimal Amount,
+        DateTimeOffset Timestamp
     )
     {
         public PaymentDto(Payment payment)
-            : this(payment.Id, payment.SendingMemberId, payment.ReceivingMemberId, payment.Amount)
+            : this(
+                payment.Id,
+                payment.SendingMemberId,
+                payment.ReceivingMemberId,
+                payment.Amount,
+                payment.Timestamp
+            )
         {
         }
     }

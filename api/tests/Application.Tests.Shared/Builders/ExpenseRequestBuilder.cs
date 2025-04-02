@@ -9,6 +9,7 @@ public sealed class ExpenseRequestBuilder
     private Guid? _expenseId = Guid.NewGuid();
     private string? _description = "Test description";
     private decimal? _amount = 100.00m;
+    private DateTimeOffset? _timestamp = DateTimeOffset.UtcNow;
     private Guid? _paidByMemberId = Guid.NewGuid();
     private ExpenseSplitType? _splitType = ExpenseSplitType.Evenly;
 
@@ -47,6 +48,12 @@ public sealed class ExpenseRequestBuilder
         _amount = amount;
         return this;
     }
+    
+    public ExpenseRequestBuilder WithTimestamp(DateTimeOffset? timestamp)
+    {
+        _timestamp = timestamp;
+        return this;
+    }
 
     public ExpenseRequestBuilder WithSplitType(ExpenseSplitType? splitType)
     {
@@ -72,6 +79,7 @@ public sealed class ExpenseRequestBuilder
         Description = _description,
         PaidByMemberId = _paidByMemberId,
         Amount = _amount,
+        Timestamp = _timestamp,
         SplitType = _splitType,
         Participants = _createParticipants,
     };
@@ -86,6 +94,7 @@ public sealed class ExpenseRequestBuilder
         Description = _description,
         PaidByMemberId = _paidByMemberId,
         Amount = _amount,
+        Timestamp = _timestamp,
         SplitType = _splitType,
         Participants = _updateParticipants,
     };

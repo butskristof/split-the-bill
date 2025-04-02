@@ -18,6 +18,7 @@ public static class UpdateExpense
         public string? Description { get; init; }
         public Guid? PaidByMemberId { get; init; }
         public decimal? Amount { get; init; }
+        public DateTimeOffset? Timestamp { get; init; }
         public ExpenseSplitType? SplitType { get; init; } = ExpenseSplitType.Evenly;
         public IReadOnlyList<Participant?> Participants { get; init; } = [];
 
@@ -198,6 +199,7 @@ public static class UpdateExpense
             // request values are non-null confirmed by validator
             expense.Description = request.Description!;
             expense.PaidByMemberId = request.PaidByMemberId!.Value;
+            expense.Timestamp = request.Timestamp!.Value;
             switch (request.SplitType)
             {
                 case ExpenseSplitType.Evenly:

@@ -247,6 +247,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
+        var timestamp = new DateTimeOffset(2025, 04, 03, 00, 47, 40, TimeSpan.Zero);
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
         var request = new ExpenseRequestBuilder()
@@ -254,6 +255,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .WithDescription(description)
             .WithPaidByMemberId(TestMembers.Alice.Id)
             .WithAmount(amount)
+            .WithTimestamp(timestamp)
             .WithSplitType(ExpenseSplitType.Evenly)
             .WithParticipants(new List<CreateExpense.Request.Participant>
             {
@@ -277,6 +279,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),
+                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
                 e => e.Participants.Count.ShouldBe(2),
@@ -293,6 +296,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),
+                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
                 e => e.Participants.Count.ShouldBe(2),
@@ -316,11 +320,13 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
 
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
+        var timestamp = new DateTimeOffset(2025, 04, 03, 00, 50, 39, TimeSpan.Zero);
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithDescription(description)
             .WithPaidByMemberId(TestMembers.Alice.Id)
             .WithAmount(amount)
+            .WithTimestamp(timestamp)
             .WithSplitType(ExpenseSplitType.Percentual)
             .WithParticipants(new List<CreateExpense.Request.Participant>
             {
@@ -346,6 +352,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),
+                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
                 e => e.Participants.Count.ShouldBe(2),
@@ -364,6 +371,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),
+                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
                 e => e.Participants.Count.ShouldBe(2),
@@ -387,6 +395,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
+        var timestamp = new DateTimeOffset(2025, 04, 03, 00, 51, 00, TimeSpan.Zero);
         const string description = "Some fancy expense";
         const decimal amount = 200.00m;
         var request = new ExpenseRequestBuilder()
@@ -394,6 +403,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .WithDescription(description)
             .WithPaidByMemberId(TestMembers.Alice.Id)
             .WithAmount(amount)
+            .WithTimestamp(timestamp)
             .WithSplitType(ExpenseSplitType.ExactAmount)
             .WithParticipants(new List<CreateExpense.Request.Participant>
             {
@@ -419,6 +429,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),
+                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
                 e => e.Participants.Count.ShouldBe(2),
@@ -437,6 +448,7 @@ internal sealed class CreateExpenseTests : ApplicationTestBase
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.Amount.ShouldBe(amount),
+                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
                 e => e.Participants.Count.ShouldBe(2),

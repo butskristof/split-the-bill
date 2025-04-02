@@ -76,6 +76,8 @@ public sealed class Expense
     #endregion
 
     public required Guid PaidByMemberId { get; set; }
+    
+    public required DateTimeOffset Timestamp { get; set; }
 
     public decimal GetExpenseAmountForMember(Guid memberId) =>
         Participants.Any(p => p.MemberId == memberId)

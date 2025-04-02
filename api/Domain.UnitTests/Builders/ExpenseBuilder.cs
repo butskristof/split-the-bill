@@ -9,6 +9,7 @@ public sealed class ExpenseBuilder
     private Guid _groupId = Guid.NewGuid();
     private string _description = "expense description";
     private Guid _paidByMemberId = Guid.NewGuid();
+    private DateTimeOffset _timestamp = DateTimeOffset.UtcNow;
 
     public ExpenseBuilder WithId(Guid id)
     {
@@ -39,13 +40,20 @@ public sealed class ExpenseBuilder
         _paidByMemberId = member;
         return this;
     }
+    
+    public ExpenseBuilder WithTimestamp(DateTimeOffset timestamp)
+    {
+        _timestamp = timestamp;
+        return this;
+    }
 
     public Expense Build() => new()
     {
         Id = _id,
         GroupId = _groupId,
         Description = _description,
-        PaidByMemberId = _paidByMemberId
+        PaidByMemberId = _paidByMemberId,
+        Timestamp = _timestamp,
     };
 
     public static implicit operator Expense(ExpenseBuilder builder) => builder.Build();
