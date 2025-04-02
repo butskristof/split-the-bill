@@ -755,8 +755,9 @@ internal sealed class UpdateExpenseValidatorTests
             .WithGroupId(Guid.NewGuid())
             .WithExpenseId(Guid.NewGuid())
             .WithDescription("Expense description")
-            .WithAmount(200m)
             .WithPaidByMemberId(Guid.NewGuid())
+            .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 28, 30, TimeSpan.Zero))
+            .WithAmount(200m)
             .WithSplitType(ExpenseSplitType.Percentual)
             .WithParticipants(new List<UpdateExpense.Request.Participant>
             {

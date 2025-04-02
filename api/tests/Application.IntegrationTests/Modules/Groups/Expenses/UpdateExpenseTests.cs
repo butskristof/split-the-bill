@@ -423,9 +423,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithGroupId(groupId)
             .WithExpenseId(expenseId)
             .WithDescription(description)
-            .WithAmount(amount)
-            .WithTimestamp(timestamp)
             .WithPaidByMemberId(TestMembers.Bob.Id)
+            .WithTimestamp(timestamp)
+            .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.Evenly)
             .WithParticipants(new List<UpdateExpense.Request.Participant>
             {
@@ -448,9 +448,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
-                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null && p.ExactShare == null),
@@ -465,9 +465,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
-                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null && p.ExactShare == null),
@@ -507,9 +507,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithGroupId(groupId)
             .WithExpenseId(expenseId)
             .WithDescription(description)
-            .WithAmount(amount)
-            .WithTimestamp(timestamp)
             .WithPaidByMemberId(TestMembers.Bob.Id)
+            .WithTimestamp(timestamp)
+            .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.Percentual)
             .WithParticipants(new List<UpdateExpense.Request.Participant>
             {
@@ -534,9 +534,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
-                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.ExactShare == null),
@@ -551,9 +551,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
-                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.ExactShare == null),
@@ -593,9 +593,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithGroupId(groupId)
             .WithExpenseId(expenseId)
             .WithDescription(description)
-            .WithAmount(amount)
-            .WithTimestamp(timestamp)
             .WithPaidByMemberId(TestMembers.Bob.Id)
+            .WithTimestamp(timestamp)
+            .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.ExactAmount)
             .WithParticipants(new List<UpdateExpense.Request.Participant>
             {
@@ -620,9 +620,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
-                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null),
@@ -637,9 +637,9 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
-                e => e.Amount.ShouldBe(amount),
-                e => e.Timestamp.ShouldBe(timestamp),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
+                e => e.Timestamp.ShouldBe(timestamp),
+                e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null),

@@ -17,8 +17,8 @@ public static class UpdateExpense
         public Guid? ExpenseId { get; init; }
         public string? Description { get; init; }
         public Guid? PaidByMemberId { get; init; }
-        public decimal? Amount { get; init; }
         public DateTimeOffset? Timestamp { get; init; }
+        public decimal? Amount { get; init; }
         public ExpenseSplitType? SplitType { get; init; } = ExpenseSplitType.Evenly;
         public IReadOnlyList<Participant?> Participants { get; init; } = [];
 

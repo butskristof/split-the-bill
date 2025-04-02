@@ -274,6 +274,7 @@ internal sealed class UpdatePaymentValidatorTests
             .WithSendingMemberId(Guid.NewGuid())
             .WithReceivingMemberId(Guid.NewGuid())
             .WithAmount(100)
+            .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 28, 46, TimeSpan.Zero))
             .BuildUpdateRequest();
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveAnyValidationErrors();

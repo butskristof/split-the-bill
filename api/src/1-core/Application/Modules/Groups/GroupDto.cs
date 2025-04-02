@@ -103,23 +103,23 @@ public record GroupDto
     public sealed record ExpenseDto(
         Guid Id,
         string Description,
-        decimal Amount,
+        Guid PaidByMemberId,
         DateTimeOffset Timestamp,
+        decimal Amount,
         ExpenseSplitType SplitType,
-        List<ExpenseDto.ExpenseParticipantDto> Participants,
-        Guid PaidByMemberId
+        List<ExpenseDto.ExpenseParticipantDto> Participants
     )
     {
         public ExpenseDto(Expense expense) : this(
             expense.Id,
             expense.Description,
-            expense.Amount,
+            expense.PaidByMemberId,
             expense.Timestamp,
+            expense.Amount,
             expense.SplitType,
             expense.Participants
                 .Select(p => new ExpenseParticipantDto(p))
-                .ToList(),
-            expense.PaidByMemberId
+                .ToList()
         )
         {
         }

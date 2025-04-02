@@ -713,8 +713,9 @@ internal sealed class CreateExpenseValidatorTests
         var request = new ExpenseRequestBuilder()
             .WithGroupId(Guid.NewGuid())
             .WithDescription("Expense description")
-            .WithAmount(200m)
             .WithPaidByMemberId(Guid.NewGuid())
+            .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 28, 11, TimeSpan.Zero))
+            .WithAmount(200m)
             .WithSplitType(ExpenseSplitType.Percentual)
             .WithParticipants(new List<CreateExpense.Request.Participant>
             {

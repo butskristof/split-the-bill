@@ -8,9 +8,9 @@ public sealed class ExpenseRequestBuilder
     private Guid? _groupId = Guid.NewGuid();
     private Guid? _expenseId = Guid.NewGuid();
     private string? _description = "Test description";
-    private decimal? _amount = 100.00m;
-    private DateTimeOffset? _timestamp = DateTimeOffset.UtcNow;
     private Guid? _paidByMemberId = Guid.NewGuid();
+    private DateTimeOffset? _timestamp = DateTimeOffset.UtcNow;
+    private decimal? _amount = 100.00m;
     private ExpenseSplitType? _splitType = ExpenseSplitType.Evenly;
 
     private IReadOnlyList<CreateExpense.Request.Participant> _createParticipants =
@@ -42,16 +42,16 @@ public sealed class ExpenseRequestBuilder
         _paidByMemberId = paidByMemberId;
         return this;
     }
-
-    public ExpenseRequestBuilder WithAmount(decimal? amount)
-    {
-        _amount = amount;
-        return this;
-    }
     
     public ExpenseRequestBuilder WithTimestamp(DateTimeOffset? timestamp)
     {
         _timestamp = timestamp;
+        return this;
+    }
+
+    public ExpenseRequestBuilder WithAmount(decimal? amount)
+    {
+        _amount = amount;
         return this;
     }
 
@@ -78,8 +78,8 @@ public sealed class ExpenseRequestBuilder
         GroupId = _groupId,
         Description = _description,
         PaidByMemberId = _paidByMemberId,
-        Amount = _amount,
         Timestamp = _timestamp,
+        Amount = _amount,
         SplitType = _splitType,
         Participants = _createParticipants,
     };
@@ -93,8 +93,8 @@ public sealed class ExpenseRequestBuilder
         ExpenseId = _expenseId,
         Description = _description,
         PaidByMemberId = _paidByMemberId,
-        Amount = _amount,
         Timestamp = _timestamp,
+        Amount = _amount,
         SplitType = _splitType,
         Participants = _updateParticipants,
     };
