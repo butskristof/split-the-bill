@@ -25,6 +25,7 @@ public static class TestMembers
         Id = new Guid("243C316A-1336-4247-89A7-CACCBF9C6E6E"),
         Name = nameof(Charlie),
         Username = "charlie",
+        UserId = null,
     };
 
     public static Member David => new()
@@ -32,6 +33,7 @@ public static class TestMembers
         Id = new Guid("66559461-E123-4233-9B57-4D8E715AA19F"),
         Name = nameof(David),
         Username = "david",
+        UserId = null,
     };
 
     public static Member Default = new()
