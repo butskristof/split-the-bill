@@ -29,6 +29,7 @@ internal sealed class AddMemberTests : ApplicationTestBase
             Id = Guid.NewGuid(),
             Name = "name",
             Username = TestUtilities.GenerateString(33),
+            UserId = null,
         };
         var exception = await Should.ThrowAsync<DbUpdateException>(async () => { await Application.AddAsync(member); });
         var innerException = exception.InnerException.ShouldNotBeNull();
@@ -47,6 +48,7 @@ internal sealed class AddMemberTests : ApplicationTestBase
             Id = id,
             Name = "name",
             Username = username,
+            UserId = null,
         };
         await Application.AddAsync(member);
         var persistedMember = await Application.FindAsync<Member>(m => m.Id == id);
@@ -65,6 +67,7 @@ internal sealed class AddMemberTests : ApplicationTestBase
                 Id = Guid.NewGuid(),
                 Name = "name",
                 Username = username1,
+                UserId = null,
             }
         );
         var exception = await Should.ThrowAsync<DbUpdateException>(async () => await Application
@@ -73,6 +76,7 @@ internal sealed class AddMemberTests : ApplicationTestBase
                 Id = Guid.NewGuid(),
                 Name = "other name",
                 Username = username2,
+                UserId = null,
             }));
         var innerException = exception.InnerException.ShouldNotBeNull();
         innerException.Message.ShouldStartWith(
@@ -88,13 +92,15 @@ internal sealed class AddMemberTests : ApplicationTestBase
         {
             Id = id1,
             Name = "name",
-            Username = "username1"
+            Username = "username1",
+            UserId = null,
         });
         await Application.AddAsync(new Member
         {
             Id = id2,
             Name = "name",
-            Username = "username2"
+            Username = "username2",
+            UserId = null,
         });
         var member1 = await Application.FindAsync<Member>(m => m.Id == id1);
         member1.ShouldNotBeNull();
@@ -172,7 +178,7 @@ internal sealed class AddMemberTests : ApplicationTestBase
             UserId = userId
         };
         await Application.AddAsync(member);
-        
+
         var persistedMember = await Application.FindAsync<Member>(m => m.Id == id);
         persistedMember.ShouldNotBeNull();
         persistedMember.Name.ShouldBe("name");
