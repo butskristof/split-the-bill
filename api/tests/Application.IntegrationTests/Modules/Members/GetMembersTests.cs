@@ -5,7 +5,7 @@ using SplitTheBill.Application.Tests.Shared.TestData;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Members;
 
-internal sealed class GetMembersTests : ApplicationTestBase
+internal sealed class GetMembersTests() : ApplicationTestBase(false)
 {
     [Test]
     public async Task NoEntities_ReturnsEmptyList()
@@ -17,28 +17,9 @@ internal sealed class GetMembersTests : ApplicationTestBase
         response.ShouldNotBeNull();
         response.Members.ShouldBeEmpty();
     }
-
+    
     [Test]
-    public async Task SingleEntity_ReturnsMappedEntity()
-    {
-        await Application.AddAsync(
-            TestMembers.Alice
-        );
-
-        var result = await Application.SendAsync(new GetMembers.Request());
-
-        result.IsError.ShouldBeFalse();
-        var response = result.Value;
-        response.ShouldNotBeNull();
-        response.Members.ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(
-                m => m.Id.ShouldBe(TestMembers.Alice.Id),
-                m => m.Name.ShouldBe(TestMembers.Alice.Name)
-            );
-    }
-
-    [Test]
-    public async Task MultipleEntities_ReturnsMappedEntities()
+    public async Task ReturnsAllMappedEntities()
     {
         await Application.AddAsync(
             TestMembers.Alice,
@@ -51,7 +32,7 @@ internal sealed class GetMembersTests : ApplicationTestBase
         var response = result.Value;
         response.ShouldNotBeNull();
         response.Members.Count.ShouldBe(2);
-        response.Members.ShouldContain(m =>
+            response.Members.ShouldContain(m =>
             m.Id == TestMembers.Alice.Id &&
             m.Name == TestMembers.Alice.Name);
         response.Members.ShouldContain(m =>

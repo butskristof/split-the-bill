@@ -40,8 +40,7 @@ public static class GetGroup
             _logger.LogDebug("Fetching Group with id {Id}", request.Id);
 
             var group = await _dbContext
-                .Groups
-                .AsNoTracking()
+                .CurrentUserGroups(false)
                 .Include(g => g.Members)
                 .Include(g => g.Expenses)
                 .ThenInclude(e => e.Participants)

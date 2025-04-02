@@ -31,6 +31,11 @@ try
 
     var app = builder.Build();
 
+    app.UseCors();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
     app
         // the default exception handler will catch unhandled exceptions and return 
         // them as ProblemDetails with status code 500 Internal Server Error
@@ -41,8 +46,6 @@ try
         // keep in mind that this middleware will only activate if the body is empty when
         // it reaches it
         .UseStatusCodePages();
-
-    app.UseCors();
 
     app.MapHealthChecks("/health");
     app.MapOpenApiEndpoints();

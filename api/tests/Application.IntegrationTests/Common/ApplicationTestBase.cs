@@ -6,12 +6,12 @@ namespace SplitTheBill.Application.IntegrationTests.Common;
 [ParallelLimiter<ApplicationTestBaseParallelLimiter>]
 internal abstract class ApplicationTestBase
 {
-    private bool _seedMembers = false;
+    private readonly bool _seedMembers;
 
     [ClassDataSource<ApplicationFixture>(Shared = SharedType.PerTestSession)]
     public required ApplicationFixture Application { get; init; }
 
-    public ApplicationTestBase(bool seedMembers = false)
+    protected ApplicationTestBase(bool seedMembers = true)
     {
         _seedMembers = seedMembers;
     }

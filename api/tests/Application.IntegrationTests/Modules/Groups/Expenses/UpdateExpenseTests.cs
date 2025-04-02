@@ -11,7 +11,7 @@ using SplitTheBill.Domain.Models.Groups;
 
 namespace SplitTheBill.Application.IntegrationTests.Modules.Groups.Expenses;
 
-internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
+internal sealed class UpdateExpenseTests : ApplicationTestBase
 {
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
@@ -62,6 +62,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .WithExpenses([
                     new ExpenseBuilder()
                         .WithId(expenseId)
@@ -118,6 +119,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(Guid.NewGuid())
+                .WithDefaultMember()
                 .WithExpenses([
                     new ExpenseBuilder()
                         .WithId(expenseId)
@@ -129,6 +131,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
                 .Build(),
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .Build()
         );
 
@@ -170,6 +173,41 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
     }
 
     [Test]
+    public async Task UserIdNotAGroupMember_ReturnsNotFoundError()
+    {
+        var groupId = Guid.NewGuid();
+        var expenseId = Guid.NewGuid();
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .AddExpense(new ExpenseBuilder()
+                    .WithId(expenseId)
+                    .WithDescription("initial description")
+                    .WithAmount(200m)
+                    .WithPaidByMemberId(TestMembers.Alice.Id)
+                    .WithEvenSplit([TestMembers.Alice.Id])
+                )
+                .Build()
+        );
+        Application.SetUserId(TestMembers.Default.UserId);
+        
+        var request = new ExpenseRequestBuilder()
+            .WithGroupId(groupId)
+            .WithExpenseId(expenseId)
+            .BuildUpdateRequest();
+        var result = await Application.SendAsync(request);
+
+        result.IsError.ShouldBeTrue();
+        result.ErrorsOrEmptyList
+            .ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                e => e.Type.ShouldBe(ErrorType.NotFound),
+                e => e.Code.ShouldBe(nameof(request.GroupId))
+            );
+    }
+
+    [Test]
     public async Task PaidByMemberDoesNotExist_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
@@ -177,6 +215,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .AddExpense(new ExpenseBuilder()
                     .WithId(expenseId)
                     .WithPaidByMemberId(TestMembers.Alice.Id)
@@ -209,6 +248,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
+                .WithDefaultMember()
                 .AddExpense(new ExpenseBuilder()
                     .WithId(expenseId)
                     .WithPaidByMemberId(TestMembers.Alice.Id)
@@ -249,6 +289,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
                 )
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
@@ -289,6 +330,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
                 )
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
@@ -372,6 +414,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
                 )
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         const string description = "updated description";
         const decimal amount = 300m;
@@ -451,6 +494,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
                 )
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         const string description = "updated description";
         const decimal amount = 300m;
@@ -532,6 +576,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
                 )
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         const string description = "updated description";
         const decimal amount = 300m;
@@ -609,6 +654,7 @@ internal sealed class UpdateExpenseTests() : ApplicationTestBase(true)
                 )
                 .Build()
         );
+        Application.SetUserId(TestMembers.Alice.UserId);
 
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)

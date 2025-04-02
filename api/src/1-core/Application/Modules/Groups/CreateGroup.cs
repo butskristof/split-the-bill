@@ -47,9 +47,12 @@ public static class CreateGroup
         {
             _logger.LogDebug("Creating new Group");
 
+            var currentUserMember = await _dbContext.GetMemberForCurrentUserAsync(false, cancellationToken);
+
             var group = new Group
             {
                 Name = request.Name!,
+                GroupMembers = [new GroupMember { MemberId = currentUserMember.Id }],
             };
             _logger.LogDebug("Mapped request to entity");
 

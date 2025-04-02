@@ -12,6 +12,7 @@
       <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
       <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
       <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+      <PackageReference Include="NSubstitute" />
       <PackageReference Include="Respawn" />
       <PackageReference Include="Shouldly" />
       <PackageReference Include="Testcontainers.PostgreSql" />

@@ -147,7 +147,7 @@ public static class CreateExpense
             _logger.LogDebug("Adding new Expense to Group with id {GroupId}", request.GroupId);
 
             var group = await _dbContext
-                .Groups
+                .CurrentUserGroups(true)
                 .Include(g => g.Expenses)
                 .Include(g => g.Members)
                 .SingleOrDefaultAsync(g => g.Id == request.GroupId, cancellationToken);

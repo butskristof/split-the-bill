@@ -36,6 +36,12 @@ public sealed class GroupBuilder
         return this;
     }
 
+    public GroupBuilder WithDefaultMember()
+    {
+        _memberIds = [TestMembers.Default.Id];
+        return this;
+    }
+
     public GroupBuilder WithExpenses(List<Expense> expenses)
     {
         _expenses = expenses;

@@ -3,7 +3,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
+using NSubstitute;
+using SplitTheBill.Application.Common.Authentication;
 using SplitTheBill.Application.IntegrationTests.Common.Database;
+using SplitTheBill.Application.Tests.Shared.TestData;
 using SplitTheBill.Persistence;
 using TUnit.Core.Interfaces;
 
@@ -18,6 +21,7 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
 {
     private ITestDatabase _database = null!;
     private FakeTimeProvider _timeProvider = new();
+    private string _userId;
 
     private IServiceScopeFactory _scopeFactory = null!;
 
@@ -41,6 +45,13 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
         services
             .AddPersistence(null, _database.GetConnection());
 
+        var authenticationInfo = Substitute.For<IAuthenticationInfo>();
+        authenticationInfo
+            .UserId
+            .Returns(_ => GetUserId());
+        services
+            .AddSingleton(authenticationInfo);
+
         // build a scope factory from the service collection
         var provider = services.BuildServiceProvider();
         _scopeFactory = provider.GetRequiredService<IServiceScopeFactory>();
@@ -50,6 +61,7 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
     {
         await _database.ResetAsync();
         _timeProvider = new FakeTimeProvider();
+        _userId = TestMembers.Default.UserId;
     }
 
     public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
@@ -107,6 +119,13 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
         return await context.Set<TEntity>().CountAsync();
     }
 
+    public void SetDateTime(DateTimeOffset dateTime)
+        => _timeProvider.SetUtcNow(dateTime);
+
+    public string GetUserId() => _userId;
+
+    public void SetUserId(string? userId)
+        => _userId = userId ?? throw new ArgumentException("userId cannot be null", nameof(userId));
 
     public async ValueTask DisposeAsync()
     {

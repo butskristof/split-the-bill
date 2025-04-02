@@ -43,7 +43,7 @@ public static class DeletePayment
                 request.PaymentId, request.GroupId);
             
             var group = await _dbContext
-                .Groups
+                .CurrentUserGroups(true)
                 .Include(g => g.Payments)
                 .SingleOrDefaultAsync(g => g.Id == request.GroupId, cancellationToken);
             if (group is null)
