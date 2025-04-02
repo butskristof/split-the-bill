@@ -63,6 +63,11 @@ internal static class DependencyInjection
         services
             .AddHealthChecks();
 
+        services
+            .AddAuthentication()
+            .AddJwtBearer();
+        services.AddAuthorization();
+
         // TODO remove after BFF/Proxy setup
         services.AddCors(options =>
         {
