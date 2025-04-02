@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Options;
+using SplitTheBill.Api.Common;
 using SplitTheBill.Api.Constants;
 using SplitTheBill.Api.Extensions;
+using SplitTheBill.Application.Common.Authentication;
 using SplitTheBill.Application.Common.Configuration;
 
 namespace SplitTheBill.Api;
@@ -67,6 +69,9 @@ internal static class DependencyInjection
             .AddAuthentication()
             .AddJwtBearer();
         services.AddAuthorization();
+        services
+            .AddHttpContextAccessor()
+            .AddScoped<IAuthenticationInfo, ApiAuthenticationInfo>();
 
         // TODO remove after BFF/Proxy setup
         services.AddCors(options =>
