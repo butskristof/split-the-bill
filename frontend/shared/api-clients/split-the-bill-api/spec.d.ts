@@ -127,6 +127,8 @@ export interface components {
             description?: string | null;
             /** Format: uuid */
             paidByMemberId?: string | null;
+            /** Format: date-time */
+            timestamp?: string | null;
             /** Format: double */
             amount?: number | null;
             splitType?: components["schemas"]["NullableOfExpenseSplitType"];
@@ -160,6 +162,8 @@ export interface components {
             receivingMemberId?: string | null;
             /** Format: double */
             amount?: number | null;
+            /** Format: date-time */
+            timestamp?: string | null;
         };
         ExpenseSplitType: number;
         /** GetGroups.Response */
@@ -202,12 +206,14 @@ export interface components {
             /** Format: uuid */
             id?: string;
             description?: string;
+            /** Format: uuid */
+            paidByMemberId?: string;
+            /** Format: date-time */
+            timestamp?: string;
             /** Format: double */
             amount?: number;
             splitType?: components["schemas"]["ExpenseSplitType"];
             participants?: components["schemas"]["GroupDto.ExpenseDto.ExpenseParticipantDto"][];
-            /** Format: uuid */
-            paidByMemberId?: string;
         };
         /** GroupDto.ExpenseDto.ExpenseParticipantDto */
         "GroupDto.ExpenseDto.ExpenseParticipantDto": {
@@ -250,6 +256,8 @@ export interface components {
             receivingMemberId?: string;
             /** Format: double */
             amount?: number;
+            /** Format: date-time */
+            timestamp?: string;
         };
         /** HttpValidationProblemDetails */
         HttpValidationProblemDetails: {
@@ -282,6 +290,8 @@ export interface components {
             description?: string | null;
             /** Format: uuid */
             paidByMemberId?: string | null;
+            /** Format: date-time */
+            timestamp?: string | null;
             /** Format: double */
             amount?: number | null;
             splitType?: components["schemas"]["NullableOfExpenseSplitType"];
@@ -314,6 +324,8 @@ export interface components {
             receivingMemberId?: string | null;
             /** Format: double */
             amount?: number | null;
+            /** Format: date-time */
+            timestamp?: string | null;
         };
     };
     responses: never;

@@ -2,16 +2,18 @@
   <div class="members">
     <h2>Members</h2>
     <p v-if="isPending">Loading...</p>
-    <p v-else-if="error">{{ error }}</p>
+    <div v-if="isError">
+      <h3>Error</h3>
+      <pre>{{ JSON.stringify(error, null, 2) }}</pre>
+    </div>
     <div v-else>
+      <h3>Data</h3>
       <pre>{{ JSON.stringify(data, null, 2) }}</pre>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { getMembers } from '#shared/api-clients/split-the-bill-api/api-client';
-
-const { data, error, status } = useLazyAsyncData('members', getMembers);
-const isPending = computed(() => status.value === 'pending');
+const { getMembers } = useSplitTheBillApi();
+const { data, isError, isPending, error } = getMembers();
 </script>
