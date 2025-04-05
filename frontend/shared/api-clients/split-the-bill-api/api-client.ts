@@ -1,5 +1,5 @@
 import createClient from 'openapi-fetch';
-import type { paths } from '~~/shared/api-clients/split-the-bill-api/spec';
+import type { components, paths } from '~~/shared/api-clients/split-the-bill-api/spec';
 import type {
   GetMembersResponse,
   ProblemDetails,
