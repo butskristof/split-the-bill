@@ -1,12 +1,20 @@
 import createClient from 'openapi-fetch';
-import type { components, paths } from '~~/shared/api-clients/split-the-bill-api/spec';
+import type { paths } from '~~/shared/api-clients/split-the-bill-api/spec';
+import type {
+  GetMembersResponse,
+  ProblemDetails,
+} from '#shared/api-clients/split-the-bill-api/types';
+
+export type ApiResponse<T> = {
+  response?: Response;
+  data?: T;
+  error?: ProblemDetails;
+};
 
 const createSplitTheBillApiClient = () => createClient<paths>({ baseUrl: 'http://localhost:5222' });
 
-export const getMembers = () =>
-  createSplitTheBillApiClient()
-    .GET('/Members')
-    .then((r) => r.data);
+export const getMembers = (): Promise<ApiResponse<GetMembersResponse>> =>
+  createSplitTheBillApiClient().GET('/Members');
 
 export const getGroups = () => createSplitTheBillApiClient().GET('/Groups');
 
