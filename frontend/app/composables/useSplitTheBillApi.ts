@@ -55,8 +55,14 @@ export default () => {
   const getGroups = () =>
     useSplitTheBillApiAsyncData<GetGroupsResponse>(KEYS.GET_GROUPS, apiClient.getGroups);
 
+  const getGroup = (id: string) =>
+    useSplitTheBillApiAsyncData<GetGroupsResponse>(KEYS.GET_GROUP(id), () =>
+      apiClient.getGroup(id),
+    );
+
   return {
     getMembers,
     getGroups,
+    getGroup,
   };
 };

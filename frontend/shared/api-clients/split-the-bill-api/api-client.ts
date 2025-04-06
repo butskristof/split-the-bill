@@ -1,6 +1,7 @@
 import createClient from 'openapi-fetch';
 import type { paths } from '~~/shared/api-clients/split-the-bill-api/spec';
 import type {
+  GetGroupResponse,
   GetGroupsResponse,
   GetMembersResponse,
   ProblemDetails,
@@ -31,6 +32,10 @@ export class SplitTeBillApiClient {
 
   getMembers = (): Promise<ApiResponse<GetMembersResponse>> => this.client.GET('/Members');
   getGroups = (): Promise<ApiResponse<GetGroupsResponse>> => this.client.GET('/Groups');
+  getGroup = (id: string): Promise<ApiResponse<GetGroupResponse>> =>
+    this.client.GET('/Groups/{id}', {
+      params: { path: { id } },
+    });
 }
 
 // const createSplitTheBillApiClient = () => createClient<paths>({ baseUrl: 'http://localhost:5222' });
