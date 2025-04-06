@@ -15,4 +15,15 @@ export default defineNuxtConfig({
       },
     ],
   },
+  routeRules: {
+    '/': { redirect: '/groups' },
+  },
+  runtimeConfig: {
+    public: {
+      splitTheBillApi: {
+        baseUrl: '',
+        accessToken: '',
+      },
+    },
+  },
 });
