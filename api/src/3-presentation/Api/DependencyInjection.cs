@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using SplitTheBill.Api.Common.Authentication;
 using SplitTheBill.Api.Constants;
 using SplitTheBill.Api.Extensions;
@@ -52,6 +53,32 @@ internal static class DependencyInjection
                     schemaId = $"{current.DeclaringType.Name}.{schemaId}";
 
                 return schemaId;
+            });
+            
+            options.AddDocumentTransformer((document, _, _) =>
+            {
+                var scheme = new OpenApiSecurityScheme
+                {
+                    BearerFormat = "JSON Web Token",
+                    Description = "Bearer authentication using a JWT",
+                    Scheme = "bearer",
+                    Type = SecuritySchemeType.Http,
+                    Reference = new OpenApiReference
+                    {
+                        Id = "Bearer",
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+
+                document.Components ??= new OpenApiComponents();
+                document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
+                document.Components.SecuritySchemes[scheme.Reference.Id] = scheme;
+
+                // Also register the scheme with the security requirements
+                document.SecurityRequirements ??= [];
+                document.SecurityRequirements.Add(new OpenApiSecurityRequirement { [scheme] = [] });
+                
+                return Task.FromResult(document);
             });
         });
 
