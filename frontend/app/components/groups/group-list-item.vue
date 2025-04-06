@@ -1,6 +1,6 @@
 <template>
   <NuxtLink
-    class="group-list-item not-prose"
+    class="group-list-item"
     :to="`/groups/${group.id}`"
   >
     <UAvatar

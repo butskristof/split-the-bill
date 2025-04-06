@@ -1,8 +1,13 @@
 <template>
   <div class="groups">
-    <p v-if="isPending">Loading...</p>
+    <div v-if="isPending">
+      <GroupListItemSkeleton
+        v-for="i in 3"
+        :key="i"
+      />
+    </div>
     <ApiError
-      v-if="isError"
+      v-else-if="isError"
       :error="error"
     />
     <div
@@ -21,6 +26,7 @@
 <script setup lang="ts">
 import ApiError from '~/components/common/ApiError.vue';
 import GroupListItem from '~/components/groups/group-list-item.vue';
+import GroupListItemSkeleton from '~/components/groups/group-list-item-skeleton.vue';
 
 const { getGroups } = useSplitTheBillApi();
 const { data, isError, isPending, error } = getGroups();
