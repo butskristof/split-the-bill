@@ -14,7 +14,7 @@ const KEYS = {
 
 type SplitTheBillApiResponse<T> = {
   data: ComputedRef<T | undefined>;
-  error?: Ref<string>;
+  error?: Ref<string | ProblemDetails | undefined>;
   isError: Ref<boolean>;
   isPending: Ref<boolean>;
 };

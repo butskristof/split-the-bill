@@ -6,3 +6,7 @@
   --ui-radius: 0.25rem;
   --ui-header-height: calc(var(--spacing) * 16);
 }
+
+.app {
+  @apply prose dark:prose-invert prose-zinc;
+}

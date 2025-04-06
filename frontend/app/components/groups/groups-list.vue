@@ -1,19 +1,27 @@
 <template>
   <div class="groups">
-    <h2>Groups</h2>
     <p v-if="isPending">Loading...</p>
-    <div v-if="isError">
-      <h3>Error</h3>
-      <pre>{{ JSON.stringify(error, null, 2) }}</pre>
-    </div>
-    <div v-else>
-      <h3>Data</h3>
-      <pre>{{ JSON.stringify(data, null, 2) }}</pre>
+    <ApiError
+      v-if="isError"
+      :error="error"
+    />
+    <div
+      v-else
+      class="groups-list"
+    >
+      <GroupListItem
+        v-for="group in data.groups"
+        :key="group.id"
+        :group="group"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import ApiError from '~/components/common/ApiError.vue';
+import GroupListItem from '~/components/groups/group-list-item.vue';
+
 const { getGroups } = useSplitTheBillApi();
 const { data, isError, isPending, error } = getGroups();
 </script>

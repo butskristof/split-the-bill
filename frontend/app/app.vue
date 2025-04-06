@@ -2,7 +2,7 @@
   <UApp>
     <NuxtRouteAnnouncer />
 
-    <div class="app prose prose-zinc">
+    <div class="app">
       <AppHeader />
 
       <UContainer class="content-container">
