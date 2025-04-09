@@ -9,10 +9,15 @@
         />
       </div>
     </div>
+    <GroupActivity />
+    <GroupActivity />
+    <GroupActivity />
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import GroupActivity from '~/components/groups/detail/GroupActivity.vue';
+</script>
 
 <style scoped>
 @reference '~/assets/css/main.css';

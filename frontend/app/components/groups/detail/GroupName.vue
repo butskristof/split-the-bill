@@ -3,6 +3,7 @@
     <UAvatar
       size="xl"
       class="icon"
+      :alt="name"
     />
     <div class="name">{{ name }}</div>
   </div>

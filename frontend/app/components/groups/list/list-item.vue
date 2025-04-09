@@ -6,6 +6,7 @@
     <UAvatar
       size="xl"
       class="icon"
+      :alt="group.name"
     />
     <div class="name">
       {{ group.name }}
