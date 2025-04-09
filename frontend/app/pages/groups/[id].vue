@@ -20,7 +20,10 @@
       v-else
       class="group"
     >
-      <h1>{{ group.name }}</h1>
+      <GroupName :name="group.name" />
+      <GroupActivities />
+      <GroupMembers :members="group.members" />
+
       <div class="prose">
         <pre>{{ JSON.stringify(group, null, 2) }}</pre>
       </div>
@@ -31,6 +34,9 @@
 <script setup lang="ts">
 import LoadingIndicator from '~/components/common/LoadingIndicator.vue';
 import ApiError from '~/components/common/ApiError.vue';
+import GroupActivities from '~/components/groups/detail/GroupActivities.vue';
+import GroupName from '~/components/groups/detail/GroupName.vue';
+import GroupMembers from '~/components/groups/detail/GroupMembers.vue';
 
 const route = useRoute();
 const id = route.params.id as string;
@@ -40,6 +46,8 @@ const { data: group, isError, isPending, error } = getGroup(id);
 </script>
 
 <style scoped>
+@reference '~/assets/css/main.css';
+
 ::v-deep(.back-button) {
   margin-bottom: 0.5rem;
 }
