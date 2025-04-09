@@ -4,7 +4,7 @@ import type {
   GetMembersResponse,
   ProblemDetails,
 } from '#shared/api-clients/split-the-bill-api/types';
-import { SplitTeBillApiClient } from '~~/shared/api-clients/split-the-bill-api/api-client';
+import { SplitTheBillApiClient } from '~~/shared/api-clients/split-the-bill-api/api-client';
 
 const KEYS = {
   GET_MEMBERS: 'MEMBERS_GET_ALL',
@@ -44,7 +44,7 @@ const useSplitTheBillApiAsyncData = <T>(
 
 export default () => {
   const runtimeConfig = useRuntimeConfig();
-  const apiClient = new SplitTeBillApiClient(
+  const apiClient = new SplitTheBillApiClient(
     runtimeConfig.public.splitTheBillApi.baseUrl,
     () => runtimeConfig.public.splitTheBillApi.accessToken,
   );
@@ -55,8 +55,14 @@ export default () => {
   const getGroups = () =>
     useSplitTheBillApiAsyncData<GetGroupsResponse>(KEYS.GET_GROUPS, apiClient.getGroups);
 
+  const getGroup = (id: string) =>
+    useSplitTheBillApiAsyncData<GetGroupsResponse>(KEYS.GET_GROUP(id), () =>
+      apiClient.getGroup(id),
+    );
+
   return {
     getMembers,
     getGroups,
+    getGroup,
   };
 };

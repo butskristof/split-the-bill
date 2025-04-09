@@ -24,7 +24,12 @@
           {{ showDetails ? 'Hide' : 'Show' }} technical details</UButton
         >
       </div>
-      <pre v-if="showDetails">{{ JSON.stringify(error, null, 2) }}</pre>
+      <div
+        v-if="showDetails"
+        class="details"
+      >
+        <pre>{{ JSON.stringify(error, null, 2) }}</pre>
+      </div>
     </div>
   </UCard>
 </template>
@@ -67,29 +72,7 @@ const toggleShowDetails = () => {
   margin-top: 1rem;
 }
 
-/*.error-container {*/
-/*  @apply border;*/
-/*  @apply border-red-200;*/
-/*  @apply bg-red-50;*/
-/*}*/
-
-/*.error-icon {*/
-/*  @apply w-8 h-8 text-red-500;*/
-/*}*/
-
-/*.error-title {*/
-/*  @apply text-lg font-semibold text-red-800;*/
-/*}*/
-
-/*.error-message {*/
-/*  @apply text-sm text-red-700;*/
-/*}*/
-
-/*.error-actions {*/
-/*  @apply pt-2;*/
-/*}*/
-
-/*.error-details {*/
-/*  @apply mt-4 p-3 bg-white rounded border border-gray-200;*/
-/*}*/
+.details {
+  @apply prose;
+}
 </style>

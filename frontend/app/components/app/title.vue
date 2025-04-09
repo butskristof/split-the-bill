@@ -1,11 +1,14 @@
 <template>
-  <div class="app-title">
+  <NuxtLink
+    to="/"
+    class="app-title"
+  >
     <UIcon
       name="i-mynaui-envelope"
       class="icon"
     />
     Split the bill
-  </div>
+  </NuxtLink>
 </template>
 
 <style scoped>
