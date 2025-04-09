@@ -1,7 +1,10 @@
 <template>
   <div class="member">
     <div class="header">
-      <UAvatar class="avatar" />
+      <UAvatar
+        class="avatar"
+        :alt="member.name"
+      />
       <h3 class="name">{{ member.name }}</h3>
       <UIcon
         name="i-mynaui-arrow-right"
@@ -12,10 +15,11 @@
 </template>
 
 <script setup lang="ts">
-import type { components } from '#shared/api-clients/split-the-bill-api/spec';
-
 defineProps<{
-  member: components['schemas']['GroupDto.MemberDto'];
+  member: {
+    id: string;
+    name: string;
+  };
 }>();
 </script>
 
