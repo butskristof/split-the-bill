@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   modules: ['@nuxt/eslint', '@nuxt/ui'],
-  css: ['~/assets/styles/main.css'],
+  css: ['~/assets/styles/main.css', '~/assets/styles/base.scss'],
   icon: {
     customCollections: [
       {
@@ -25,5 +25,8 @@ export default defineNuxtConfig({
         accessToken: '',
       },
     },
+  },
+  components: {
+    dirs: [],
   },
 });

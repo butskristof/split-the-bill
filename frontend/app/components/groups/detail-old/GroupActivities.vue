@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import GroupActivity from '~/components/groups/detail/GroupActivity.vue';
+import GroupActivity from '~/components/groups/detail-old/GroupActivity.vue';
 
 const isOpenExpense = ref(false);
 const openExpense = () => {

@@ -30,9 +30,9 @@
 <script setup lang="ts">
 import LoadingIndicator from '~/components/common/LoadingIndicator.vue';
 import ApiError from '~/components/common/ApiError.vue';
-import GroupActivities from '~/components/groups/detail/GroupActivities.vue';
-import GroupName from '~/components/groups/detail/GroupName.vue';
-import GroupMembers from '~/components/groups/detail/GroupMembers.vue';
+import GroupActivities from '~/components/groups/detail-old/GroupActivities.vue';
+import GroupName from '~/components/groups/detail-old/GroupName.vue';
+import GroupMembers from '~/components/groups/detail-old/GroupMembers.vue';
 
 const route = useRoute();
 const id = route.params.id as string;

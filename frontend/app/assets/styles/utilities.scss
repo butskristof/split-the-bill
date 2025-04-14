@@ -34,8 +34,16 @@
 
 // FONTS
 
+@mixin font-size($size) {
+  font-size: var(--text-#{$size});
+}
+
 @mixin semibold {
   font-weight: var(--font-weight-semibold);
+}
+
+@mixin bold {
+  font-weight: var(--font-weight-bold);
 }
 
 // LISTS

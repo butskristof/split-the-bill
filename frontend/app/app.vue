@@ -22,6 +22,9 @@
 </template>
 
 <script setup lang="ts">
+import AppHeader from '~/components/app/AppHeader.vue';
+import AppFooter from '~/components/app/AppFooter.vue';
+
 // UApp provides global configuration (Reka UI's "ConfigProvider"), sets up the providers for
 // toasts, tooltips, scroll behaviour, ...
 // NuxtRouteAnnouncer announces route changes to screen readers

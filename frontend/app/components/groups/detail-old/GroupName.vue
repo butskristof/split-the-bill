@@ -5,7 +5,7 @@
       class="icon"
       :alt="name"
     />
-    <h1 class="name">{{ name }}</h1>
+    <div class="name">{{ name }}</div>
   </div>
 </template>
 
@@ -15,10 +15,18 @@ defineProps<{
 }>();
 </script>
 
-<style scoped lang="scss">
-@use '~/assets/styles/utilities.scss';
+<style scoped>
+@reference '~/assets/styles/main.css';
 
 .group-name {
-  @include utilities.flex-row-align-center;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+
+  margin-bottom: 1rem;
+}
+
+.name {
+  @apply text-2xl font-bold;
 }
 </style>
