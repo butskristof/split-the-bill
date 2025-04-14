@@ -15,9 +15,9 @@
     <Project Path="src/3-presentation/Api/Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="Domain.UnitTests\Domain.UnitTests.csproj" Type="Classic C#" />
+    <Project Path="tests/Domain.UnitTests\Domain.UnitTests.csproj" Type="Classic C#" />
     <Project Path="tests/Application.IntegrationTests/Application.IntegrationTests.csproj" />
     <Project Path="tests/Application.UnitTests/Application.UnitTests.csproj" />
-    <Project Path="tests\Application.Tests.Shared\Application.Tests.Shared.csproj" Type="Classic C#" />
+    <Project Path="tests/Application.Tests.Shared/Application.Tests.Shared.csproj" Type="Classic C#" />
   </Folder>
 </Solution>
