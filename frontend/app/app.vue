@@ -22,28 +22,40 @@
 </template>
 
 <script setup lang="ts">
+import AppHeader from '~/components/app/AppHeader.vue';
+import AppFooter from '~/components/app/AppFooter.vue';
+
+// UApp provides global configuration (Reka UI's "ConfigProvider"), sets up the providers for
+// toasts, tooltips, scroll behaviour, ...
+// NuxtRouteAnnouncer announces route changes to screen readers
+
+// the actual app as far as the UI goes is wrapped in an 'app' class: it should feature a sticky
+// header, growing page content and a footer which is always at the bottom, even if the content
+// doesn't fill the page
+
 useHead({
-  // title: 'Dashboard',
+  // prepend the page's title if defined, fall back to "Split the bill" otherwise
   titleTemplate: (title) => (title ? `${title} - ` : '') + 'Split the bill',
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use '~/assets/styles/utilities.scss';
+
 .app {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
-}
+  @include utilities.flex-column(false);
 
-.content-container {
-  min-height: calc(100vh - var(--ui-header-height));
-  display: flex;
-  flex-direction: column;
-}
+  .content-container {
+    // make sure the content container fills at least the available screen space below the header
+    min-height: calc(100vh - var(--ui-header-height));
+    @include utilities.flex-column(false);
 
-main {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  flex-grow: 1;
+    main {
+      margin-top: var(--default-spacing);
+      margin-bottom: var(--default-spacing);
+      flex-grow: 1;
+    }
+  }
 }
 </style>

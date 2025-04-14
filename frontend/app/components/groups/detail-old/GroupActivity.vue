@@ -33,7 +33,7 @@
 <script setup lang="ts"></script>
 
 <style scoped>
-@reference '~/assets/css/main.css';
+@reference '~/assets/styles/main.css';
 
 .activity {
   display: flex;

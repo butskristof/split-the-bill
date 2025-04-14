@@ -11,11 +11,11 @@
   </NuxtLink>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@use '~/assets/styles/utilities.scss';
+
 .app-title {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  @include utilities.flex-row-align-center;
   gap: 0.5rem;
 
   font-size: 1.5rem;
