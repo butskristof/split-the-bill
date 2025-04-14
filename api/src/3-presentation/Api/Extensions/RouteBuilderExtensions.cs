@@ -5,10 +5,10 @@ internal static class RouteBuilderExtensions
     // these extensions are shorthand for adding OpenAPI specifications to minimal API endpoints
 
     internal static RouteHandlerBuilder ProducesOk<T>(this RouteHandlerBuilder builder)
-        => builder.Produces(StatusCodes.Status200OK, typeof(T));
+        => builder.Produces<T>(StatusCodes.Status200OK);
 
     internal static RouteHandlerBuilder ProducesCreated<T>(this RouteHandlerBuilder builder)
-        => builder.Produces(StatusCodes.Status201Created, typeof(T));
+        => builder.Produces<T>(StatusCodes.Status201Created);
 
     internal static RouteHandlerBuilder ProducesCreated(this RouteHandlerBuilder builder)
         => builder.Produces(StatusCodes.Status201Created);
