@@ -1,4 +1,3 @@
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SplitTheBill.Api.Extensions;
 using SplitTheBill.Application.Modules.Groups;

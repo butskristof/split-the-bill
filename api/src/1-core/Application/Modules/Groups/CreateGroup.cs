@@ -1,5 +1,4 @@
 using ErrorOr;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Application.Common.Validation;

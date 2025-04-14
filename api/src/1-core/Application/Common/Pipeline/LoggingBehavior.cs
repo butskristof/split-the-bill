@@ -1,4 +1,3 @@
-using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace SplitTheBill.Application.Common.Pipeline;

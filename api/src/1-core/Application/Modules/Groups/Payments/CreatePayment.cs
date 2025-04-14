@@ -1,6 +1,5 @@
 using ErrorOr;
 using FluentValidation;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
