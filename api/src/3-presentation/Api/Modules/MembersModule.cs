@@ -1,3 +1,4 @@
+using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using SplitTheBill.Api.Extensions;
 using SplitTheBill.Application.Modules.Members;
@@ -22,7 +23,7 @@ internal static class MembersModule
         return endpoints;
     }
 
-    private static Task<IResult> GetMembers(
+    private static ValueTask<IResult> GetMembers(
         [FromServices] ISender sender
     )
         => sender.Send(new GetMembers.Request())

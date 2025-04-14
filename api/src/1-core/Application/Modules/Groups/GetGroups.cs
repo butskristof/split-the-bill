@@ -1,4 +1,5 @@
 using ErrorOr;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
@@ -7,7 +8,7 @@ namespace SplitTheBill.Application.Modules.Groups;
 
 public static class GetGroups
 {
-    public sealed record Request : IRequest<ErrorOr<Response>>;
+    public sealed record Request : IQuery<ErrorOr<Response>>;
 
     public sealed record Response(
         List<Response.GroupDto> Groups
@@ -16,7 +17,7 @@ public static class GetGroups
         public sealed record GroupDto(Guid Id, string Name);
     }
 
-    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Response>>
+    internal sealed class Handler : IQueryHandler<Request, ErrorOr<Response>>
     {
         #region construction
 
@@ -34,7 +35,7 @@ public static class GetGroups
 
         #endregion
 
-        public async Task<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Fetching all groups from database");
 

@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
@@ -63,19 +64,38 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
         _userId = TestMembers.Default.UserId!;
     }
 
-    public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+    #region Mediator - SendAsync
+
+    // this covers IRequest, IQuery, ICommand and INotification, none of which have returns
+    public async ValueTask SendAsync(IMessage message)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+        await sender.Send(message);
+    }
+
+    public async ValueTask<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
         using var scope = _scopeFactory.CreateScope();
         var sender = scope.ServiceProvider.GetRequiredService<ISender>();
         return await sender.Send(request);
     }
 
-    public async Task SendAsync(IBaseRequest request)
+    public async ValueTask<TResponse> SendAsync<TResponse>(IQuery<TResponse> query)
     {
         using var scope = _scopeFactory.CreateScope();
         var sender = scope.ServiceProvider.GetRequiredService<ISender>();
-        await sender.Send(request);
+        return await sender.Send(query);
     }
+
+    public async ValueTask<TResponse> SendAsync<TResponse>(ICommand<TResponse> command)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+        return await sender.Send(command);
+    }
+
+    #endregion
 
     public async Task<TEntity?> FindAsync<TEntity>(params object[] keyValues)
         where TEntity : class

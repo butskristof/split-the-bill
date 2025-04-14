@@ -1,5 +1,6 @@
 using ErrorOr;
 using FluentValidation;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
@@ -10,7 +11,7 @@ namespace SplitTheBill.Application.Modules.Groups.Payments;
 
 public static class CreatePayment
 {
-    public sealed record Request : IRequest<ErrorOr<Created>>
+    public sealed record Request : ICommand<ErrorOr<Created>>
     {
         public Guid? GroupId { get; init; }
         public Guid? SendingMemberId { get; init; }
@@ -39,7 +40,7 @@ public static class CreatePayment
         }
     }
 
-    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Created>>
+    internal sealed class Handler : ICommandHandler<Request, ErrorOr<Created>>
     {
         #region construction
 
@@ -54,7 +55,7 @@ public static class CreatePayment
 
         #endregion
 
-        public async Task<ErrorOr<Created>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Created>> Handle(Request request, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Adding new Payment to Group with id {GroupId}", request.GroupId);
 

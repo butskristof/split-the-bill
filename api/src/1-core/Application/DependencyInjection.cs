@@ -1,5 +1,6 @@
 using System.Reflection;
 using FluentValidation;
+using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using SplitTheBill.Application.Common.Pipeline;
 
@@ -15,19 +16,11 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
 
         services
-            .AddMediatR(configuration =>
-            {
-                // scan the current assembly for requests and handlers and register them with the DI container
-                // internals should be included by default, no additional configuration is necessary
-                configuration
-                    .RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-
-                // add cross-cutting concerns (supporting services) in the pipeline 
-                // keep in mind that order of registration matters here
-                configuration
-                    .AddOpenBehavior(typeof(LoggingBehavior<,>))
-                    .AddOpenBehavior(typeof(ValidationBehavior<,>));
-            });
+            .AddMediator(options => { options.ServiceLifetime = ServiceLifetime.Scoped; })
+            // add cross-cutting concerns (supporting services) in the pipeline 
+            // keep in mind that order of registration matters here
+            .AddSingleton(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
+            .AddSingleton(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         return services;
     }

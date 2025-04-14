@@ -1,4 +1,5 @@
 using ErrorOr;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
@@ -8,7 +9,7 @@ namespace SplitTheBill.Application.Modules.Groups;
 
 public static class UpdateGroup
 {
-    public sealed record Request : IRequest<ErrorOr<Updated>>
+    public sealed record Request : ICommand<ErrorOr<Updated>>
     {
         public Guid Id { get; init; }
         public string? Name { get; init; }
@@ -25,7 +26,7 @@ public static class UpdateGroup
         }
     }
 
-    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Updated>>
+    internal sealed class Handler : ICommandHandler<Request, ErrorOr<Updated>>
     {
         #region construction
 
@@ -43,7 +44,7 @@ public static class UpdateGroup
 
         #endregion
 
-        public async Task<ErrorOr<Updated>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Updated>> Handle(Request request, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Updating Group with id {Id}", request.Id);
 

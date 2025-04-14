@@ -1,3 +1,4 @@
+using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using SplitTheBill.Api.Extensions;
 using SplitTheBill.Application.Modules.Groups;
@@ -101,27 +102,27 @@ internal static class GroupsModule
         return endpoints;
     }
 
-    private static Task<IResult> GetGroups(
+    private static ValueTask<IResult> GetGroups(
         [FromServices] ISender sender
     )
         => sender.Send(new GetGroups.Request())
             .MapToOkOrProblem();
 
-    private static Task<IResult> GetGroup(
+    private static ValueTask<IResult> GetGroup(
         [FromRoute] Guid id,
         [FromServices] ISender sender
     )
         => sender.Send(new GetGroup.Request(id))
             .MapToOkOrProblem();
 
-    private static Task<IResult> CreateGroup(
+    private static ValueTask<IResult> CreateGroup(
         [FromBody] CreateGroup.Request request,
         [FromServices] ISender sender
     )
         => sender.Send(request)
             .MapToCreatedOrProblem(r => $"/{GroupName}/{r.Id}");
 
-    private static Task<IResult> UpdateGroup(
+    private static ValueTask<IResult> UpdateGroup(
         [FromRoute] Guid id,
         [FromBody] UpdateGroup.Request request,
         [FromServices] ISender sender
@@ -129,7 +130,7 @@ internal static class GroupsModule
         => sender.Send(request with { Id = id })
             .MapToNoContentOrProblem();
 
-    private static Task<IResult> DeleteGroup(
+    private static ValueTask<IResult> DeleteGroup(
         [FromRoute] Guid id,
         [FromServices] ISender sender
     )
@@ -138,14 +139,14 @@ internal static class GroupsModule
 
     #region Expenses
 
-    private static Task<IResult> CreateExpense(
+    private static ValueTask<IResult> CreateExpense(
         [FromRoute] Guid groupId,
         [FromBody] CreateExpense.Request request,
         [FromServices] ISender sender
     ) => sender.Send(request with { GroupId = groupId })
         .MapToCreatedOrProblem(_ => $"/{GroupName}/{groupId}");
 
-    private static Task<IResult> UpdateExpense(
+    private static ValueTask<IResult> UpdateExpense(
         [FromRoute] Guid groupId,
         [FromRoute] Guid expenseId,
         [FromBody] UpdateExpense.Request request,
@@ -153,7 +154,7 @@ internal static class GroupsModule
     ) => sender.Send(request with { GroupId = groupId, ExpenseId = expenseId })
         .MapToNoContentOrProblem();
 
-    private static Task<IResult> DeleteExpense(
+    private static ValueTask<IResult> DeleteExpense(
         [FromRoute] Guid groupId,
         [FromRoute] Guid expenseId,
         [FromServices] ISender sender
@@ -164,14 +165,14 @@ internal static class GroupsModule
 
     #region Payments
 
-    private static Task<IResult> CreatePayment(
+    private static ValueTask<IResult> CreatePayment(
         [FromRoute] Guid groupId,
         [FromBody] CreatePayment.Request request,
         [FromServices] ISender sender)
         => sender.Send(request with { GroupId = groupId })
             .MapToCreatedOrProblem(_ => $"/{GroupName}/{groupId}");
 
-    private static Task<IResult> UpdatePayment(
+    private static ValueTask<IResult> UpdatePayment(
         [FromRoute] Guid groupId,
         [FromRoute] Guid paymentId,
         [FromBody] UpdatePayment.Request request,
@@ -179,7 +180,7 @@ internal static class GroupsModule
     ) => sender.Send(request with { GroupId = groupId, PaymentId = paymentId })
         .MapToNoContentOrProblem();
 
-    private static Task<IResult> DeletePayment(
+    private static ValueTask<IResult> DeletePayment(
         [FromRoute] Guid groupId,
         [FromRoute] Guid paymentId,
         [FromServices] ISender sender)

@@ -1,29 +1,30 @@
 using ErrorOr;
 using FluentValidation;
+using Mediator;
 using Microsoft.Extensions.Logging;
 
 namespace SplitTheBill.Application.Common.Pipeline;
 
 // this behavior will retrieve all applicable validators from the DI container and verify whether the incoming 
-// request passes all of them 
+// message passes all of them 
 // in case it doesn't, the pipeline execution will be cut short and an error result will be returned
 
 // keep in mind the validators registered with the FluentValidation library should mainly do input validation
 // and not be concerned with business logic
-// effectively, this behavior is intended to stop unprocessable requests from continuing further into the pipeline
-// "an *invalid* request should never reach the handler"
+// effectively, this behavior is intended to stop unprocessable messages from continuing further into the pipeline
+// "an *invalid* message should never reach the handler"
 
-internal sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+internal sealed class ValidationBehavior<TMessage, TResponse> : IPipelineBehavior<TMessage, TResponse>
+    where TMessage : IMessage
     where TResponse : IErrorOr
 {
     #region construction
 
-    private readonly ILogger<ValidationBehavior<TRequest, TResponse>> _logger;
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
+    private readonly ILogger<ValidationBehavior<TMessage, TResponse>> _logger;
+    private readonly IEnumerable<IValidator<TMessage>> _validators;
 
-    public ValidationBehavior(ILogger<ValidationBehavior<TRequest, TResponse>> logger,
-        IEnumerable<IValidator<TRequest>> validators)
+    public ValidationBehavior(ILogger<ValidationBehavior<TMessage, TResponse>> logger,
+        IEnumerable<IValidator<TMessage>> validators)
     {
         _logger = logger;
         _validators = validators;
@@ -31,17 +32,17 @@ internal sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavio
 
     #endregion
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    public async ValueTask<TResponse> Handle(TMessage message, CancellationToken cancellationToken, MessageHandlerDelegate<TMessage, TResponse> next)
     {
-        _logger.LogDebug("Validating incoming request {RequestName}", typeof(TRequest).FullName);
+        var messageTypeName = typeof(TMessage).FullName;
+        _logger.LogDebug("Validating incoming message of type {MessageType}", messageTypeName);
 
         if (_validators.Any())
         {
-            _logger.LogDebug("Applying {Count} validators for request type", _validators.Count());
+            _logger.LogDebug("Applying {Count} validators for message type", _validators.Count());
 
             // create a new validation context scoped to this execution
-            var context = new ValidationContext<TRequest>(request);
+            var context = new ValidationContext<TMessage>(message);
             // run all validators asynchronously and collect the results
             var results = await Task.WhenAll(
                 _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
@@ -72,11 +73,11 @@ internal sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavio
         }
         else
         {
-            // in case no validators are found for the request type, just return out of the handler and
+            // in case no validators are found for the message type, just return out of the behaviour and
             // continue the pipeline
-            _logger.LogDebug("No validators are available for request type");
+            _logger.LogDebug("No validators are available for message of type {MessageType}", messageTypeName);
         }
 
-        return await next();
+        return await next(message, cancellationToken);
     }
 }
