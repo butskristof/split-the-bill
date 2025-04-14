@@ -18,6 +18,7 @@ export default withNuxt(
       'build/**',
       '.nuxt/**',
       '.output/**',
+      'shared/api-clients/split-the-bill-api/spec.d.t',
     ],
   },
   ...pluginVueScopedCss.configs['flat/recommended'],
