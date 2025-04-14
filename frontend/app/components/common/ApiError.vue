@@ -7,14 +7,16 @@
       <div class="header">
         <UIcon
           name="i-mynaui-danger-square"
-          class="icon"
+          class="icon size-6"
         />
         Something went wrong
       </div>
     </template>
-    <div>
-      We're having trouble loading this content. <br />
-      Please review the details below or try again.
+    <div class="content">
+      <div class="lead">
+        We're having trouble loading this content. <br />
+        Please review the details below or try again.
+      </div>
 
       <div class="actions">
         <UButton
@@ -24,18 +26,18 @@
           {{ showDetails ? 'Hide' : 'Show' }} technical details</UButton
         >
       </div>
-      <div
+
+      <PreformattedText
         v-if="showDetails"
-        class="details"
-      >
-        <pre>{{ JSON.stringify(error, null, 2) }}</pre>
-      </div>
+        :value="error"
+      />
     </div>
   </UCard>
 </template>
 
 <script setup lang="ts">
 import type { ProblemDetails } from '#shared/api-clients/split-the-bill-api/types';
+import PreformattedText from '~/components/common/PreformattedText.vue';
 
 defineProps<{
   error: string | ProblemDetails;
@@ -48,31 +50,30 @@ const toggleShowDetails = () => {
 </script>
 
 <style scoped>
-@reference '~/assets/css/main.css';
+@reference '~/assets/styles/main.css';
 
 .card {
   @apply bg-red-50 dark:bg-red-900/50;
   @apply ring-red-200 dark:ring-red-700/75;
   @apply text-red-700 dark:text-red-200;
+  border-radius: var(--ui-radius);
 }
+</style>
+
+<style scoped lang="scss">
+@use '~/assets/styles/utilities.scss';
 
 .header {
-  @apply font-semibold;
-  display: flex;
-  align-items: center;
+  @include utilities.semibold;
+  @include utilities.flex-row-align-center;
   font-size: 110%;
 
   .icon {
-    @apply size-6;
     margin-right: 0.5rem;
   }
 }
 
-.actions {
-  margin-top: 1rem;
-}
-
-.details {
-  @apply prose;
+.content {
+  @include utilities.flex-column;
 }
 </style>

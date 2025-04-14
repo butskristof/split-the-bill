@@ -1,0 +1,59 @@
+// LAYOUT
+
+@mixin flex($apply-gap: true) {
+  display: flex;
+  @if $apply-gap {
+    gap: var(--default-spacing);
+  }
+}
+
+@mixin flex-row($apply-gap: true) {
+  @include flex($apply-gap);
+  flex-direction: row;
+}
+
+@mixin flex-column($apply-gap: true) {
+  @include flex($apply-gap);
+  flex-direction: column;
+}
+
+@mixin flex-row-align-center($apply-gap: true) {
+  @include flex-row($apply-gap);
+  align-items: center;
+}
+
+@mixin flex-row-justify-between($apply-gap: true) {
+  @include flex-row($apply-gap);
+  justify-content: space-between;
+}
+
+@mixin flex-row-justify-between-align-center($apply-gap: true) {
+  @include flex-row-justify-between($apply-gap);
+  align-items: center;
+}
+
+// FONTS
+
+@mixin semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+// LISTS
+@mixin list-item-hover {
+  &:hover {
+    background-color: var(--ui-bg-elevated);
+  }
+}
+
+@mixin list-item-separator {
+  position: relative;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0;
+    border-bottom: 1px solid var(--ui-border);
+  }
+}

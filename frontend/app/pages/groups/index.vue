@@ -1,5 +1,3 @@
 <template>
-  <div class="groups-page">
-    <GroupsList />
-  </div>
+  <GroupsList />
 </template>

@@ -46,7 +46,7 @@ const { data: group, isError, isPending, error } = getGroup(id);
 </script>
 
 <style scoped>
-@reference '~/assets/css/main.css';
+@reference '~/assets/styles/main.css';
 
 ::v-deep(.back-button) {
   margin-bottom: 0.5rem;

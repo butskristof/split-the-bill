@@ -13,7 +13,7 @@
     </div>
     <UIcon
       name="i-mynaui-arrow-right"
-      class="open-arrow"
+      class="open-arrow size-5"
     />
   </NuxtLink>
 </template>
@@ -26,30 +26,25 @@ defineProps<{
 }>();
 </script>
 
-<style scoped>
-@reference '~/assets/css/main.css';
+<style scoped lang="scss">
+@use '~/assets/styles/utilities.scss';
 
 .group-list-item {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-
-  padding: 1rem;
+  @include utilities.flex-row-align-center;
+  padding: var(--default-spacing);
   border-radius: var(--ui-radius);
-  position: relative;
+  @include utilities.list-item-hover;
+  @include utilities.list-item-separator;
 
   .name {
     flex-grow: 1;
   }
 
   .open-arrow {
-    @apply size-5;
     opacity: 0;
   }
 
   &:hover {
-    background-color: var(--ui-bg-elevated);
-
     .icon {
       background-color: var(--ui-bg-accented);
     }
@@ -57,15 +52,6 @@ defineProps<{
     .open-arrow {
       opacity: 100;
     }
-  }
-
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 0.5rem;
-    right: 0.5rem;
-    bottom: 0;
-    border-bottom: 1px solid var(--ui-border);
   }
 }
 </style>

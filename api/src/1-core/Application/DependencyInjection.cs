@@ -20,7 +20,7 @@ public static class DependencyInjection
             // add cross-cutting concerns (supporting services) in the pipeline 
             // keep in mind that order of registration matters here
             .AddSingleton(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
-            .AddSingleton(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         return services;
     }

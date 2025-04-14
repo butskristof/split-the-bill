@@ -16,7 +16,7 @@ defineProps<{
 </script>
 
 <style scoped>
-@reference '~/assets/css/main.css';
+@reference '~/assets/styles/main.css';
 
 .group-name {
   display: flex;
