@@ -1,7 +1,7 @@
 <template>
   <div class="groups-list">
     <template v-if="isPending">
-      <GroupsListItemSkeleton
+      <ListItemSkeleton
         v-for="i in 3"
         :key="i"
       />
@@ -13,7 +13,7 @@
     />
 
     <template v-else>
-      <GroupsListItem
+      <ListItem
         v-for="group in data.groups"
         :key="group.id"
         :group="group"
@@ -24,8 +24,8 @@
 
 <script setup lang="ts">
 import ApiError from '~/components/common/ApiError.vue';
-import GroupsListItem from '~/components/groups/list/GroupsListItem.vue';
-import GroupsListItemSkeleton from '~/components/groups/list/GroupsListItemSkeleton.vue';
+import ListItem from './ListItem.vue';
+import ListItemSkeleton from './ListItemSkeleton.vue';
 
 const { getGroups } = useSplitTheBillApi();
 const { data, isError, isPending, error } = getGroups();
