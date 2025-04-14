@@ -8,19 +8,19 @@ internal static class ResultExtensions
     internal static IResult MapToOkOrProblem<T>(this ErrorOr<T> result)
         => result.MapToValueOrProblem(TypedResults.Ok);
 
-    internal static Task<IResult> MapToOkOrProblem<T>(this Task<ErrorOr<T>> result)
+    internal static ValueTask<IResult> MapToOkOrProblem<T>(this ValueTask<ErrorOr<T>> result)
         => result.MapToValueOrProblem(TypedResults.Ok);
 
     internal static IResult MapToCreatedOrProblem<T>(this ErrorOr<T> result, Func<T, string> getLocation)
         => result.MapToValueOrProblem(response => TypedResults.Created(getLocation(response), response));
 
-    internal static Task<IResult> MapToCreatedOrProblem<T>(this Task<ErrorOr<T>> result, Func<T, string> getLocation)
+    internal static ValueTask<IResult> MapToCreatedOrProblem<T>(this ValueTask<ErrorOr<T>> result, Func<T, string> getLocation)
         => result.MapToValueOrProblem(response => TypedResults.Created(getLocation(response), response));
 
     internal static IResult MapToNoContentOrProblem<T>(this ErrorOr<T> result)
         => result.MapToValueOrProblem(_ => TypedResults.NoContent());
 
-    internal static Task<IResult> MapToNoContentOrProblem<T>(this Task<ErrorOr<T>> result)
+    internal static ValueTask<IResult> MapToNoContentOrProblem<T>(this ValueTask<ErrorOr<T>> result)
         => result.MapToValueOrProblem(_ => TypedResults.NoContent());
 
     // if the result doesn't have errors, the function that's passed in to get to an IResult is used
@@ -28,7 +28,7 @@ internal static class ResultExtensions
     internal static IResult MapToValueOrProblem<T>(this ErrorOr<T> result, Func<T, IResult> onValue)
         => result.Match(onValue, MapErrorsToProblemDetailsResult);
 
-    internal static async Task<IResult> MapToValueOrProblem<T>(this Task<ErrorOr<T>> result, Func<T, IResult> onValue)
+    internal static async ValueTask<IResult> MapToValueOrProblem<T>(this ValueTask<ErrorOr<T>> result, Func<T, IResult> onValue)
         => (await result).MapToValueOrProblem(onValue);
 
 

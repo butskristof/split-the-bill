@@ -1,5 +1,5 @@
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
@@ -9,7 +9,7 @@ namespace SplitTheBill.Application.Modules.Members;
 
 public static class DeleteMember
 {
-    public sealed record Request(Guid Id) : IRequest<ErrorOr<Deleted>>;
+    public sealed record Request(Guid Id) : ICommand<ErrorOr<Deleted>>;
 
     internal sealed class Validator : BaseValidator<Request>
     {
@@ -20,7 +20,7 @@ public static class DeleteMember
         }
     }
 
-    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Deleted>>
+    internal sealed class Handler : ICommandHandler<Request, ErrorOr<Deleted>>
     {
         #region construction
 
@@ -35,7 +35,7 @@ public static class DeleteMember
 
         #endregion
 
-        public async Task<ErrorOr<Deleted>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Deleted>> Handle(Request request, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Deleting Member with id {Id}", request.Id);
 

@@ -1,5 +1,5 @@
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
@@ -9,7 +9,7 @@ namespace SplitTheBill.Application.Modules.Groups.Payments;
 
 public static class DeletePayment
 {
-    public sealed record Request(Guid GroupId, Guid PaymentId) : IRequest<ErrorOr<Deleted>>;
+    public sealed record Request(Guid GroupId, Guid PaymentId) : ICommand<ErrorOr<Deleted>>;
 
     internal sealed class Validator : BaseValidator<Request>
     {
@@ -22,7 +22,7 @@ public static class DeletePayment
         }
     }
 
-    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Deleted>>
+    internal sealed class Handler : ICommandHandler<Request, ErrorOr<Deleted>>
     {
         #region construction
 
@@ -37,7 +37,7 @@ public static class DeletePayment
 
         #endregion
 
-        public async Task<ErrorOr<Deleted>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Deleted>> Handle(Request request, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Deleting Payment with id {PaymentId} from group {GroupId}", 
                 request.PaymentId, request.GroupId);

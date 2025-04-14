@@ -1,5 +1,5 @@
 using ErrorOr;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 using SplitTheBill.Application.Common.Persistence;
 using SplitTheBill.Application.Common.Validation;
@@ -9,7 +9,7 @@ namespace SplitTheBill.Application.Modules.Groups;
 
 public static class CreateGroup
 {
-    public sealed record Request : IRequest<ErrorOr<Response>>
+    public sealed record Request : ICommand<ErrorOr<Response>>
     {
         public string? Name { get; init; }
     }
@@ -25,7 +25,7 @@ public static class CreateGroup
         }
     }
 
-    internal sealed class Handler : IRequestHandler<Request, ErrorOr<Response>>
+    internal sealed class Handler : ICommandHandler<Request, ErrorOr<Response>>
     {
         #region construction
 
@@ -43,7 +43,7 @@ public static class CreateGroup
 
         #endregion
 
-        public async Task<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
         {
             _logger.LogDebug("Creating new Group");
 
