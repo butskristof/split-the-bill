@@ -28,5 +28,5 @@ import ListItem from './ListItem.vue';
 import ListItemSkeleton from './ListItemSkeleton.vue';
 
 const { getGroups } = useSplitTheBillApi();
-const { data, isError, isPending, error } = getGroups();
+const { data, isError, isPending, error } = await getGroups();
 </script>

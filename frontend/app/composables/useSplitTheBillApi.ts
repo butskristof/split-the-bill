@@ -20,11 +20,11 @@ type SplitTheBillApiResponse<T> = {
   isPending: Ref<boolean>;
 };
 
-const useSplitTheBillApiAsyncData = <T>(
+const useSplitTheBillApiAsyncData = async <T>(
   key: string,
   fn: () => Promise<ApiResponse<T>>,
-): SplitTheBillApiResponse<T> => {
-  const asyncData = useLazyAsyncData<ApiResponse<T>>(key, fn, {
+): Promise<SplitTheBillApiResponse<T>> => {
+  const asyncData = await useLazyAsyncData<ApiResponse<T>>(key, fn, {
     transform: (r: ApiResponse<T>) => ({ data: r.data, error: r.error }),
   });
   const data = computed<T | undefined>(() => asyncData.data.value?.data);

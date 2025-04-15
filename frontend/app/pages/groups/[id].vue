@@ -34,7 +34,7 @@ import PreformattedText from '~/components/common/PreformattedText.vue';
 const id = useGroupId();
 
 const { getGroup } = useSplitTheBillApi();
-const { data: group, isError, isPending, error } = getGroup(id);
+const { data: group, isError, isPending, error } = await getGroup(id);
 </script>
 
 <style scoped lang="scss">
