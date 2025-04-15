@@ -14,6 +14,7 @@
 
     <template v-if="group">
       <GroupName :name="group.name" />
+      <RecentActivity />
       <GroupMembers :members="group.members" />
     </template>
   </div>
@@ -26,6 +27,7 @@ import ApiError from '~/components/common/ApiError.vue';
 import GroupName from '~/components/groups/detail/GroupName.vue';
 import GroupMembers from '~/components/groups/detail/GroupMembers.vue';
 import { useProvideGroup } from '~/composables/group';
+import RecentActivity from '~/components/groups/detail/RecentActivity.vue';
 
 const { group, isPending, isError, error } = await useGroup();
 useProvideGroup(group);
