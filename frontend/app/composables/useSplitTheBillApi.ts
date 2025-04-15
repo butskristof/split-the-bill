@@ -2,6 +2,7 @@ import type { ApiResponse } from '~~/shared/api-clients/split-the-bill-api/api-c
 import type {
   GetGroupsResponse,
   GetMembersResponse,
+  Group,
   ProblemDetails,
 } from '#shared/api-clients/split-the-bill-api/types';
 import { SplitTheBillApiClient } from '~~/shared/api-clients/split-the-bill-api/api-client';
@@ -56,9 +57,7 @@ export default () => {
     useSplitTheBillApiAsyncData<GetGroupsResponse>(KEYS.GET_GROUPS, apiClient.getGroups);
 
   const getGroup = (id: string) =>
-    useSplitTheBillApiAsyncData<GetGroupsResponse>(KEYS.GET_GROUP(id), () =>
-      apiClient.getGroup(id),
-    );
+    useSplitTheBillApiAsyncData<Group>(KEYS.GET_GROUP(id), () => apiClient.getGroup(id));
 
   return {
     getMembers,

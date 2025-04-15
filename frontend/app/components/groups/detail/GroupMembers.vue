@@ -17,17 +17,22 @@
         class="avatar"
       />
       <h3 class="name">{{ member.name }}</h3>
-      <UIcon name="i-mynaui-chevron-down" />
+      <p
+        class="balance"
+        :class="{ positive: member.totalBalance > 0, negative: member.totalBalance < 0 }"
+      >
+        {{ formatCurrency(member.totalBalance) }}
+      </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { GroupMember } from '#shared/api-clients/split-the-bill-api/types';
+import { formatCurrency } from '~~/shared/utilities/format-currency';
+
 defineProps<{
-  members: {
-    id: string;
-    name: string;
-  }[];
+  members: GroupMember[];
 }>();
 </script>
 
@@ -47,6 +52,18 @@ defineProps<{
 
   .name {
     flex-grow: 1;
+  }
+
+  .balance {
+    @include utilities.semibold;
+
+    &.positive {
+      //color: green;
+    }
+
+    &.negative {
+      //color: red;
+    }
   }
 
   &:hover {

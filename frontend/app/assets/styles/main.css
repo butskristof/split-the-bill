@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
-/* TODO factor out */
 :root {
   --ui-radius: 0.25rem;
   --ui-header-height: calc(var(--spacing) * 16);
