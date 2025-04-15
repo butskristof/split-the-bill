@@ -21,7 +21,11 @@
         class="balance"
         :class="{ positive: member.totalBalance > 0, negative: member.totalBalance < 0 }"
       >
-        {{ formatCurrency(member.totalBalance) }}
+        <span v-if="member.totalBalance === 0">settled up</span>
+        <span v-else>
+          {{ member.totalBalance > 0 ? 'gets back' : 'owes' }}
+          {{ formatCurrency(Math.abs(member.totalBalance)) }}
+        </span>
       </p>
     </div>
   </div>
