@@ -1,24 +1,39 @@
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using SplitTheBill.Application.Common.Constants;
 
 namespace SplitTheBill.Application.Common.Validation;
 
-internal static class FluentValidationExtensions
+public static class FluentValidationExtensions
 {
+    public static OptionsBuilder<TOptions> FluentValidateOptions<TOptions>(this OptionsBuilder<TOptions> optionsBuilder)
+        where TOptions : class
+    {
+        optionsBuilder.Services
+            .AddSingleton<IValidateOptions<TOptions>>(serviceProvider =>
+                new FluentValidateOptions<TOptions>(serviceProvider, optionsBuilder.Name)
+            );
+
+        return optionsBuilder;
+    }
+
     internal static IRuleBuilderOptions<T, TProperty?> NotNullWithErrorCode<T, TProperty>(
-        this IRuleBuilder<T, TProperty?> ruleBuilder, string errorCode = ErrorCodes.Required)
+        this IRuleBuilder<T, TProperty?> ruleBuilder,
+        string errorCode = ErrorCodes.Required)
         => ruleBuilder
             .NotNull()
             .WithMessage(errorCode);
 
     internal static IRuleBuilderOptions<T, TProperty> NotEmptyWithErrorCode<T, TProperty>(
-        this IRuleBuilder<T, TProperty> ruleBuilder, string errorCode = ErrorCodes.Required)
+        this IRuleBuilder<T, TProperty> ruleBuilder,
+        string errorCode = ErrorCodes.Required)
         => ruleBuilder
             .NotEmpty()
             .WithMessage(errorCode);
 
     internal static IRuleBuilderOptions<T, Guid?> NotNullOrEmptyWithErrorCode<T>(
-        this IRuleBuilder<T, Guid?> ruleBuilder, 
+        this IRuleBuilder<T, Guid?> ruleBuilder,
         string errorCodeWhenNull = ErrorCodes.Required,
         string errorCodeWhenEmpty = ErrorCodes.Invalid)
     {

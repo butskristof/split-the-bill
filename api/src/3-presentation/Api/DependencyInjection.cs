@@ -5,6 +5,7 @@ using SplitTheBill.Api.Constants;
 using SplitTheBill.Api.Extensions;
 using SplitTheBill.Application.Common.Authentication;
 using SplitTheBill.Application.Common.Configuration;
+using SplitTheBill.Application.Common.Validation;
 
 namespace SplitTheBill.Api;
 
@@ -28,9 +29,9 @@ internal static class DependencyInjection
     {
         services
             .AddOptions<TOptions>()
-            .BindConfiguration(sectionName);
-        // .FluentValidateOptions()
-        // .ValidateOnStart();
+            .BindConfiguration(sectionName)
+            .FluentValidateOptions()
+            .ValidateOnStart();
 
         return services;
     }
