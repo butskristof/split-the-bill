@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -7,24 +6,20 @@
         <AssemblyName>SplitTheBill.Application</AssemblyName>
         <RootNamespace>SplitTheBill.Application</RootNamespace>
     </PropertyGroup>
-    
     <ItemGroup>
         <InternalsVisibleTo Include="SplitTheBill.Application.UnitTests" />
     </ItemGroup>
-
     <ItemGroup>
-      <PackageReference Include="ErrorOr" />
-      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-      <PackageReference Include="Mediator.Abstractions" />
-      <PackageReference Include="Mediator.SourceGenerator">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="ErrorOr" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+        <PackageReference Include="Mediator.Abstractions" />
+        <PackageReference Include="Mediator.SourceGenerator">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
     </ItemGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\Domain\Domain.csproj" />
+        <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
-
 </Project>

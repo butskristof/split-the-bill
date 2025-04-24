@@ -9,8 +9,7 @@ internal sealed class GroupDtoTotalsTests
     [Test]
     public void EmptyGroup_TotalAmountsShouldBeZero()
     {
-        var group = new GroupBuilder()
-            .Build();
+        var group = new GroupBuilder().Build();
         var dto = new GroupDto(group);
 
         dto.TotalExpenseAmount.ShouldBe(0);
@@ -22,18 +21,9 @@ internal sealed class GroupDtoTotalsTests
     public void WithExpenses_ShouldSumAmounts()
     {
         var group = new GroupBuilder()
-            .AddExpense(new ExpenseBuilder()
-                .WithEvenSplit([Guid.NewGuid()])
-                .WithAmount(100)
-            )
-            .AddExpense(new ExpenseBuilder()
-                .WithEvenSplit([Guid.NewGuid()])
-                .WithAmount(200)
-            )
-            .AddExpense(new ExpenseBuilder()
-                .WithEvenSplit([Guid.NewGuid()])
-                .WithAmount(1234)
-            )
+            .AddExpense(new ExpenseBuilder().WithEvenSplit([Guid.NewGuid()]).WithAmount(100))
+            .AddExpense(new ExpenseBuilder().WithEvenSplit([Guid.NewGuid()]).WithAmount(200))
+            .AddExpense(new ExpenseBuilder().WithEvenSplit([Guid.NewGuid()]).WithAmount(1234))
             .Build();
         var dto = new GroupDto(group);
 
@@ -46,15 +36,9 @@ internal sealed class GroupDtoTotalsTests
     public void WithPayments_ShouldSumAmounts()
     {
         var group = new GroupBuilder()
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(100)
-            )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(200)
-            )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(1234)
-            )
+            .AddPayment(new PaymentBuilder().WithAmount(100))
+            .AddPayment(new PaymentBuilder().WithAmount(200))
+            .AddPayment(new PaymentBuilder().WithAmount(1234))
             .Build();
         var dto = new GroupDto(group);
 
@@ -67,27 +51,12 @@ internal sealed class GroupDtoTotalsTests
     public void WithExpensesAndPayments_ShouldBalance()
     {
         var group = new GroupBuilder()
-            .AddExpense(new ExpenseBuilder()
-                .WithEvenSplit([Guid.NewGuid()])
-                .WithAmount(100)
-            )
-            .AddExpense(new ExpenseBuilder()
-                .WithEvenSplit([Guid.NewGuid()])
-                .WithAmount(200)
-            )
-            .AddExpense(new ExpenseBuilder()
-                .WithEvenSplit([Guid.NewGuid()])
-                .WithAmount(1234)
-            )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(100)
-            )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(200)
-            )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(1234)
-            )
+            .AddExpense(new ExpenseBuilder().WithEvenSplit([Guid.NewGuid()]).WithAmount(100))
+            .AddExpense(new ExpenseBuilder().WithEvenSplit([Guid.NewGuid()]).WithAmount(200))
+            .AddExpense(new ExpenseBuilder().WithEvenSplit([Guid.NewGuid()]).WithAmount(1234))
+            .AddPayment(new PaymentBuilder().WithAmount(100))
+            .AddPayment(new PaymentBuilder().WithAmount(200))
+            .AddPayment(new PaymentBuilder().WithAmount(1234))
             .Build();
         var dto = new GroupDto(group);
 

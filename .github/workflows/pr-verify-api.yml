@@ -33,6 +33,11 @@ jobs:
       - name: Restore
         run: dotnet restore
 
+      - name: Check formatting
+        run: |
+          dotnet tool restore
+          dotnet csharpier check .
+
       - name: Build
         run: dotnet build --configuration Release --no-restore --no-incremental
 

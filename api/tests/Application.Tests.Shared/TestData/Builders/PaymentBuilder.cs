@@ -40,22 +40,23 @@ public sealed class PaymentBuilder
         _amount = amount;
         return this;
     }
-    
+
     public PaymentBuilder WithTimestamp(DateTimeOffset timestamp)
     {
         _timestamp = timestamp;
         return this;
     }
 
-    public Payment Build() => new()
-    {
-        Id = _id,
-        GroupId = _groupId,
-        SendingMemberId = _sendingMemberId,
-        ReceivingMemberId = _receivingMemberId,
-        Amount = _amount,
-        Timestamp = _timestamp,
-    };
+    public Payment Build() =>
+        new()
+        {
+            Id = _id,
+            GroupId = _groupId,
+            SendingMemberId = _sendingMemberId,
+            ReceivingMemberId = _receivingMemberId,
+            Amount = _amount,
+            Timestamp = _timestamp,
+        };
 
     public static implicit operator Payment(PaymentBuilder builder) => builder.Build();
 }

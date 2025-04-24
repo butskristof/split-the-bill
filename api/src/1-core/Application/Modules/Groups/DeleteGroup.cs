@@ -15,8 +15,7 @@ public static class DeleteGroup
     {
         public Validator()
         {
-            RuleFor(r => r.Id)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid);
+            RuleFor(r => r.Id).NotEmptyWithErrorCode(ErrorCodes.Invalid);
         }
     }
 
@@ -35,7 +34,10 @@ public static class DeleteGroup
 
         #endregion
 
-        public async ValueTask<ErrorOr<Deleted>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Deleted>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Deleting Group with id {Id}", request.Id);
 
@@ -45,7 +47,10 @@ public static class DeleteGroup
             if (group is null)
             {
                 _logger.LogDebug("No group with id {Id} found in database", request.Id);
-                return Error.NotFound(nameof(request.Id), $"Could not find group with id {request.Id}");
+                return Error.NotFound(
+                    nameof(request.Id),
+                    $"Could not find group with id {request.Id}"
+                );
             }
 
             _logger.LogDebug("Fetched entity to delete from database");

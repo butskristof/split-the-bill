@@ -8,11 +8,17 @@ namespace SplitTheBill.Persistence;
 
 public static class DependencyInjection
 {
-    internal static Action<NpgsqlDbContextOptionsBuilder> GetDbContextOptionsBuilder()
-        => optionsBuilder => { optionsBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); };
+    internal static Action<NpgsqlDbContextOptionsBuilder> GetDbContextOptionsBuilder() =>
+        optionsBuilder =>
+        {
+            optionsBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+        };
 
-    public static IServiceCollection AddPersistence(this IServiceCollection services, string? connectionString = null,
-        DbConnection? connection = null)
+    public static IServiceCollection AddPersistence(
+        this IServiceCollection services,
+        string? connectionString = null,
+        DbConnection? connection = null
+    )
     {
         services
             .AddDbContext<AppDbContext>(builder =>
@@ -26,9 +32,7 @@ public static class DependencyInjection
             })
             .AddScoped<IAppDbContext, AppDbContext>();
 
-        services
-            .AddHealthChecks()
-            .AddDbContextCheck<AppDbContext>();
+        services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
 
         return services;
     }

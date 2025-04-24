@@ -4,8 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace SplitTheBill.Application.Common.Validation;
 
-internal sealed class FluentValidateOptions<TOptions>
-    : IValidateOptions<TOptions>
+internal sealed class FluentValidateOptions<TOptions> : IValidateOptions<TOptions>
     where TOptions : class
 {
     private readonly IServiceProvider _serviceProvider;
@@ -16,7 +15,7 @@ internal sealed class FluentValidateOptions<TOptions>
         _serviceProvider = serviceProvider;
         _name = name;
     }
-    
+
     public ValidateOptionsResult Validate(string? name, TOptions options)
     {
         if (_name is not null && _name != name)
@@ -27,26 +26,17 @@ internal sealed class FluentValidateOptions<TOptions>
         var type = options.GetType().Name;
 
         using var scope = _serviceProvider.CreateScope();
-        var validators = scope
-            .ServiceProvider
-            .GetServices<IValidator<TOptions>>()
-            .ToList();
+        var validators = scope.ServiceProvider.GetServices<IValidator<TOptions>>().ToList();
         if (validators.Count == 0)
             return ValidateOptionsResult.Fail($"No validator found for options of type {type}");
 
-        var results = validators
-            .Select(v => v.Validate(options))
-            .ToList();
+        var results = validators.Select(v => v.Validate(options)).ToList();
         if (results.All(r => r.IsValid))
             return ValidateOptionsResult.Success;
 
-        var errors = results
-            .SelectMany(r =>
-                r.Errors
-                    .Select(e =>
-                        $"Validation failed for {type}.{e.PropertyName}: {e.ErrorMessage}"
-                    )
-            );
+        var errors = results.SelectMany(r =>
+            r.Errors.Select(e => $"Validation failed for {type}.{e.PropertyName}: {e.ErrorMessage}")
+        );
         return ValidateOptionsResult.Fail(errors);
     }
 }

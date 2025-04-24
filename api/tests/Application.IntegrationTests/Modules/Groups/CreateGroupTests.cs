@@ -14,14 +14,12 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     [Test]
     public async Task InvalidRequest_ReturnsValidationErrors()
     {
-        var request = new GroupRequestBuilder()
-            .WithName(string.Empty)
-            .BuildCreateRequest();
+        var request = new GroupRequestBuilder().WithName(string.Empty).BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(request.Name)),
@@ -33,14 +31,12 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     public async Task LongName_ReturnsValidationError()
     {
         var name = TestUtilities.GenerateString(513);
-        var request = new GroupRequestBuilder()
-            .WithName(name)
-            .BuildCreateRequest();
+        var request = new GroupRequestBuilder().WithName(name).BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(request.Name)),
@@ -52,9 +48,7 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     public async Task ValidRequest_ReturnsResponseWithId()
     {
         var name = TestUtilities.GenerateString(512); // max string length
-        var request = new GroupRequestBuilder()
-            .WithName(name)
-            .BuildCreateRequest();
+        var request = new GroupRequestBuilder().WithName(name).BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
@@ -71,28 +65,24 @@ internal sealed class CreateGroupTests : ApplicationTestBase
     public async Task NoMemberForUserId_Throws()
     {
         Application.SetUserId("NotAMember");
-        var request = new GroupRequestBuilder()
-            .BuildCreateRequest();
-        await Should.ThrowAsync<AuthenticationException>(async () => await Application.SendAsync(request));
+        var request = new GroupRequestBuilder().BuildCreateRequest();
+        await Should.ThrowAsync<AuthenticationException>(async () =>
+            await Application.SendAsync(request)
+        );
     }
 
     [Test]
     public async Task AddsCurrentMemberToGroup()
     {
         Application.SetUserId(TestMembers.Alice.UserId);
-        
-        var request = new GroupRequestBuilder()
-            .WithName("group name")
-            .BuildCreateRequest();
+
+        var request = new GroupRequestBuilder().WithName("group name").BuildCreateRequest();
         var result = await Application.SendAsync(request);
         var id = result.Value.Id;
 
         var group = await Application.FindAsync<Group>(g => g.Id == id, g => g.Members);
-        group!.Members
-            .ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(
-                m => m.Id.ShouldBe(TestMembers.Alice.Id)
-            );
+        group!
+            .Members.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(m => m.Id.ShouldBe(TestMembers.Alice.Id));
     }
-
 }

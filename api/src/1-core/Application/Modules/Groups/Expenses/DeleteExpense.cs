@@ -15,10 +15,8 @@ public static class DeleteExpense
     {
         public Validator()
         {
-            RuleFor(r => r.GroupId)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid);
-            RuleFor(r => r.ExpenseId)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid);
+            RuleFor(r => r.GroupId).NotEmptyWithErrorCode(ErrorCodes.Invalid);
+            RuleFor(r => r.ExpenseId).NotEmptyWithErrorCode(ErrorCodes.Invalid);
         }
     }
 
@@ -37,10 +35,16 @@ public static class DeleteExpense
 
         #endregion
 
-        public async ValueTask<ErrorOr<Deleted>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Deleted>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
-            _logger.LogDebug("Deleting Expense with id {ExpenseId} from group {GroupId}",
-                request.ExpenseId, request.GroupId);
+            _logger.LogDebug(
+                "Deleting Expense with id {ExpenseId} from group {GroupId}",
+                request.ExpenseId,
+                request.GroupId
+            );
 
             var group = await _dbContext
                 .CurrentUserGroups(true)
@@ -49,26 +53,37 @@ public static class DeleteExpense
             if (group is null)
             {
                 _logger.LogDebug("No group with id {GroupId} found in database", request.GroupId);
-                return Error.NotFound(nameof(request.GroupId), $"Could not find group with id {request.GroupId}");
+                return Error.NotFound(
+                    nameof(request.GroupId),
+                    $"Could not find group with id {request.GroupId}"
+                );
             }
 
             _logger.LogDebug("Fetched group to delete expense from from database");
 
-            var expense = group.Expenses
-                .SingleOrDefault(e => e.Id == request.ExpenseId);
+            var expense = group.Expenses.SingleOrDefault(e => e.Id == request.ExpenseId);
             if (expense is null)
             {
-                _logger.LogDebug("No expense with id {ExpenseId} found in group {GroupId}",
-                    request.ExpenseId, request.GroupId);
-                return Error.NotFound(nameof(request.ExpenseId), $"Could not find expense with id {request.ExpenseId}");
+                _logger.LogDebug(
+                    "No expense with id {ExpenseId} found in group {GroupId}",
+                    request.ExpenseId,
+                    request.GroupId
+                );
+                return Error.NotFound(
+                    nameof(request.ExpenseId),
+                    $"Could not find expense with id {request.ExpenseId}"
+                );
             }
-            
+
             group.Expenses.Remove(expense);
-            _logger.LogDebug("Deleted expense with id {ExpenseId} from group {GroupId}",
-                request.ExpenseId, request.GroupId);
+            _logger.LogDebug(
+                "Deleted expense with id {ExpenseId} from group {GroupId}",
+                request.ExpenseId,
+                request.GroupId
+            );
             await _dbContext.SaveChangesAsync(CancellationToken.None);
             _logger.LogDebug("Persisted changes to database");
-            
+
             return Result.Deleted;
         }
     }

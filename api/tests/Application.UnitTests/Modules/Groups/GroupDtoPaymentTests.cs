@@ -14,10 +14,11 @@ internal sealed class GroupDtoPaymentTests
     {
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(100m)
-                .WithSendingMemberId(TestMembers.Bob.Id)
-                .WithReceivingMemberId(TestMembers.Alice.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(100m)
+                    .WithSendingMemberId(TestMembers.Bob.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
             )
             .Build();
         var dto = new GroupDto(group);
@@ -40,14 +41,15 @@ internal sealed class GroupDtoPaymentTests
     {
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(100m)
-                .WithSendingMemberId(TestMembers.Alice.Id)
-                .WithReceivingMemberId(TestMembers.Bob.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(100m)
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id)
             )
             .Build();
         var dto = new GroupDto(group);
-        
+
         dto.TotalPaymentAmount.ShouldBe(100);
 
         var alice = dto.Members.Single(m => m.Id == TestMembers.Alice.Id);
@@ -66,20 +68,23 @@ internal sealed class GroupDtoPaymentTests
     {
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(100m)
-                .WithSendingMemberId(TestMembers.Alice.Id)
-                .WithReceivingMemberId(TestMembers.Bob.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(100m)
+                    .WithSendingMemberId(TestMembers.Alice.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id)
             )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(50m)
-                .WithSendingMemberId(TestMembers.Bob.Id)
-                .WithReceivingMemberId(TestMembers.Charlie.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(50m)
+                    .WithSendingMemberId(TestMembers.Bob.Id)
+                    .WithReceivingMemberId(TestMembers.Charlie.Id)
             )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(25m)
-                .WithSendingMemberId(TestMembers.Charlie.Id)
-                .WithReceivingMemberId(TestMembers.Alice.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(25m)
+                    .WithSendingMemberId(TestMembers.Charlie.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
             )
             .Build();
         var dto = new GroupDto(group);
@@ -111,15 +116,17 @@ internal sealed class GroupDtoPaymentTests
     {
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
-            .AddExpense(new ExpenseBuilder()
-                .WithAmount(100m)
-                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
-                .WithPaidByMemberId(TestMembers.Alice.Id)
+            .AddExpense(
+                new ExpenseBuilder()
+                    .WithAmount(100m)
+                    .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                    .WithPaidByMemberId(TestMembers.Alice.Id)
             )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(50m)
-                .WithSendingMemberId(TestMembers.Bob.Id)
-                .WithReceivingMemberId(TestMembers.Alice.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(50m)
+                    .WithSendingMemberId(TestMembers.Bob.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
             )
             .Build();
         var dto = new GroupDto(group);
@@ -148,15 +155,17 @@ internal sealed class GroupDtoPaymentTests
     {
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
-            .AddExpense(new ExpenseBuilder()
-                .WithAmount(100m)
-                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
-                .WithPaidByMemberId(TestMembers.Alice.Id)
+            .AddExpense(
+                new ExpenseBuilder()
+                    .WithAmount(100m)
+                    .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                    .WithPaidByMemberId(TestMembers.Alice.Id)
             )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(25m)
-                .WithSendingMemberId(TestMembers.Bob.Id)
-                .WithReceivingMemberId(TestMembers.Alice.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(25m)
+                    .WithSendingMemberId(TestMembers.Bob.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
             )
             .Build();
         var dto = new GroupDto(group);
@@ -185,15 +194,17 @@ internal sealed class GroupDtoPaymentTests
     {
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
-            .AddExpense(new ExpenseBuilder()
-                .WithAmount(100m)
-                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
-                .WithPaidByMemberId(TestMembers.Alice.Id)
+            .AddExpense(
+                new ExpenseBuilder()
+                    .WithAmount(100m)
+                    .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                    .WithPaidByMemberId(TestMembers.Alice.Id)
             )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(75m)
-                .WithSendingMemberId(TestMembers.Bob.Id)
-                .WithReceivingMemberId(TestMembers.Alice.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(75m)
+                    .WithSendingMemberId(TestMembers.Bob.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
             )
             .Build();
         var dto = new GroupDto(group);
@@ -227,50 +238,62 @@ internal sealed class GroupDtoPaymentTests
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob, TestMembers.Charlie])
             // Expense 1: Alice pays, split evenly
-            .AddExpense(new ExpenseBuilder()
-                .WithAmount(300m)
-                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
-                .WithPaidByMemberId(TestMembers.Alice.Id)
+            .AddExpense(
+                new ExpenseBuilder()
+                    .WithAmount(300m)
+                    .WithEvenSplit(
+                        [TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id]
+                    )
+                    .WithPaidByMemberId(TestMembers.Alice.Id)
             )
             // Expense 2: Bob pays, split percentually
-            .AddExpense(new ExpenseBuilder()
-                .WithAmount(400m)
-                .WithPercentualSplit(new Dictionary<Guid, int>
-                {
-                    {TestMembers.Alice.Id, 25},
-                    {TestMembers.Bob.Id, 25},
-                    {TestMembers.Charlie.Id, 50},
-                })
-                .WithPaidByMemberId(TestMembers.Bob.Id)
+            .AddExpense(
+                new ExpenseBuilder()
+                    .WithAmount(400m)
+                    .WithPercentualSplit(
+                        new Dictionary<Guid, int>
+                        {
+                            { TestMembers.Alice.Id, 25 },
+                            { TestMembers.Bob.Id, 25 },
+                            { TestMembers.Charlie.Id, 50 },
+                        }
+                    )
+                    .WithPaidByMemberId(TestMembers.Bob.Id)
             )
             // Expense 3: Charlie pays, split exact amounts
-            .AddExpense(new ExpenseBuilder()
-                .WithAmount(500m)
-                .WithExactAmountSplit(new Dictionary<Guid, decimal>
-                {
-                    {TestMembers.Alice.Id, 150},
-                    {TestMembers.Bob.Id, 150},
-                    {TestMembers.Charlie.Id, 200},
-                })
-                .WithPaidByMemberId(TestMembers.Charlie.Id)
+            .AddExpense(
+                new ExpenseBuilder()
+                    .WithAmount(500m)
+                    .WithExactAmountSplit(
+                        new Dictionary<Guid, decimal>
+                        {
+                            { TestMembers.Alice.Id, 150 },
+                            { TestMembers.Bob.Id, 150 },
+                            { TestMembers.Charlie.Id, 200 },
+                        }
+                    )
+                    .WithPaidByMemberId(TestMembers.Charlie.Id)
             )
             // Payment 1: Bob pays Alice
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(100m)
-                .WithSendingMemberId(TestMembers.Bob.Id)
-                .WithReceivingMemberId(TestMembers.Alice.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(100m)
+                    .WithSendingMemberId(TestMembers.Bob.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
             )
             // Payment 2: Charlie pays Alice
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(150m)
-                .WithSendingMemberId(TestMembers.Charlie.Id)
-                .WithReceivingMemberId(TestMembers.Alice.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(150m)
+                    .WithSendingMemberId(TestMembers.Charlie.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
             )
             // Payment 3: Charlie pays Bob
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(200m)
-                .WithSendingMemberId(TestMembers.Charlie.Id)
-                .WithReceivingMemberId(TestMembers.Bob.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(200m)
+                    .WithSendingMemberId(TestMembers.Charlie.Id)
+                    .WithReceivingMemberId(TestMembers.Bob.Id)
             )
             .Build();
         var dto = new GroupDto(group);
@@ -322,15 +345,17 @@ internal sealed class GroupDtoPaymentTests
     {
         var group = new GroupBuilder()
             .WithMembers([TestMembers.Alice, TestMembers.Bob])
-            .AddExpense(new ExpenseBuilder()
-                .WithAmount(100m)
-                .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
-                .WithPaidByMemberId(TestMembers.Alice.Id)
+            .AddExpense(
+                new ExpenseBuilder()
+                    .WithAmount(100m)
+                    .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                    .WithPaidByMemberId(TestMembers.Alice.Id)
             )
-            .AddPayment(new PaymentBuilder()
-                .WithAmount(0m)
-                .WithSendingMemberId(TestMembers.Bob.Id)
-                .WithReceivingMemberId(TestMembers.Alice.Id)
+            .AddPayment(
+                new PaymentBuilder()
+                    .WithAmount(0m)
+                    .WithSendingMemberId(TestMembers.Bob.Id)
+                    .WithReceivingMemberId(TestMembers.Alice.Id)
             )
             .Build();
         var dto = new GroupDto(group);

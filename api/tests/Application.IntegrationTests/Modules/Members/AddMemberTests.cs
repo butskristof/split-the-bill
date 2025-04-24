@@ -14,7 +14,7 @@ internal sealed class AddMemberTests : ApplicationTestBase
 
     // Username:
     // 3-32 characters
-    // only a-zA-Z0-9._ 
+    // only a-zA-Z0-9._
     // case-insensitive unique
     // start with letter or _
 
@@ -31,7 +31,10 @@ internal sealed class AddMemberTests : ApplicationTestBase
             Username = TestUtilities.GenerateString(33),
             UserId = null,
         };
-        var exception = await Should.ThrowAsync<DbUpdateException>(async () => { await Application.AddAsync(member); });
+        var exception = await Should.ThrowAsync<DbUpdateException>(async () =>
+        {
+            await Application.AddAsync(member);
+        });
         var innerException = exception.InnerException.ShouldNotBeNull();
         innerException.Message.ShouldBe("22001: value too long for type character varying(32)");
     }
@@ -62,7 +65,8 @@ internal sealed class AddMemberTests : ApplicationTestBase
     [Arguments("username", "ùsername")]
     public async Task Username_NotUnique_Fails(string username1, string username2)
     {
-        await Application.AddAsync(new Member
+        await Application.AddAsync(
+            new Member
             {
                 Id = Guid.NewGuid(),
                 Name = "name",
@@ -70,17 +74,21 @@ internal sealed class AddMemberTests : ApplicationTestBase
                 UserId = null,
             }
         );
-        var exception = await Should.ThrowAsync<DbUpdateException>(async () => await Application
-            .AddAsync(new Member
-            {
-                Id = Guid.NewGuid(),
-                Name = "other name",
-                Username = username2,
-                UserId = null,
-            }));
+        var exception = await Should.ThrowAsync<DbUpdateException>(async () =>
+            await Application.AddAsync(
+                new Member
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "other name",
+                    Username = username2,
+                    UserId = null,
+                }
+            )
+        );
         var innerException = exception.InnerException.ShouldNotBeNull();
         innerException.Message.ShouldStartWith(
-            "23505: duplicate key value violates unique constraint \"IX_Members_Username\"");
+            "23505: duplicate key value violates unique constraint \"IX_Members_Username\""
+        );
     }
 
     [Test]
@@ -88,20 +96,24 @@ internal sealed class AddMemberTests : ApplicationTestBase
     {
         var id1 = Guid.NewGuid();
         var id2 = Guid.NewGuid();
-        await Application.AddAsync(new Member
-        {
-            Id = id1,
-            Name = "name",
-            Username = "username1",
-            UserId = null,
-        });
-        await Application.AddAsync(new Member
-        {
-            Id = id2,
-            Name = "name",
-            Username = "username2",
-            UserId = null,
-        });
+        await Application.AddAsync(
+            new Member
+            {
+                Id = id1,
+                Name = "name",
+                Username = "username1",
+                UserId = null,
+            }
+        );
+        await Application.AddAsync(
+            new Member
+            {
+                Id = id2,
+                Name = "name",
+                Username = "username2",
+                UserId = null,
+            }
+        );
         var member1 = await Application.FindAsync<Member>(m => m.Id == id1);
         member1.ShouldNotBeNull();
         member1.Username.ShouldBe("username1");
@@ -116,7 +128,8 @@ internal sealed class AddMemberTests : ApplicationTestBase
     [Arguments("userid", "ùserid")]
     public async Task UserId_NotUnique_Fails(string userId1, string userId2)
     {
-        await Application.AddAsync(new Member
+        await Application.AddAsync(
+            new Member
             {
                 Id = Guid.NewGuid(),
                 Name = "name",
@@ -124,17 +137,21 @@ internal sealed class AddMemberTests : ApplicationTestBase
                 UserId = userId1,
             }
         );
-        var exception = await Should.ThrowAsync<DbUpdateException>(async () => await Application
-            .AddAsync(new Member
-            {
-                Id = Guid.NewGuid(),
-                Name = "other name",
-                Username = "username2",
-                UserId = userId2,
-            }));
+        var exception = await Should.ThrowAsync<DbUpdateException>(async () =>
+            await Application.AddAsync(
+                new Member
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "other name",
+                    Username = "username2",
+                    UserId = userId2,
+                }
+            )
+        );
         var innerException = exception.InnerException.ShouldNotBeNull();
         innerException.Message.ShouldStartWith(
-            "23505: duplicate key value violates unique constraint \"IX_Members_UserId\"");
+            "23505: duplicate key value violates unique constraint \"IX_Members_UserId\""
+        );
     }
 
     [Test]
@@ -142,20 +159,24 @@ internal sealed class AddMemberTests : ApplicationTestBase
     {
         var id1 = Guid.NewGuid();
         var id2 = Guid.NewGuid();
-        await Application.AddAsync(new Member
-        {
-            Id = id1,
-            Name = "name",
-            Username = "username1",
-            UserId = "id1",
-        });
-        await Application.AddAsync(new Member
-        {
-            Id = id2,
-            Name = "name",
-            Username = "username2",
-            UserId = "id2",
-        });
+        await Application.AddAsync(
+            new Member
+            {
+                Id = id1,
+                Name = "name",
+                Username = "username1",
+                UserId = "id1",
+            }
+        );
+        await Application.AddAsync(
+            new Member
+            {
+                Id = id2,
+                Name = "name",
+                Username = "username2",
+                UserId = "id2",
+            }
+        );
         var member1 = await Application.FindAsync<Member>(m => m.Id == id1);
         member1.ShouldNotBeNull();
         member1.Id.ShouldBe(id1);
@@ -175,7 +196,7 @@ internal sealed class AddMemberTests : ApplicationTestBase
             Id = id,
             Name = "name",
             Username = "username",
-            UserId = userId
+            UserId = userId,
         };
         await Application.AddAsync(member);
 

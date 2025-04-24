@@ -10,9 +10,8 @@ internal sealed class ExpenseParticipantConfiguration : IEntityTypeConfiguration
     {
         builder.ToTable("ExpenseParticipants");
 
-        builder
-            .HasKey(ep => new { ep.ExpenseId, ep.MemberId });
-        
+        builder.HasKey(ep => new { ep.ExpenseId, ep.MemberId });
+
         builder
             .HasOne<Expense>()
             .WithMany(e => e.Participants)

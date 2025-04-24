@@ -33,8 +33,7 @@ internal sealed class AppDbContext : DbContext, IAppDbContext
 
     public IQueryable<Group> CurrentUserGroups(bool tracking)
     {
-        var query = Groups
-            .Where(g => g.Members.Any(m => m.UserId == _authenticationInfo.UserId));
+        var query = Groups.Where(g => g.Members.Any(m => m.UserId == _authenticationInfo.UserId));
 
         if (!tracking)
             query = query.AsNoTracking();
@@ -42,16 +41,19 @@ internal sealed class AppDbContext : DbContext, IAppDbContext
         return query;
     }
 
-    public async Task<Member> GetMemberForCurrentUserAsync(bool tracking = false,
-        CancellationToken cancellationToken = default)
+    public async Task<Member> GetMemberForCurrentUserAsync(
+        bool tracking = false,
+        CancellationToken cancellationToken = default
+    )
     {
-        var query = Members
-            .Where(m => m.UserId == _authenticationInfo.UserId);
+        var query = Members.Where(m => m.UserId == _authenticationInfo.UserId);
         if (!tracking)
             query = query.AsNoTracking();
 
         return await query.SingleOrDefaultAsync(cancellationToken)
-               ?? throw new AuthenticationException("Could not find Member for currently authenticated user");
+            ?? throw new AuthenticationException(
+                "Could not find Member for currently authenticated user"
+            );
     }
 
     #region Configuration
@@ -62,20 +64,18 @@ internal sealed class AppDbContext : DbContext, IAppDbContext
         // it should be used in a future version
         base.ConfigureConventions(configurationBuilder);
 
-        // set text fields to have a reduced maximum length by default 
-        // this cuts down on a lot of varchar(max) columns, and can still be set to a higher 
+        // set text fields to have a reduced maximum length by default
+        // this cuts down on a lot of varchar(max) columns, and can still be set to a higher
         // maximum length on a per-column basis
         configurationBuilder
             .Properties<string>()
             .HaveMaxLength(ApplicationConstants.DefaultMaxStringLength);
 
-        configurationBuilder
-            .Properties<decimal>()
-            .HavePrecision(18, 6);
+        configurationBuilder.Properties<decimal>().HavePrecision(18, 6);
 
-		configurationBuilder
-			.Properties<DateTimeOffset>()
-			.HaveConversion<DateTimeOffsetValueConverter>();
+        configurationBuilder
+            .Properties<DateTimeOffset>()
+            .HaveConversion<DateTimeOffsetValueConverter>();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

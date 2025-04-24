@@ -5,39 +5,53 @@ namespace SplitTheBill.Api.Extensions;
 
 internal static class ResultExtensions
 {
-    internal static IResult MapToOkOrProblem<T>(this ErrorOr<T> result)
-        => result.MapToValueOrProblem(TypedResults.Ok);
+    internal static IResult MapToOkOrProblem<T>(this ErrorOr<T> result) =>
+        result.MapToValueOrProblem(TypedResults.Ok);
 
-    internal static ValueTask<IResult> MapToOkOrProblem<T>(this ValueTask<ErrorOr<T>> result)
-        => result.MapToValueOrProblem(TypedResults.Ok);
+    internal static ValueTask<IResult> MapToOkOrProblem<T>(this ValueTask<ErrorOr<T>> result) =>
+        result.MapToValueOrProblem(TypedResults.Ok);
 
-    internal static IResult MapToCreatedOrProblem<T>(this ErrorOr<T> result, Func<T, string> getLocation)
-        => result.MapToValueOrProblem(response => TypedResults.Created(getLocation(response), response));
+    internal static IResult MapToCreatedOrProblem<T>(
+        this ErrorOr<T> result,
+        Func<T, string> getLocation
+    ) =>
+        result.MapToValueOrProblem(response =>
+            TypedResults.Created(getLocation(response), response)
+        );
 
-    internal static ValueTask<IResult> MapToCreatedOrProblem<T>(this ValueTask<ErrorOr<T>> result, Func<T, string> getLocation)
-        => result.MapToValueOrProblem(response => TypedResults.Created(getLocation(response), response));
+    internal static ValueTask<IResult> MapToCreatedOrProblem<T>(
+        this ValueTask<ErrorOr<T>> result,
+        Func<T, string> getLocation
+    ) =>
+        result.MapToValueOrProblem(response =>
+            TypedResults.Created(getLocation(response), response)
+        );
 
-    internal static IResult MapToNoContentOrProblem<T>(this ErrorOr<T> result)
-        => result.MapToValueOrProblem(_ => TypedResults.NoContent());
+    internal static IResult MapToNoContentOrProblem<T>(this ErrorOr<T> result) =>
+        result.MapToValueOrProblem(_ => TypedResults.NoContent());
 
-    internal static ValueTask<IResult> MapToNoContentOrProblem<T>(this ValueTask<ErrorOr<T>> result)
-        => result.MapToValueOrProblem(_ => TypedResults.NoContent());
+    internal static ValueTask<IResult> MapToNoContentOrProblem<T>(
+        this ValueTask<ErrorOr<T>> result
+    ) => result.MapToValueOrProblem(_ => TypedResults.NoContent());
 
     // if the result doesn't have errors, the function that's passed in to get to an IResult is used
-    // in case of errors, a mapping to ProblemDetails is done to provide a meaningful error response 
-    internal static IResult MapToValueOrProblem<T>(this ErrorOr<T> result, Func<T, IResult> onValue)
-        => result.Match(onValue, MapErrorsToProblemDetailsResult);
+    // in case of errors, a mapping to ProblemDetails is done to provide a meaningful error response
+    internal static IResult MapToValueOrProblem<T>(
+        this ErrorOr<T> result,
+        Func<T, IResult> onValue
+    ) => result.Match(onValue, MapErrorsToProblemDetailsResult);
 
-    internal static async ValueTask<IResult> MapToValueOrProblem<T>(this ValueTask<ErrorOr<T>> result, Func<T, IResult> onValue)
-        => (await result).MapToValueOrProblem(onValue);
-
+    internal static async ValueTask<IResult> MapToValueOrProblem<T>(
+        this ValueTask<ErrorOr<T>> result,
+        Func<T, IResult> onValue
+    ) => (await result).MapToValueOrProblem(onValue);
 
     private static IResult MapErrorsToProblemDetailsResult(List<Error> errors)
     {
         // start with a general problem details response
         var problemDetails = new ProblemDetails();
 
-        // in case the list of errors contains validation errors, the problem details variable is replaced with 
+        // in case the list of errors contains validation errors, the problem details variable is replaced with
         // a specific validation problem details implementation which contains the errors as well
         // since we have to check whether there's any validation errors anyway, we attach the logic for grouping them
         // by Code (which we assume to be the property name)
@@ -50,10 +64,10 @@ internal static class ResultExtensions
         else
         {
             // in other cases, we only go by the first error in the list
-            // this may be an oversimplification, but the problem details response only allows for one detail and 
+            // this may be an oversimplification, but the problem details response only allows for one detail and
             // it makes processing easier for the consumer
-            // assuming the list of errors will contain at least one error may be optimistic, but this method is 
-            // meant to be called in the error part of .Match, which should only happen if there's actually some errors 
+            // assuming the list of errors will contain at least one error may be optimistic, but this method is
+            // meant to be called in the error part of .Match, which should only happen if there's actually some errors
             var error = errors.First();
             var statusCode = error.Type switch
             {

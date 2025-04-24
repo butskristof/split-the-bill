@@ -40,21 +40,22 @@ public sealed class ExpenseBuilder
         _paidByMemberId = member;
         return this;
     }
-    
+
     public ExpenseBuilder WithTimestamp(DateTimeOffset timestamp)
     {
         _timestamp = timestamp;
         return this;
     }
 
-    public Expense Build() => new()
-    {
-        Id = _id,
-        GroupId = _groupId,
-        Description = _description,
-        PaidByMemberId = _paidByMemberId,
-        Timestamp = _timestamp,
-    };
+    public Expense Build() =>
+        new()
+        {
+            Id = _id,
+            GroupId = _groupId,
+            Description = _description,
+            PaidByMemberId = _paidByMemberId,
+            Timestamp = _timestamp,
+        };
 
     public static implicit operator Expense(ExpenseBuilder builder) => builder.Build();
 

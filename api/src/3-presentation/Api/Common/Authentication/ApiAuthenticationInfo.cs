@@ -17,10 +17,8 @@ internal sealed class ApiAuthenticationInfo : IAuthenticationInfo
 
     #endregion
 
-    private ClaimsPrincipal? User => _httpContextAccessor
-        .HttpContext?
-        .User;
+    private ClaimsPrincipal? User => _httpContextAccessor.HttpContext?.User;
 
-    public string UserId => User?.FindFirstValue(ClaimTypes.NameIdentifier)
-                            ?? throw new AuthenticationException();
+    public string UserId =>
+        User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new AuthenticationException();
 }

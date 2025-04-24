@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -7,18 +6,14 @@
         <AssemblyName>SplitTheBill.Persistence</AssemblyName>
         <RootNamespace>SplitTheBill.Persistence</RootNamespace>
     </PropertyGroup>
-
     <ItemGroup>
         <InternalsVisibleTo Include="SplitTheBill.Application.IntegrationTests" />
     </ItemGroup>
-
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     </ItemGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\..\1-core\Application\Application.csproj" />
+        <ProjectReference Include="..\..\1-core\Application\Application.csproj" />
     </ItemGroup>
-
 </Project>

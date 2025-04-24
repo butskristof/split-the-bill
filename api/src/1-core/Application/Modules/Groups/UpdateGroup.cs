@@ -19,10 +19,8 @@ public static class UpdateGroup
     {
         public Validator()
         {
-            RuleFor(r => r.Id)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid);
-            RuleFor(r => r.Name)
-                .ValidString(true);
+            RuleFor(r => r.Id).NotEmptyWithErrorCode(ErrorCodes.Invalid);
+            RuleFor(r => r.Name).ValidString(true);
         }
     }
 
@@ -33,10 +31,7 @@ public static class UpdateGroup
         private readonly ILogger<Handler> _logger;
         private readonly IAppDbContext _dbContext;
 
-        public Handler(
-            ILogger<Handler> logger,
-            IAppDbContext dbContext
-        )
+        public Handler(ILogger<Handler> logger, IAppDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -44,7 +39,10 @@ public static class UpdateGroup
 
         #endregion
 
-        public async ValueTask<ErrorOr<Updated>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Updated>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Updating Group with id {Id}", request.Id);
 
@@ -54,16 +52,19 @@ public static class UpdateGroup
             if (group is null)
             {
                 _logger.LogDebug("No group with id {Id} found in database", request.Id);
-                return Error.NotFound(nameof(request.Id), $"Could not find group with id {request.Id}");
+                return Error.NotFound(
+                    nameof(request.Id),
+                    $"Could not find group with id {request.Id}"
+                );
             }
             _logger.LogDebug("Fetched entity to update from database");
 
             group.Name = request.Name!;
             _logger.LogDebug("Mapped updated properties from request to entity");
-            
+
             await _dbContext.SaveChangesAsync(CancellationToken.None);
             _logger.LogDebug("Persisted updated entity to database");
-            
+
             return Result.Updated;
         }
     }

@@ -8,9 +8,12 @@ public interface IAppDbContext
 {
     DbSet<Member> Members { get; }
     DbSet<Group> Groups { get; }
-    
+
     IQueryable<Group> CurrentUserGroups(bool tracking);
-    Task<Member> GetMemberForCurrentUserAsync(bool tracking = false, CancellationToken cancellationToken = default);
+    Task<Member> GetMemberForCurrentUserAsync(
+        bool tracking = false,
+        CancellationToken cancellationToken = default
+    );
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

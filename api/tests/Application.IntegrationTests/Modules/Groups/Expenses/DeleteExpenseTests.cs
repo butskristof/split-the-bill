@@ -15,15 +15,12 @@ internal sealed class DeleteExpenseTests : ApplicationTestBase
     [Test]
     public async Task InvalidRequest_ReturnsValidationError()
     {
-        var request = new DeleteExpense.Request(
-            Guid.Empty,
-            Guid.NewGuid()
-        );
+        var request = new DeleteExpense.Request(Guid.Empty, Guid.NewGuid());
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(request.GroupId)),
@@ -40,21 +37,20 @@ internal sealed class DeleteExpenseTests : ApplicationTestBase
             .WithAmount(100m)
             .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(Guid.NewGuid())
-            .WithMembers([TestMembers.Alice.Id])
-            .WithExpenses([expense])
-            .Build());
-
-        var request = new DeleteExpense.Request(
-            Guid.NewGuid(),
-            Guid.NewGuid()
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(Guid.NewGuid())
+                .WithMembers([TestMembers.Alice.Id])
+                .WithExpenses([expense])
+                .Build()
         );
+
+        var request = new DeleteExpense.Request(Guid.NewGuid(), Guid.NewGuid());
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.GroupId))
@@ -84,15 +80,12 @@ internal sealed class DeleteExpenseTests : ApplicationTestBase
         await Application.AddAsync(group);
         Application.SetUserId(TestMembers.Alice.UserId);
 
-        var request = new DeleteExpense.Request(
-            group.Id,
-            Guid.NewGuid()
-        );
+        var request = new DeleteExpense.Request(group.Id, Guid.NewGuid());
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.ExpenseId))
@@ -121,22 +114,14 @@ internal sealed class DeleteExpenseTests : ApplicationTestBase
             .WithExpenses([expense])
             .Build();
         var group2Id = Guid.NewGuid();
-        await Application.AddAsync(
-            group1,
-            new GroupBuilder()
-                .WithId(group2Id)
-                .WithDefaultMember()
-        );
+        await Application.AddAsync(group1, new GroupBuilder().WithId(group2Id).WithDefaultMember());
 
-        var request = new DeleteExpense.Request(
-            group2Id,
-            expense.Id
-        );
+        var request = new DeleteExpense.Request(group2Id, expense.Id);
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.ExpenseId))
@@ -159,23 +144,21 @@ internal sealed class DeleteExpenseTests : ApplicationTestBase
             .WithAmount(100m)
             .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id])
-            .WithExpenses([expense])
-            .Build()
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id])
+                .WithExpenses([expense])
+                .Build()
         );
         Application.SetUserId(TestMembers.Bob.UserId);
-        
-        var request = new DeleteExpense.Request(
-            groupId,
-            expense.Id
-        );
+
+        var request = new DeleteExpense.Request(groupId, expense.Id);
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.GroupId))
@@ -192,18 +175,16 @@ internal sealed class DeleteExpenseTests : ApplicationTestBase
             .WithAmount(100m)
             .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id])
-            .WithExpenses([expense])
-            .Build()
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id])
+                .WithExpenses([expense])
+                .Build()
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
-        var request = new DeleteExpense.Request(
-            groupId,
-            expense.Id
-        );
+        var request = new DeleteExpense.Request(groupId, expense.Id);
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
@@ -232,18 +213,16 @@ internal sealed class DeleteExpenseTests : ApplicationTestBase
             .WithAmount(100m)
             .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id])
-            .WithExpenses([expense1, expense2])
-            .Build()
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id])
+                .WithExpenses([expense1, expense2])
+                .Build()
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
-        var request = new DeleteExpense.Request(
-            groupId,
-            expense1.Id
-        );
+        var request = new DeleteExpense.Request(groupId, expense1.Id);
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
@@ -272,28 +251,27 @@ internal sealed class DeleteExpenseTests : ApplicationTestBase
             .WithAmount(100m)
             .WithEvenSplit([TestMembers.Alice.Id])
             .Build();
-        expense2.SetAmountAndParticipantsWithEvenSplit(100m, new HashSet<Guid> { TestMembers.Alice.Id });
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id])
-            .WithExpenses([expense1, expense2])
-            .Build()
+        expense2.SetAmountAndParticipantsWithEvenSplit(
+            100m,
+            new HashSet<Guid> { TestMembers.Alice.Id }
+        );
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id])
+                .WithExpenses([expense1, expense2])
+                .Build()
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
-        var request = new DeleteExpense.Request(
-            groupId,
-            expense1.Id
-        );
+        var request = new DeleteExpense.Request(groupId, expense1.Id);
         await Application.SendAsync(request);
 
         var result = await Application.SendAsync(new GetGroup.Request(groupId));
         var response = result.Value;
         response.TotalExpenseAmount.ShouldBe(100m);
-        response.Expenses
-            .ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(
-                e => e.Id.ShouldBe(expense2.Id)
-            );
+        response
+            .Expenses.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(e => e.Id.ShouldBe(expense2.Id));
     }
 }

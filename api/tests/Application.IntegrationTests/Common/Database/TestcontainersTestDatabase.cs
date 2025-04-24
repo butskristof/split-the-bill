@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NSubstitute;
 using Respawn;
-using Respawn.Graph;
 using SplitTheBill.Application.Common.Authentication;
 using SplitTheBill.Persistence;
 using Testcontainers.PostgreSql;
@@ -13,7 +12,7 @@ namespace SplitTheBill.Application.IntegrationTests.Common.Database;
 
 // this implementation uses the Testcontainers library to spin up a Postgres Docker container,
 // prepare the database and dispose of it afterwards
-// it assures a self-contained process against a production-grade database, but can suffer from 
+// it assures a self-contained process against a production-grade database, but can suffer from
 // longer startup times since the container has to be prepared before each test run
 
 internal sealed class TestcontainersTestDatabase : ITestDatabase
@@ -25,9 +24,7 @@ internal sealed class TestcontainersTestDatabase : ITestDatabase
 
     public TestcontainersTestDatabase()
     {
-        _container = new PostgreSqlBuilder()
-            .WithAutoRemove(true)
-            .Build();
+        _container = new PostgreSqlBuilder().WithAutoRemove(true).Build();
     }
 
     public async Task InitializeAsync()
@@ -39,16 +36,22 @@ internal sealed class TestcontainersTestDatabase : ITestDatabase
         await _dbConnection.OpenAsync();
 
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseNpgsql(_connectionString, Persistence.DependencyInjection.GetDbContextOptionsBuilder())
+            .UseNpgsql(
+                _connectionString,
+                Persistence.DependencyInjection.GetDbContextOptionsBuilder()
+            )
             .Options;
         var context = new AppDbContext(options, Substitute.For<IAuthenticationInfo>());
         await context.Database.MigrateAsync();
 
-        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
-        {
-            TablesToIgnore = new Table[] { "__EFMigrationsHistory" },
-            DbAdapter = DbAdapter.Postgres,
-        });
+        _respawner = await Respawner.CreateAsync(
+            _dbConnection,
+            new RespawnerOptions
+            {
+                TablesToIgnore = ["__EFMigrationsHistory"],
+                DbAdapter = DbAdapter.Postgres,
+            }
+        );
     }
 
     public DbConnection GetConnection()

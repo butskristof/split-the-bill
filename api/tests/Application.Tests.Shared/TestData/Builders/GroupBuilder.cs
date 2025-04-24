@@ -66,20 +66,19 @@ public sealed class GroupBuilder
         return this;
     }
 
-    public Group Build() => new()
-    {
-        Id = _id,
-        Name = _name,
-        // if memberIds is defined, set null, otherwise use members and finally fall back to empty list
-        Members = _memberIds?.Any() == true ? null! : _members ?? [],
-        // not defined -> fall back to null, Members will fall back to empty list
-        GroupMembers = _memberIds?
-                           .Select(id => new GroupMember { MemberId = id })
-                           .ToList()
-                       ?? null!,
-        Expenses = _expenses,
-        Payments = _payments,
-    };
+    public Group Build() =>
+        new()
+        {
+            Id = _id,
+            Name = _name,
+            // if memberIds is defined, set null, otherwise use members and finally fall back to empty list
+            Members = _memberIds?.Any() == true ? null! : _members ?? [],
+            // not defined -> fall back to null, Members will fall back to empty list
+            GroupMembers =
+                _memberIds?.Select(id => new GroupMember { MemberId = id }).ToList() ?? null!,
+            Expenses = _expenses,
+            Payments = _payments,
+        };
 
     public static implicit operator Group(GroupBuilder builder) => builder.Build();
 }

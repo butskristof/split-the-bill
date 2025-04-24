@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
@@ -8,23 +7,20 @@
         <RootNamespace>SplitTheBill.Api</RootNamespace>
         <UserSecretsId>2f389c86-6f73-4a14-bc92-e16890b63ef8</UserSecretsId>
     </PropertyGroup>
-
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-      <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Scalar.AspNetCore" />
-      <PackageReference Include="Serilog.AspNetCore" />
-      <PackageReference Include="Serilog.Sinks.Console" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Scalar.AspNetCore" />
+        <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Serilog.Sinks.Console" />
     </ItemGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\..\1-core\Application\Application.csproj" />
-      <ProjectReference Include="..\..\2-infrastructure\Infrastructure\Infrastructure.csproj" />
-      <ProjectReference Include="..\..\2-infrastructure\Persistence\Persistence.csproj" />
+        <ProjectReference Include="..\..\1-core\Application\Application.csproj" />
+        <ProjectReference Include="..\..\2-infrastructure\Infrastructure\Infrastructure.csproj" />
+        <ProjectReference Include="..\..\2-infrastructure\Persistence\Persistence.csproj" />
     </ItemGroup>
-
 </Project>

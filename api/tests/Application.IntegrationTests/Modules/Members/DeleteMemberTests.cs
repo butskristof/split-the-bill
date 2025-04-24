@@ -18,8 +18,8 @@ internal sealed class DeleteMemberTests() : ApplicationTestBase(false)
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(request.Id)),
@@ -36,8 +36,8 @@ internal sealed class DeleteMemberTests() : ApplicationTestBase(false)
         var result = await Application.SendAsync(new DeleteMember.Request(id));
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(Member.Id))
@@ -65,14 +65,9 @@ internal sealed class DeleteMemberTests() : ApplicationTestBase(false)
     [Test]
     public async Task DeletesCorrectMember()
     {
-        await Application.AddAsync(
-            TestMembers.Alice,
-            TestMembers.Bob
-        );
+        await Application.AddAsync(TestMembers.Alice, TestMembers.Bob);
 
-        var result = await Application.SendAsync(
-            new DeleteMember.Request(TestMembers.Alice.Id)
-        );
+        var result = await Application.SendAsync(new DeleteMember.Request(TestMembers.Alice.Id));
 
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Deleted>();
@@ -90,20 +85,14 @@ internal sealed class DeleteMemberTests() : ApplicationTestBase(false)
     public async Task MemberWithGroups_CannotBeDeleted()
     {
         await SeedMembersAsync();
-        await Application.AddAsync(
-            new GroupBuilder()
-                .WithMembers([TestMembers.Alice.Id])
-                .Build()
-        );
+        await Application.AddAsync(new GroupBuilder().WithMembers([TestMembers.Alice.Id]).Build());
         Application.SetUserId(TestMembers.Bob.UserId);
 
-        var result = await Application.SendAsync(
-            new DeleteMember.Request(TestMembers.Alice.Id)
-        );
+        var result = await Application.SendAsync(new DeleteMember.Request(TestMembers.Alice.Id));
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(Member.Id)),

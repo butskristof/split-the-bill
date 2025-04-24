@@ -20,8 +20,7 @@ public static class CreateGroup
     {
         public Validator()
         {
-            RuleFor(r => r.Name)
-                .ValidString(true);
+            RuleFor(r => r.Name).ValidString(true);
         }
     }
 
@@ -32,10 +31,7 @@ public static class CreateGroup
         private readonly ILogger<Handler> _logger;
         private readonly IAppDbContext _dbContext;
 
-        public Handler(
-            ILogger<Handler> logger,
-            IAppDbContext dbContext
-        )
+        public Handler(ILogger<Handler> logger, IAppDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -43,11 +39,17 @@ public static class CreateGroup
 
         #endregion
 
-        public async ValueTask<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Response>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Creating new Group");
 
-            var currentUserMember = await _dbContext.GetMemberForCurrentUserAsync(false, cancellationToken);
+            var currentUserMember = await _dbContext.GetMemberForCurrentUserAsync(
+                false,
+                cancellationToken
+            );
 
             var group = new Group
             {

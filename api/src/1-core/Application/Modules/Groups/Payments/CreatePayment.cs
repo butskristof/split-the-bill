@@ -24,19 +24,14 @@ public static class CreatePayment
     {
         public Validator()
         {
-            RuleFor(r => r.GroupId)
-                .NotNullOrEmptyWithErrorCode();
-            RuleFor(r => r.SendingMemberId)
-                .NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.GroupId).NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.SendingMemberId).NotNullOrEmptyWithErrorCode();
             RuleFor(r => r.ReceivingMemberId)
                 .NotNullOrEmptyWithErrorCode()
                 .NotEqual(r => r.SendingMemberId)
                 .WithMessage(ErrorCodes.NotUnique);
-            RuleFor(r => r.Amount)
-                .NotNullWithErrorCode()
-                .PositiveDecimal(false);
-            RuleFor(r => r.Timestamp)
-                .NotNullWithErrorCode();
+            RuleFor(r => r.Amount).NotNullWithErrorCode().PositiveDecimal(false);
+            RuleFor(r => r.Timestamp).NotNullWithErrorCode();
         }
     }
 
@@ -55,7 +50,10 @@ public static class CreatePayment
 
         #endregion
 
-        public async ValueTask<ErrorOr<Created>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Created>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Adding new Payment to Group with id {GroupId}", request.GroupId);
 
@@ -67,35 +65,48 @@ public static class CreatePayment
             if (group is null)
             {
                 _logger.LogDebug("No group with id {Id} found in database", request.GroupId);
-                return Error.NotFound(nameof(request.GroupId), $"Could not find group with id {request.GroupId}");
+                return Error.NotFound(
+                    nameof(request.GroupId),
+                    $"Could not find group with id {request.GroupId}"
+                );
             }
 
-            _logger.LogDebug("Fetched Group to add Payment to from database with related navigation properties");
+            _logger.LogDebug(
+                "Fetched Group to add Payment to from database with related navigation properties"
+            );
 
             if (group.Members.All(m => m.Id != request.SendingMemberId))
             {
                 _logger.LogDebug("No member found in group with id {Id}", request.SendingMemberId);
-                return Error.NotFound(nameof(request.SendingMemberId),
-                    $"Could not find member with id {request.SendingMemberId} in group with id {request.GroupId}");
+                return Error.NotFound(
+                    nameof(request.SendingMemberId),
+                    $"Could not find member with id {request.SendingMemberId} in group with id {request.GroupId}"
+                );
             }
 
             if (group.Members.All(m => m.Id != request.ReceivingMemberId))
             {
-                _logger.LogDebug("No member found in group with id {Id}", request.ReceivingMemberId);
-                return Error.NotFound(nameof(request.ReceivingMemberId),
-                    $"Could not find member with id {request.ReceivingMemberId} in group with id {request.GroupId}");
+                _logger.LogDebug(
+                    "No member found in group with id {Id}",
+                    request.ReceivingMemberId
+                );
+                return Error.NotFound(
+                    nameof(request.ReceivingMemberId),
+                    $"Could not find member with id {request.ReceivingMemberId} in group with id {request.GroupId}"
+                );
             }
 
             _logger.LogDebug("Verified existence of sending and receiving member in group");
 
-            group.Payments
-                .Add(new Payment
+            group.Payments.Add(
+                new Payment
                 {
                     SendingMemberId = request.SendingMemberId!.Value,
                     ReceivingMemberId = request.ReceivingMemberId!.Value,
                     Amount = request.Amount!.Value,
                     Timestamp = request.Timestamp!.Value,
-                });
+                }
+            );
             _logger.LogDebug("Mapped request to entity and added to Group's Payments collection");
             await _dbContext.SaveChangesAsync(CancellationToken.None);
             _logger.LogDebug("Persisted changes to database");

@@ -16,23 +16,17 @@ internal sealed class UpdateGroupValidatorTests
     [Test]
     public void EmptyId_Fails()
     {
-        var request = new GroupRequestBuilder()
-            .WithId(Guid.Empty)
-            .BuildUpdateRequest();
+        var request = new GroupRequestBuilder().WithId(Guid.Empty).BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Id)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.Id).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]
     public void ValidId_Passes()
     {
-        var request = new GroupRequestBuilder()
-            .WithId(Guid.NewGuid())
-            .BuildUpdateRequest();
+        var request = new GroupRequestBuilder().WithId(Guid.NewGuid()).BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
@@ -47,43 +41,31 @@ internal sealed class UpdateGroupValidatorTests
     [MethodDataSource(typeof(TestValues), nameof(TestValues.EmptyStrings))]
     public void NullOrEmptyName_Fails(string? name)
     {
-        var request = new GroupRequestBuilder()
-            .WithName(name)
-            .BuildUpdateRequest();
+        var request = new GroupRequestBuilder().WithName(name).BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Name)
-            .WithErrorMessage(ErrorCodes.Required);
+        result.ShouldHaveValidationErrorFor(r => r.Name).WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
     public void EmptyName_OnlyReturnsOneErrorCode()
     {
-        var request = new GroupRequestBuilder()
-            .WithName(null)
-            .BuildUpdateRequest();
+        var request = new GroupRequestBuilder().WithName(null).BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Name)
-            .Count().ShouldBe(1);
+        result.ShouldHaveValidationErrorFor(r => r.Name).Count().ShouldBe(1);
     }
 
     [Test]
     public void NameTooLong_Fails()
     {
         var name = TestUtilities.GenerateString(513);
-        var request = new GroupRequestBuilder()
-            .WithName(name)
-            .BuildUpdateRequest();
+        var request = new GroupRequestBuilder().WithName(name).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Name)
-            .WithErrorMessage(ErrorCodes.TooLong);
+        result.ShouldHaveValidationErrorFor(r => r.Name).WithErrorMessage(ErrorCodes.TooLong);
     }
 
     [Test]
@@ -93,9 +75,7 @@ internal sealed class UpdateGroupValidatorTests
     public void NameValidLength_Passes(int length)
     {
         var name = TestUtilities.GenerateString(length);
-        var request = new GroupRequestBuilder()
-            .WithName(name)
-            .BuildUpdateRequest();
+        var request = new GroupRequestBuilder().WithName(name).BuildUpdateRequest();
 
         var result = _sut.TestValidate(request);
 

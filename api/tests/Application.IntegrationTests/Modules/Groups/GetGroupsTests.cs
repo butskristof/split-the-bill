@@ -26,11 +26,7 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         const string groupName = "group name";
 
         await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithDefaultMember()
-                .WithName(groupName)
-                .Build()
+            new GroupBuilder().WithId(groupId).WithDefaultMember().WithName(groupName).Build()
         );
 
         var result = await Application.SendAsync(new GetGroups.Request());
@@ -38,7 +34,8 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         result.IsError.ShouldBeFalse();
         var response = result.Value;
         response.ShouldNotBeNull();
-        response.Groups.ShouldHaveSingleItem()
+        response
+            .Groups.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 m => m.Id.ShouldBe(groupId),
                 m => m.Name.ShouldBe(groupName)
@@ -54,16 +51,8 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         const string groupName2 = "group name 2";
 
         await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId1)
-                .WithDefaultMember()
-                .WithName(groupName1)
-                .Build(),
-            new GroupBuilder()
-                .WithId(groupId2)
-                .WithDefaultMember()
-                .WithName(groupName2)
-                .Build()
+            new GroupBuilder().WithId(groupId1).WithDefaultMember().WithName(groupName1).Build(),
+            new GroupBuilder().WithId(groupId2).WithDefaultMember().WithName(groupName2).Build()
         );
 
         var result = await Application.SendAsync(new GetGroups.Request());
@@ -72,10 +61,8 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         var response = result.Value;
         response.ShouldNotBeNull();
         response.Groups.Count.ShouldBe(2);
-        response.Groups.ShouldContain(m =>
-            m.Id == groupId1 && m.Name == groupName1);
-        response.Groups.ShouldContain(m =>
-            m.Id == groupId2 && m.Name == groupName2);
+        response.Groups.ShouldContain(m => m.Id == groupId1 && m.Name == groupName1);
+        response.Groups.ShouldContain(m => m.Id == groupId2 && m.Name == groupName2);
     }
 
     [Test]
@@ -85,41 +72,28 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         var group2Id = Guid.NewGuid();
 
         await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(group1Id)
-                .Build(),
-            new GroupBuilder()
-                .WithId(group2Id)
-                .WithMembers([TestMembers.Bob.Id])
-                .Build()
+            new GroupBuilder().WithId(group1Id).Build(),
+            new GroupBuilder().WithId(group2Id).WithMembers([TestMembers.Bob.Id]).Build()
         );
         Application.SetUserId(TestMembers.Bob.UserId);
-        
+
         var result = await Application.SendAsync(new GetGroups.Request());
         var response = result.Value;
 
-        response.Groups
-            .ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(
-                g => g.Id.ShouldBe(group2Id)
-            );
+        response
+            .Groups.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(g => g.Id.ShouldBe(group2Id));
     }
 
     [Test]
     public async Task NoGroupsForUserId_ReturnsEmptyList()
     {
         var groupId = Guid.NewGuid();
-        await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .Build()
-        );
+        await Application.AddAsync(new GroupBuilder().WithId(groupId).Build());
 
         Application.SetUserId(TestMembers.Alice.UserId);
         var result = await Application.SendAsync(new GetGroups.Request());
         result.IsError.ShouldBeFalse();
-        result.Value
-            .Groups
-            .ShouldBeEmpty();
+        result.Value.Groups.ShouldBeEmpty();
     }
 }
