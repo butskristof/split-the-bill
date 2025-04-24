@@ -19,18 +19,13 @@ public sealed class GroupRequestBuilder
         return this;
     }
 
-    public CreateGroup.Request BuildCreateRequest() => new()
-    {
-        Name = _name,
-    };
+    public CreateGroup.Request BuildCreateRequest() => new() { Name = _name };
 
-    public static implicit operator CreateGroup.Request(GroupRequestBuilder builder) => builder.BuildCreateRequest();
+    public static implicit operator CreateGroup.Request(GroupRequestBuilder builder) =>
+        builder.BuildCreateRequest();
 
-    public UpdateGroup.Request BuildUpdateRequest() => new()
-    {
-        Id = _id,
-        Name = _name,
-    };
+    public UpdateGroup.Request BuildUpdateRequest() => new() { Id = _id, Name = _name };
 
-    public static implicit operator UpdateGroup.Request(GroupRequestBuilder builder) => builder.BuildUpdateRequest();
+    public static implicit operator UpdateGroup.Request(GroupRequestBuilder builder) =>
+        builder.BuildUpdateRequest();
 }

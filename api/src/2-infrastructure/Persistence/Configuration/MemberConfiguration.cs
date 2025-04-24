@@ -13,20 +13,15 @@ internal sealed class MemberConfiguration : IEntityTypeConfiguration<Member>
     {
         builder.ToTable("Members");
 
-        builder.Property(m => m.Username)
+        builder
+            .Property(m => m.Username)
             .UseCollation(PersistenceConstants.CaseInsensitiveCollation)
             .HasMaxLength(ApplicationConstants.MemberUsernameMaxLength);
-        builder.HasIndex(m => m.Username)
-            .IsUnique();
+        builder.HasIndex(m => m.Username).IsUnique();
 
-        builder.Property(m => m.UserId)
-            .UseCollation(PersistenceConstants.CaseInsensitiveCollation);
-        builder.HasIndex(m => m.UserId)
-            .IsUnique();
-        
-        builder
-            .HasMany(m => m.Groups)
-            .WithMany(g => g.Members)
-            .UsingEntity<GroupMember>();
+        builder.Property(m => m.UserId).UseCollation(PersistenceConstants.CaseInsensitiveCollation);
+        builder.HasIndex(m => m.UserId).IsUnique();
+
+        builder.HasMany(m => m.Groups).WithMany(g => g.Members).UsingEntity<GroupMember>();
     }
 }

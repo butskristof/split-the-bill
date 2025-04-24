@@ -13,60 +13,43 @@ internal sealed class CreatePaymentValidatorTests
     [Test]
     public void NullGroupId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(null)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithGroupId(null).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.GroupId)
-            .WithErrorMessage(ErrorCodes.Required);
+        result.ShouldHaveValidationErrorFor(r => r.GroupId).WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
     public void EmptyGroupId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(Guid.Empty)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithGroupId(Guid.Empty).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.GroupId)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.GroupId).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]
     public void EmptyNullableGuid_OnlyReturnsOneErrorCode()
     {
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(Guid.Empty)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithGroupId(Guid.Empty).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.GroupId)
-            .Count().ShouldBe(1);
+        result.ShouldHaveValidationErrorFor(r => r.GroupId).Count().ShouldBe(1);
     }
 
     [Test]
     public void NonEmptyGroupId_Passes()
     {
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(Guid.NewGuid())
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithGroupId(Guid.NewGuid()).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.GroupId);
+        result.ShouldNotHaveValidationErrorFor(r => r.GroupId);
     }
-    
+
     [Test]
     public void NullSendingMemberId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithSendingMemberId(null)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithSendingMemberId(null).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -95,16 +78,13 @@ internal sealed class CreatePaymentValidatorTests
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.SendingMemberId);
+        result.ShouldNotHaveValidationErrorFor(r => r.SendingMemberId);
     }
-    
+
     [Test]
     public void NullReceivingMemberId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithReceivingMemberId(null)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithReceivingMemberId(null).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -133,8 +113,7 @@ internal sealed class CreatePaymentValidatorTests
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.ReceivingMemberId);
+        result.ShouldNotHaveValidationErrorFor(r => r.ReceivingMemberId);
     }
 
     [Test]
@@ -151,18 +130,14 @@ internal sealed class CreatePaymentValidatorTests
             .ShouldHaveValidationErrorFor(r => r.ReceivingMemberId)
             .WithErrorMessage(ErrorCodes.NotUnique);
     }
-    
+
     [Test]
     public void NullAmount_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithAmount(null)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithAmount(null).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Amount)
-            .WithErrorMessage(ErrorCodes.Required);
+        result.ShouldHaveValidationErrorFor(r => r.Amount).WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
@@ -170,41 +145,30 @@ internal sealed class CreatePaymentValidatorTests
     [Arguments(0)]
     public void NegativeOrZeroAmount_Fails(decimal amount)
     {
-        var request = new PaymentRequestBuilder()
-            .WithAmount(amount)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithAmount(amount).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Amount)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.Amount).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]
     public void PositiveAmount_Passes()
     {
-        var request = new PaymentRequestBuilder()
-            .WithAmount(1.0m)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithAmount(1.0m).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.Amount);
+        result.ShouldNotHaveValidationErrorFor(r => r.Amount);
     }
 
     [Test]
     public void NullTimestamp_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithTimestamp(null)
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithTimestamp(null).BuildCreateRequest();
         var result = _sut.TestValidate(request);
-        
-        result
-            .ShouldHaveValidationErrorFor(r => r.Timestamp)
-            .WithErrorMessage(ErrorCodes.Required);
+
+        result.ShouldHaveValidationErrorFor(r => r.Timestamp).WithErrorMessage(ErrorCodes.Required);
     }
-    
+
     [Test]
     public void ValidTimestamp_Passes()
     {
@@ -212,9 +176,8 @@ internal sealed class CreatePaymentValidatorTests
             .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 14, 21, TimeSpan.Zero))
             .BuildCreateRequest();
         var result = _sut.TestValidate(request);
-        
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.Timestamp);
+
+        result.ShouldNotHaveValidationErrorFor(r => r.Timestamp);
     }
 
     [Test]

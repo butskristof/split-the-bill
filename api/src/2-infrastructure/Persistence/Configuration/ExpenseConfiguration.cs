@@ -22,7 +22,7 @@ internal sealed class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
             .WithOne()
             .HasForeignKey(ep => ep.ExpenseId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder
             .HasOne<Member>()
             .WithMany()

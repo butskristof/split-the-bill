@@ -14,7 +14,7 @@ namespace SplitTheBill.Application.IntegrationTests.Common;
 
 // this collection fixture sets up a database and builds a minimal, but representative, service collection
 // so the application layer can be configured, with a scope factory as a result
-// it also provides various utility methods to access the underlying database and authentication 
+// it also provides various utility methods to access the underlying database and authentication
 // so integration tests can be easily "arranged" before "acting" by sending requests into the mediator
 
 internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
@@ -32,25 +32,18 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
         // build a service collection
         var services = new ServiceCollection();
         // start by adding the application layer
-        services
-            .AddApplication();
+        services.AddApplication();
 
         // add in required ports & adapters by replacing them with fakes
         // infrastructure
-        services
-            .AddLogging()
-            .AddScoped<TimeProvider>(_ => _timeProvider);
+        services.AddLogging().AddScoped<TimeProvider>(_ => _timeProvider);
 
         // persistence
-        services
-            .AddPersistence(null, _database.GetConnection());
+        services.AddPersistence(null, _database.GetConnection());
 
         var authenticationInfo = Substitute.For<IAuthenticationInfo>();
-        authenticationInfo
-            .UserId
-            .Returns(_ => GetUserId());
-        services
-            .AddSingleton(authenticationInfo);
+        authenticationInfo.UserId.Returns(_ => GetUserId());
+        services.AddSingleton(authenticationInfo);
 
         // build a scope factory from the service collection
         var provider = services.BuildServiceProvider();
@@ -107,7 +100,8 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
 
     public async Task<TEntity?> FindAsync<TEntity>(
         Expression<Func<TEntity, bool>> identifier,
-        params Expression<Func<TEntity, object>>[] includes)
+        params Expression<Func<TEntity, object>>[] includes
+    )
         where TEntity : class
     {
         using var scope = _scopeFactory.CreateScope();
@@ -118,8 +112,7 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
     }
 
     public Task AddAsync<TEntity>(params TEntity[] entities)
-        where TEntity : class
-        => AddAsync(entities.AsEnumerable());
+        where TEntity : class => AddAsync(entities.AsEnumerable());
 
     public async Task AddAsync<TEntity>(IEnumerable<TEntity> entities)
         where TEntity : class
@@ -138,13 +131,12 @@ internal sealed class ApplicationFixture : IAsyncInitializer, IAsyncDisposable
         return await context.Set<TEntity>().CountAsync();
     }
 
-    public void SetDateTime(DateTimeOffset dateTime)
-        => _timeProvider.SetUtcNow(dateTime);
+    public void SetDateTime(DateTimeOffset dateTime) => _timeProvider.SetUtcNow(dateTime);
 
     public string GetUserId() => _userId;
 
-    public void SetUserId(string? userId)
-        => _userId = userId ?? throw new ArgumentException("userId cannot be null", nameof(userId));
+    public void SetUserId(string? userId) =>
+        _userId = userId ?? throw new ArgumentException("userId cannot be null", nameof(userId));
 
     public async ValueTask DisposeAsync()
     {

@@ -11,8 +11,9 @@ namespace SplitTheBill.Persistence.ValueConverters;
 /// </summary>
 internal sealed class DateTimeOffsetValueConverter : ValueConverter<DateTimeOffset, DateTime>
 {
-    public DateTimeOffsetValueConverter() : base(dateTimeOffset => dateTimeOffset.UtcDateTime,
-        dateTime => new DateTimeOffset(dateTime, TimeSpan.Zero))
-    {
-    }
+    public DateTimeOffsetValueConverter()
+        : base(
+            dateTimeOffset => dateTimeOffset.UtcDateTime,
+            dateTime => new DateTimeOffset(dateTime, TimeSpan.Zero)
+        ) { }
 }

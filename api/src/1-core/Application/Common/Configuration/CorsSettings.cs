@@ -37,8 +37,10 @@ internal sealed class CorsSettingsValidator : BaseValidator<CorsSettings>
             .WithMessage("Origin value must not contain authentication information")
             .Must(origin => string.IsNullOrEmpty(new Uri(origin, UriKind.Absolute).Fragment))
             .WithMessage("Origin value must not contain a fragment")
-            .Must(origin => Uri.TryCreate(origin, UriKind.Absolute, out var uri) &&
-                            (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            .Must(origin =>
+                Uri.TryCreate(origin, UriKind.Absolute, out var uri)
+                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps)
+            )
             .WithMessage("Origin value must use http or https scheme");
     }
 }

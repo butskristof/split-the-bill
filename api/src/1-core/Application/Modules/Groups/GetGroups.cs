@@ -10,9 +10,7 @@ public static class GetGroups
 {
     public sealed record Request : IQuery<ErrorOr<Response>>;
 
-    public sealed record Response(
-        List<Response.GroupDto> Groups
-    )
+    public sealed record Response(List<Response.GroupDto> Groups)
     {
         public sealed record GroupDto(Guid Id, string Name);
     }
@@ -24,10 +22,7 @@ public static class GetGroups
         private readonly ILogger<Handler> _logger;
         private readonly IAppDbContext _dbContext;
 
-        public Handler(
-            ILogger<Handler> logger,
-            IAppDbContext dbContext
-        )
+        public Handler(ILogger<Handler> logger, IAppDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -35,7 +30,10 @@ public static class GetGroups
 
         #endregion
 
-        public async ValueTask<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Response>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Fetching all groups from database");
 

@@ -15,8 +15,7 @@ public static class DeleteMember
     {
         public Validator()
         {
-            RuleFor(r => r.Id)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid);
+            RuleFor(r => r.Id).NotEmptyWithErrorCode(ErrorCodes.Invalid);
         }
     }
 
@@ -35,18 +34,23 @@ public static class DeleteMember
 
         #endregion
 
-        public async ValueTask<ErrorOr<Deleted>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Deleted>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Deleting Member with id {Id}", request.Id);
 
             var member = await _dbContext
-                .Members
-                .Include(m => m.Groups)
+                .Members.Include(m => m.Groups)
                 .SingleOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
             if (member is null)
             {
                 _logger.LogDebug("No member with id {Id} found in database", request.Id);
-                return Error.NotFound(nameof(request.Id), $"Could not find member with id {request.Id}");
+                return Error.NotFound(
+                    nameof(request.Id),
+                    $"Could not find member with id {request.Id}"
+                );
             }
 
             _logger.LogDebug("Fetched entity to delete from database");

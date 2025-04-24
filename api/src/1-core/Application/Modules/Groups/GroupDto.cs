@@ -17,19 +17,13 @@ public record GroupDto
     public Guid Id => _group.Id;
     public string Name => _group.Name;
 
-    public List<MemberDto> Members => _group.Members
-        .Select(m => new MemberDto(_group, m))
-        .ToList();
+    public List<MemberDto> Members => _group.Members.Select(m => new MemberDto(_group, m)).ToList();
 
-    public List<ExpenseDto> Expenses => _group.Expenses
-        .Select(e => new ExpenseDto(e))
-        .OrderByDescending(e => e.Timestamp)
-        .ToList();
+    public List<ExpenseDto> Expenses =>
+        _group.Expenses.Select(e => new ExpenseDto(e)).OrderByDescending(e => e.Timestamp).ToList();
 
-    public List<PaymentDto> Payments => _group.Payments
-        .Select(p => new PaymentDto(p))
-        .OrderByDescending(p => p.Timestamp)
-        .ToList();
+    public List<PaymentDto> Payments =>
+        _group.Payments.Select(p => new PaymentDto(p)).OrderByDescending(p => p.Timestamp).ToList();
 
     #endregion
 
@@ -61,28 +55,31 @@ public record GroupDto
 
         #region Totals
 
-        public decimal TotalExpenseAmount => _group.Expenses
-            .Sum(e => e.GetExpenseAmountForMember(Id));
+        public decimal TotalExpenseAmount =>
+            _group.Expenses.Sum(e => e.GetExpenseAmountForMember(Id));
 
-        public decimal TotalExpensePaidAmount => _group.Expenses
-            .Where(e => e.PaidByMemberId == Id)
-            .Sum(e => e.Amount);
+        public decimal TotalExpensePaidAmount =>
+            _group.Expenses.Where(e => e.PaidByMemberId == Id).Sum(e => e.Amount);
 
-        private decimal ExpenseAmountSelfPaid => _group.Expenses
-            .Where(e => e.PaidByMemberId == Id && e.Participants.Any(p => p.MemberId == Id))
-            .Sum(e => e.GetExpenseAmountForMember(Id));
+        private decimal ExpenseAmountSelfPaid =>
+            _group
+                .Expenses.Where(e =>
+                    e.PaidByMemberId == Id && e.Participants.Any(p => p.MemberId == Id)
+                )
+                .Sum(e => e.GetExpenseAmountForMember(Id));
 
-        public decimal TotalExpenseAmountPaidByOtherMembers => _group.Expenses
-            .Where(e => e.Participants.Any(p => p.MemberId == Id) && e.PaidByMemberId != Id)
-            .Sum(e => e.GetExpenseAmountForMember(Id));
+        public decimal TotalExpenseAmountPaidByOtherMembers =>
+            _group
+                .Expenses.Where(e =>
+                    e.Participants.Any(p => p.MemberId == Id) && e.PaidByMemberId != Id
+                )
+                .Sum(e => e.GetExpenseAmountForMember(Id));
 
-        public decimal TotalPaymentReceivedAmount => _group.Payments
-            .Where(p => p.ReceivingMemberId == Id)
-            .Sum(p => p.Amount);
+        public decimal TotalPaymentReceivedAmount =>
+            _group.Payments.Where(p => p.ReceivingMemberId == Id).Sum(p => p.Amount);
 
-        public decimal TotalPaymentSentAmount => _group.Payments
-            .Where(p => p.SendingMemberId == Id)
-            .Sum(p => p.Amount);
+        public decimal TotalPaymentSentAmount =>
+            _group.Payments.Where(p => p.SendingMemberId == Id).Sum(p => p.Amount);
 
         public decimal TotalAmountOwed =>
             TotalExpensePaidAmount // total amount paid by
@@ -90,8 +87,7 @@ public record GroupDto
             - TotalPaymentReceivedAmount; // subtract already received
 
         public decimal TotalAmountOwedToOtherMembers =>
-            TotalExpenseAmountPaidByOtherMembers
-            - TotalPaymentSentAmount; // subtract already sent
+            TotalExpenseAmountPaidByOtherMembers - TotalPaymentSentAmount; // subtract already sent
 
         public decimal TotalBalance => TotalAmountOwed - TotalAmountOwedToOtherMembers;
 
@@ -112,19 +108,16 @@ public record GroupDto
         List<ExpenseDto.ExpenseParticipantDto> Participants
     )
     {
-        public ExpenseDto(Expense expense) : this(
-            expense.Id,
-            expense.Description,
-            expense.PaidByMemberId,
-            expense.Timestamp,
-            expense.Amount,
-            expense.SplitType,
-            expense.Participants
-                .Select(p => new ExpenseParticipantDto(p))
-                .ToList()
-        )
-        {
-        }
+        public ExpenseDto(Expense expense)
+            : this(
+                expense.Id,
+                expense.Description,
+                expense.PaidByMemberId,
+                expense.Timestamp,
+                expense.Amount,
+                expense.SplitType,
+                expense.Participants.Select(p => new ExpenseParticipantDto(p)).ToList()
+            ) { }
 
         public sealed record ExpenseParticipantDto(
             Guid MemberId,
@@ -137,9 +130,7 @@ public record GroupDto
                     expenseParticipant.MemberId,
                     expenseParticipant.PercentualShare,
                     expenseParticipant.ExactShare
-                )
-            {
-            }
+                ) { }
         }
     }
 
@@ -162,9 +153,7 @@ public record GroupDto
                 payment.ReceivingMemberId,
                 payment.Amount,
                 payment.Timestamp
-            )
-        {
-        }
+            ) { }
     }
 
     #endregion

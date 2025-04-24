@@ -25,39 +25,37 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
 
         result.IsError.ShouldBeTrue();
         result.ErrorsOrEmptyList.Count.ShouldBe(4);
-        result.ErrorsOrEmptyList
-            .ShouldContain(r =>
-                r.Type == ErrorType.Validation &&
-                r.Code == nameof(request.GroupId) &&
-                r.Description == ErrorCodes.Invalid);
-        result.ErrorsOrEmptyList
-            .ShouldContain(r =>
-                r.Type == ErrorType.Validation &&
-                r.Code == nameof(request.SendingMemberId) &&
-                r.Description == ErrorCodes.Required);
-        result.ErrorsOrEmptyList
-            .ShouldContain(r =>
-                r.Type == ErrorType.Validation &&
-                r.Code == nameof(request.ReceivingMemberId) &&
-                r.Description == ErrorCodes.Invalid);
-        result.ErrorsOrEmptyList
-            .ShouldContain(r =>
-                r.Type == ErrorType.Validation &&
-                r.Code == nameof(request.Amount) &&
-                r.Description == ErrorCodes.Invalid);
+        result.ErrorsOrEmptyList.ShouldContain(r =>
+            r.Type == ErrorType.Validation
+            && r.Code == nameof(request.GroupId)
+            && r.Description == ErrorCodes.Invalid
+        );
+        result.ErrorsOrEmptyList.ShouldContain(r =>
+            r.Type == ErrorType.Validation
+            && r.Code == nameof(request.SendingMemberId)
+            && r.Description == ErrorCodes.Required
+        );
+        result.ErrorsOrEmptyList.ShouldContain(r =>
+            r.Type == ErrorType.Validation
+            && r.Code == nameof(request.ReceivingMemberId)
+            && r.Description == ErrorCodes.Invalid
+        );
+        result.ErrorsOrEmptyList.ShouldContain(r =>
+            r.Type == ErrorType.Validation
+            && r.Code == nameof(request.Amount)
+            && r.Description == ErrorCodes.Invalid
+        );
     }
 
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(Guid.NewGuid())
-            .BuildCreateRequest();
+        var request = new PaymentRequestBuilder().WithGroupId(Guid.NewGuid()).BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.GroupId))
@@ -69,21 +67,16 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     {
         var groupId = Guid.NewGuid();
         await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithMembers([TestMembers.Alice.Id])
-                .Build()
+            new GroupBuilder().WithId(groupId).WithMembers([TestMembers.Alice.Id]).Build()
         );
         Application.SetUserId(TestMembers.Bob.UserId);
-        
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(groupId)
-            .BuildCreateRequest();
+
+        var request = new PaymentRequestBuilder().WithGroupId(groupId).BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.GroupId))
@@ -94,12 +87,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     public async Task SendingMemberDoesNotExist_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
-        await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithDefaultMember()
-                .Build()
-        );
+        await Application.AddAsync(new GroupBuilder().WithId(groupId).WithDefaultMember().Build());
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
             .WithSendingMemberId(Guid.NewGuid())
@@ -107,8 +95,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.SendingMemberId))
@@ -119,12 +107,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     public async Task SendingMemberNotInGroup_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
-        await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithDefaultMember()
-                .Build()
-        );
+        await Application.AddAsync(new GroupBuilder().WithId(groupId).WithDefaultMember().Build());
 
         var request = new PaymentRequestBuilder()
             .WithGroupId(groupId)
@@ -133,8 +116,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.SendingMemberId))
@@ -146,10 +129,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     {
         var groupId = Guid.NewGuid();
         await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithMembers([TestMembers.Alice.Id])
-                .Build()
+            new GroupBuilder().WithId(groupId).WithMembers([TestMembers.Alice.Id]).Build()
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
@@ -161,8 +141,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.ReceivingMemberId))
@@ -174,10 +154,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
     {
         var groupId = Guid.NewGuid();
         await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithMembers([TestMembers.Alice.Id])
-                .Build()
+            new GroupBuilder().WithId(groupId).WithMembers([TestMembers.Alice.Id]).Build()
         );
         Application.SetUserId(TestMembers.Alice.UserId);
 
@@ -189,8 +166,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.ReceivingMemberId))
@@ -204,10 +181,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMembers([
-                    TestMembers.Alice.Id,
-                    TestMembers.Bob.Id
-                ])
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .Build()
         );
         Application.SetUserId(TestMembers.Alice.UserId);
@@ -217,7 +191,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             .WithSendingMemberId(TestMembers.Alice.Id)
             .WithReceivingMemberId(TestMembers.Bob.Id)
             .WithAmount(100m)
-            .WithTimestamp(new DateTimeOffset(2025,4,3,0,36,1,TimeSpan.Zero))
+            .WithTimestamp(new DateTimeOffset(2025, 4, 3, 0, 36, 1, TimeSpan.Zero))
             .BuildCreateRequest();
         var result = await Application.SendAsync(request);
 
@@ -232,10 +206,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMembers([
-                    TestMembers.Alice.Id,
-                    TestMembers.Bob.Id
-                ])
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .Build()
         );
         Application.SetUserId(TestMembers.Alice.UserId);
@@ -250,13 +221,9 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
             .BuildCreateRequest();
         await Application.SendAsync(request);
 
-        var group = await Application
-            .FindAsync<Group>(
-                g => g.Id == groupId,
-                g => g.Payments
-            );
-        group!.Payments
-            .ShouldHaveSingleItem()
+        var group = await Application.FindAsync<Group>(g => g.Id == groupId, g => g.Payments);
+        group!
+            .Payments.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 p => p.SendingMemberId.ShouldBe(TestMembers.Alice.Id),
                 p => p.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id),
@@ -272,10 +239,7 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         await Application.AddAsync(
             new GroupBuilder()
                 .WithId(groupId)
-                .WithMembers([
-                    TestMembers.Alice.Id,
-                    TestMembers.Bob.Id
-                ])
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 .Build()
         );
         Application.SetUserId(TestMembers.Alice.UserId);
@@ -293,8 +257,8 @@ internal sealed class CreatePaymentTests : ApplicationTestBase
         var result = await Application.SendAsync(new GetGroup.Request(groupId));
         var response = result.Value;
         response.TotalPaymentAmount.ShouldBe(100m);
-        response.Payments
-            .ShouldHaveSingleItem()
+        response
+            .Payments.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 p => p.SendingMemberId.ShouldBe(TestMembers.Alice.Id),
                 p => p.ReceivingMemberId.ShouldBe(TestMembers.Bob.Id),

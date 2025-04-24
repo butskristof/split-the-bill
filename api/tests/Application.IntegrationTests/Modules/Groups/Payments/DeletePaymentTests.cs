@@ -15,15 +15,12 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     [Test]
     public async Task InvalidRequest_ReturnsValidationError()
     {
-        var request = new DeletePayment.Request(
-            Guid.Empty,
-            Guid.NewGuid()
-        );
+        var request = new DeletePayment.Request(Guid.Empty, Guid.NewGuid());
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(request.GroupId)),
@@ -34,25 +31,26 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(Guid.NewGuid())
-            .WithPayments([
-                new PaymentBuilder()
-                    .WithId(Guid.NewGuid())
-                    .WithSendingMemberId(TestMembers.Alice.Id)
-                    .WithReceivingMemberId(TestMembers.Bob.Id)
-            ])
-            .Build());
-
-        var request = new DeletePayment.Request(
-            Guid.NewGuid(),
-            Guid.NewGuid()
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(Guid.NewGuid())
+                .WithPayments(
+                    [
+                        new PaymentBuilder()
+                            .WithId(Guid.NewGuid())
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                    ]
+                )
+                .Build()
         );
+
+        var request = new DeletePayment.Request(Guid.NewGuid(), Guid.NewGuid());
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.GroupId))
@@ -67,27 +65,28 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     public async Task PaymentDoesNotExist_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
-            .WithPayments([
-                new PaymentBuilder()
-                    .WithId(Guid.NewGuid())
-                    .WithSendingMemberId(TestMembers.Alice.Id)
-                    .WithReceivingMemberId(TestMembers.Bob.Id)
-            ])
-            .Build());
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .WithPayments(
+                    [
+                        new PaymentBuilder()
+                            .WithId(Guid.NewGuid())
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                    ]
+                )
+                .Build()
+        );
         Application.SetUserId(TestMembers.Alice.UserId);
 
-        var request = new DeletePayment.Request(
-            groupId,
-            Guid.NewGuid()
-        );
+        var request = new DeletePayment.Request(groupId, Guid.NewGuid());
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.PaymentId))
@@ -107,28 +106,24 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(Guid.NewGuid())
                 .WithDefaultMember()
-                .WithPayments([
-                    new PaymentBuilder()
-                        .WithId(paymentId)
-                        .WithSendingMemberId(TestMembers.Alice.Id)
-                        .WithReceivingMemberId(TestMembers.Bob.Id)
-                ])
+                .WithPayments(
+                    [
+                        new PaymentBuilder()
+                            .WithId(paymentId)
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                    ]
+                )
                 .Build(),
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithDefaultMember()
-                .Build()
+            new GroupBuilder().WithId(groupId).WithDefaultMember().Build()
         );
 
-        var request = new DeletePayment.Request(
-            groupId,
-            paymentId
-        );
+        var request = new DeletePayment.Request(groupId, paymentId);
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.PaymentId))
@@ -144,24 +139,28 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
     {
         var groupId = Guid.NewGuid();
         var paymentId = Guid.NewGuid();
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
-            .WithPayments([
-                new PaymentBuilder()
-                    .WithId(paymentId)
-                    .WithSendingMemberId(TestMembers.Alice.Id)
-                    .WithReceivingMemberId(TestMembers.Bob.Id)
-            ])
-            .Build());
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .WithPayments(
+                    [
+                        new PaymentBuilder()
+                            .WithId(paymentId)
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                    ]
+                )
+                .Build()
+        );
         Application.SetUserId(TestMembers.Default.UserId);
 
         var request = new DeletePayment.Request(groupId, paymentId);
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.GroupId))
@@ -174,22 +173,23 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var groupId = Guid.NewGuid();
         var paymentId = Guid.NewGuid();
 
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
-            .WithPayments([
-                new PaymentBuilder()
-                    .WithId(paymentId)
-                    .WithSendingMemberId(TestMembers.Alice.Id)
-                    .WithReceivingMemberId(TestMembers.Bob.Id)
-            ])
-            .Build());
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .WithPayments(
+                    [
+                        new PaymentBuilder()
+                            .WithId(paymentId)
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                    ]
+                )
+                .Build()
+        );
         Application.SetUserId(TestMembers.Alice.UserId);
 
-        var request = new DeletePayment.Request(
-            groupId,
-            paymentId
-        );
+        var request = new DeletePayment.Request(groupId, paymentId);
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
@@ -207,26 +207,27 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var payment1Id = Guid.NewGuid();
         var payment2Id = Guid.NewGuid();
 
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
-            .WithPayments([
-                new PaymentBuilder()
-                    .WithId(payment1Id)
-                    .WithSendingMemberId(TestMembers.Alice.Id)
-                    .WithReceivingMemberId(TestMembers.Bob.Id),
-                new PaymentBuilder()
-                    .WithId(payment2Id)
-                    .WithSendingMemberId(TestMembers.Alice.Id)
-                    .WithReceivingMemberId(TestMembers.Bob.Id)
-            ])
-            .Build());
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .WithPayments(
+                    [
+                        new PaymentBuilder()
+                            .WithId(payment1Id)
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                        new PaymentBuilder()
+                            .WithId(payment2Id)
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                    ]
+                )
+                .Build()
+        );
         Application.SetUserId(TestMembers.Alice.UserId);
 
-        var request = new DeletePayment.Request(
-            groupId,
-            payment1Id
-        );
+        var request = new DeletePayment.Request(groupId, payment1Id);
         await Application.SendAsync(request);
 
         // verify payment is deleted
@@ -243,38 +244,37 @@ internal sealed class DeletePaymentTests : ApplicationTestBase
         var payment1Id = Guid.NewGuid();
         var payment2Id = Guid.NewGuid();
 
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(groupId)
-            .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
-            .WithPayments([
-                new PaymentBuilder()
-                    .WithId(payment1Id)
-                    .WithAmount(100)
-                    .WithSendingMemberId(TestMembers.Alice.Id)
-                    .WithReceivingMemberId(TestMembers.Bob.Id),
-                new PaymentBuilder()
-                    .WithId(payment2Id)
-                    .WithAmount(100)
-                    .WithSendingMemberId(TestMembers.Alice.Id)
-                    .WithReceivingMemberId(TestMembers.Bob.Id)
-            ])
-            .WithName("group name")
-            .Build());
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .WithPayments(
+                    [
+                        new PaymentBuilder()
+                            .WithId(payment1Id)
+                            .WithAmount(100)
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                        new PaymentBuilder()
+                            .WithId(payment2Id)
+                            .WithAmount(100)
+                            .WithSendingMemberId(TestMembers.Alice.Id)
+                            .WithReceivingMemberId(TestMembers.Bob.Id),
+                    ]
+                )
+                .WithName("group name")
+                .Build()
+        );
         Application.SetUserId(TestMembers.Alice.UserId);
 
-        var request = new DeletePayment.Request(
-            groupId,
-            payment1Id
-        );
+        var request = new DeletePayment.Request(groupId, payment1Id);
         await Application.SendAsync(request);
 
         var result = await Application.SendAsync(new GetGroup.Request(groupId));
         var response = result.Value;
         response.TotalPaymentAmount.ShouldBe(100m);
-        response.Payments
-            .ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(
-                p => p.Id.ShouldBe(payment2Id)
-            );
+        response
+            .Payments.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(p => p.Id.ShouldBe(payment2Id));
     }
 }

@@ -7,15 +7,13 @@ namespace SplitTheBill.Application.UnitTests.Modules.Groups;
 internal sealed class DeleteGroupValidatorTests
 {
     private readonly DeleteGroup.Validator _sut = new();
-    
+
     [Test]
     public void EmptyId_Fails()
     {
         var request = new DeleteGroup.Request(Guid.Empty);
         var result = _sut.TestValidate(request);
-        result
-            .ShouldHaveValidationErrorFor(r => r.Id)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.Id).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]

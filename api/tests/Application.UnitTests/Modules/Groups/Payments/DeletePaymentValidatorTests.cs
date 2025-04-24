@@ -11,23 +11,15 @@ internal sealed class DeletePaymentValidatorTests
     [Test]
     public void EmptyGroupId_Fails()
     {
-        var request = new DeletePayment.Request(
-            Guid.Empty,
-            Guid.NewGuid()
-        );
+        var request = new DeletePayment.Request(Guid.Empty, Guid.NewGuid());
         var result = _sut.TestValidate(request);
-        result
-            .ShouldHaveValidationErrorFor(r => r.GroupId)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.GroupId).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]
     public void ValidGroupId_Passes()
     {
-        var request = new DeletePayment.Request(
-            Guid.NewGuid(), 
-            Guid.NewGuid()
-        );
+        var request = new DeletePayment.Request(Guid.NewGuid(), Guid.NewGuid());
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveValidationErrorFor(r => r.GroupId);
     }
@@ -35,23 +27,15 @@ internal sealed class DeletePaymentValidatorTests
     [Test]
     public void EmptyPaymentId_Fails()
     {
-        var request = new DeletePayment.Request(
-            Guid.NewGuid(), 
-            Guid.Empty
-        );
+        var request = new DeletePayment.Request(Guid.NewGuid(), Guid.Empty);
         var result = _sut.TestValidate(request);
-        result
-            .ShouldHaveValidationErrorFor(r => r.PaymentId)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.PaymentId).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]
     public void ValidPaymentId_Passes()
     {
-        var request = new DeletePayment.Request(
-            Guid.NewGuid(), 
-            Guid.NewGuid()
-        );
+        var request = new DeletePayment.Request(Guid.NewGuid(), Guid.NewGuid());
         var result = _sut.TestValidate(request);
         result.ShouldNotHaveValidationErrorFor(r => r.PaymentId);
     }

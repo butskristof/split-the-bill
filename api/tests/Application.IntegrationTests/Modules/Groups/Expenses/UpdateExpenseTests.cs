@@ -24,30 +24,28 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
 
         result.IsError.ShouldBeTrue();
         result.ErrorsOrEmptyList.ShouldNotBeEmpty();
-        result.ErrorsOrEmptyList
-            .ShouldContain(r =>
-                r.Type == ErrorType.Validation &&
-                r.Code == nameof(request.GroupId) &&
-                r.Description == ErrorCodes.Invalid);
-        result.ErrorsOrEmptyList
-            .ShouldContain(r =>
-                r.Type == ErrorType.Validation &&
-                r.Code == nameof(request.ExpenseId) &&
-                r.Description == ErrorCodes.Required);
+        result.ErrorsOrEmptyList.ShouldContain(r =>
+            r.Type == ErrorType.Validation
+            && r.Code == nameof(request.GroupId)
+            && r.Description == ErrorCodes.Invalid
+        );
+        result.ErrorsOrEmptyList.ShouldContain(r =>
+            r.Type == ErrorType.Validation
+            && r.Code == nameof(request.ExpenseId)
+            && r.Description == ErrorCodes.Required
+        );
     }
 
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        var request = new ExpenseRequestBuilder()
-            .WithGroupId(Guid.NewGuid())
-            .BuildUpdateRequest();
+        var request = new ExpenseRequestBuilder().WithGroupId(Guid.NewGuid()).BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
         result.ErrorsOrEmptyList.ShouldNotBeEmpty();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.GroupId))
@@ -63,14 +61,16 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithDefaultMember()
-                .WithExpenses([
-                    new ExpenseBuilder()
-                        .WithId(expenseId)
-                        .WithDescription("initial description")
-                        .WithAmount(200m)
-                        .WithPaidByMemberId(TestMembers.Alice.Id)
-                        .WithEvenSplit([TestMembers.Alice.Id])
-                ])
+                .WithExpenses(
+                    [
+                        new ExpenseBuilder()
+                            .WithId(expenseId)
+                            .WithDescription("initial description")
+                            .WithAmount(200m)
+                            .WithPaidByMemberId(TestMembers.Alice.Id)
+                            .WithEvenSplit([TestMembers.Alice.Id]),
+                    ]
+                )
                 .Build()
         );
 
@@ -80,35 +80,37 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithDescription("updated description")
             .WithAmount(300m)
             .WithPaidByMemberId(TestMembers.Bob.Id)
-            .WithParticipants([
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .BuildUpdateParticipant()
-            ])
+            .WithParticipants(
+                [
+                    new ExpenseRequestBuilder.ParticipantBuilder()
+                        .WithMemberId(TestMembers.Bob.Id)
+                        .BuildUpdateParticipant(),
+                ]
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.ExpenseId))
             );
 
         // verify expense is untouched
-        var expense = await Application.FindAsync<Expense>(e => e.Id == expenseId,
-            e => e.Participants);
+        var expense = await Application.FindAsync<Expense>(
+            e => e.Id == expenseId,
+            e => e.Participants
+        );
         expense.ShouldNotBeNull();
         expense.Description.ShouldBe("initial description");
         expense.Amount.ShouldBe(200m);
         expense.PaidByMemberId.ShouldBe(TestMembers.Alice.Id);
         expense.SplitType.ShouldBe(ExpenseSplitType.Evenly);
-        expense.Participants
-            .ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(
-                p => p.MemberId.ShouldBe(TestMembers.Alice.Id)
-            );
+        expense
+            .Participants.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(p => p.MemberId.ShouldBe(TestMembers.Alice.Id));
     }
 
     [Test]
@@ -120,19 +122,18 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(Guid.NewGuid())
                 .WithDefaultMember()
-                .WithExpenses([
-                    new ExpenseBuilder()
-                        .WithId(expenseId)
-                        .WithDescription("initial description")
-                        .WithAmount(200m)
-                        .WithPaidByMemberId(TestMembers.Alice.Id)
-                        .WithEvenSplit([TestMembers.Alice.Id])
-                ])
+                .WithExpenses(
+                    [
+                        new ExpenseBuilder()
+                            .WithId(expenseId)
+                            .WithDescription("initial description")
+                            .WithAmount(200m)
+                            .WithPaidByMemberId(TestMembers.Alice.Id)
+                            .WithEvenSplit([TestMembers.Alice.Id]),
+                    ]
+                )
                 .Build(),
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithDefaultMember()
-                .Build()
+            new GroupBuilder().WithId(groupId).WithDefaultMember().Build()
         );
 
         var request = new ExpenseRequestBuilder()
@@ -141,35 +142,37 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithDescription("updated description")
             .WithAmount(300m)
             .WithPaidByMemberId(TestMembers.Bob.Id)
-            .WithParticipants([
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .BuildUpdateParticipant()
-            ])
+            .WithParticipants(
+                [
+                    new ExpenseRequestBuilder.ParticipantBuilder()
+                        .WithMemberId(TestMembers.Bob.Id)
+                        .BuildUpdateParticipant(),
+                ]
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.ExpenseId))
             );
 
         // verify expense is untouched
-        var expense = await Application.FindAsync<Expense>(e => e.Id == expenseId,
-            e => e.Participants);
+        var expense = await Application.FindAsync<Expense>(
+            e => e.Id == expenseId,
+            e => e.Participants
+        );
         expense.ShouldNotBeNull();
         expense.Description.ShouldBe("initial description");
         expense.Amount.ShouldBe(200m);
         expense.PaidByMemberId.ShouldBe(TestMembers.Alice.Id);
         expense.SplitType.ShouldBe(ExpenseSplitType.Evenly);
-        expense.Participants
-            .ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(
-                p => p.MemberId.ShouldBe(TestMembers.Alice.Id)
-            );
+        expense
+            .Participants.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(p => p.MemberId.ShouldBe(TestMembers.Alice.Id));
     }
 
     [Test]
@@ -181,17 +184,18 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithDescription("initial description")
-                    .WithAmount(200m)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithEvenSplit([TestMembers.Alice.Id])
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithDescription("initial description")
+                        .WithAmount(200m)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithEvenSplit([TestMembers.Alice.Id])
                 )
                 .Build()
         );
         Application.SetUserId(TestMembers.Default.UserId);
-        
+
         var request = new ExpenseRequestBuilder()
             .WithGroupId(groupId)
             .WithExpenseId(expenseId)
@@ -199,8 +203,8 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.GroupId))
@@ -216,10 +220,11 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithDefaultMember()
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithEvenSplit([TestMembers.Alice.Id])
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithEvenSplit([TestMembers.Alice.Id])
                 )
                 .Build()
         );
@@ -232,8 +237,8 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.PaidByMemberId))
@@ -249,10 +254,11 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithDefaultMember()
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithEvenSplit([TestMembers.Alice.Id])
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithEvenSplit([TestMembers.Alice.Id])
                 )
                 .Build()
         );
@@ -265,8 +271,8 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(request.PaidByMemberId))
@@ -282,10 +288,11 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([TestMembers.Alice.Id])
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithEvenSplit([TestMembers.Alice.Id])
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithEvenSplit([TestMembers.Alice.Id])
                 )
                 .Build()
         );
@@ -295,22 +302,24 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithGroupId(groupId)
             .WithExpenseId(expenseId)
             .WithPaidByMemberId(TestMembers.Alice.Id)
-            .WithParticipants(new List<UpdateExpense.Request.Participant>
-            {
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(Guid.NewGuid())
-            })
+            .WithParticipants(
+                new List<UpdateExpense.Request.Participant>
+                {
+                    new ExpenseRequestBuilder.ParticipantBuilder().WithMemberId(Guid.NewGuid()),
+                }
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
-                e => e.Code.ShouldBe(
-                    $"{nameof(request.Participants)}[0].{nameof(UpdateExpense.Request.Participant.MemberId)}"
-                )
+                e =>
+                    e.Code.ShouldBe(
+                        $"{nameof(request.Participants)}[0].{nameof(UpdateExpense.Request.Participant.MemberId)}"
+                    )
             );
     }
 
@@ -323,10 +332,11 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([TestMembers.Alice.Id])
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithEvenSplit([TestMembers.Alice.Id])
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithEvenSplit([TestMembers.Alice.Id])
                 )
                 .Build()
         );
@@ -336,22 +346,24 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithGroupId(groupId)
             .WithExpenseId(expenseId)
             .WithPaidByMemberId(TestMembers.Alice.Id)
-            .WithParticipants(new List<UpdateExpense.Request.Participant>
-            {
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-            })
+            .WithParticipants(
+                new List<UpdateExpense.Request.Participant>
+                {
+                    new ExpenseRequestBuilder.ParticipantBuilder().WithMemberId(TestMembers.Bob.Id),
+                }
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
-                e => e.Code.ShouldBe(
-                    $"{nameof(request.Participants)}[0].{nameof(UpdateExpense.Request.Participant.MemberId)}"
-                )
+                e =>
+                    e.Code.ShouldBe(
+                        $"{nameof(request.Participants)}[0].{nameof(UpdateExpense.Request.Participant.MemberId)}"
+                    )
             );
     }
 
@@ -370,21 +382,23 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithGroupId(groupId)
             .WithAmount(200)
             .WithSplitType(ExpenseSplitType.ExactAmount)
-            .WithParticipants(new List<UpdateExpense.Request.Participant>
-            {
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(80),
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Alice.Id)
-                    .WithExactShare(120)
-            })
+            .WithParticipants(
+                new List<UpdateExpense.Request.Participant>
+                {
+                    new ExpenseRequestBuilder.ParticipantBuilder()
+                        .WithMemberId(TestMembers.Alice.Id)
+                        .WithExactShare(80),
+                    new ExpenseRequestBuilder.ParticipantBuilder()
+                        .WithMemberId(TestMembers.Alice.Id)
+                        .WithExactShare(120),
+                }
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(request.Participants)),
@@ -401,16 +415,19 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithDescription("initial description")
-                    .WithAmount(200m)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithPercentualSplit(new Dictionary<Guid, int>
-                    {
-                        { TestMembers.Alice.Id, 60 },
-                        { TestMembers.Bob.Id, 40 }
-                    })
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithDescription("initial description")
+                        .WithAmount(200m)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithPercentualSplit(
+                            new Dictionary<Guid, int>
+                            {
+                                { TestMembers.Alice.Id, 60 },
+                                { TestMembers.Bob.Id, 40 },
+                            }
+                        )
                 )
                 .Build()
         );
@@ -427,23 +444,25 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithTimestamp(timestamp)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.Evenly)
-            .WithParticipants(new List<UpdateExpense.Request.Participant>
-            {
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id),
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id),
-            })
+            .WithParticipants(
+                new List<UpdateExpense.Request.Participant>
+                {
+                    new ExpenseRequestBuilder.ParticipantBuilder().WithMemberId(TestMembers.Bob.Id),
+                    new ExpenseRequestBuilder.ParticipantBuilder().WithMemberId(
+                        TestMembers.Charlie.Id
+                    ),
+                }
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Updated>();
 
-        var expense = await Application
-            .FindAsync<Expense>(e => e.Id == expenseId,
-                e => e.Participants
-            );
+        var expense = await Application.FindAsync<Expense>(
+            e => e.Id == expenseId,
+            e => e.Participants
+        );
         expense
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
@@ -453,7 +472,10 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
                 e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
                 e => e.Participants.Count.ShouldBe(2),
-                e => e.Participants.ShouldAllBe(p => p.PercentualShare == null && p.ExactShare == null),
+                e =>
+                    e.Participants.ShouldAllBe(p =>
+                        p.PercentualShare == null && p.ExactShare == null
+                    ),
                 e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Bob.Id),
                 e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Charlie.Id)
             );
@@ -461,8 +483,8 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
         var groupDto = await Application.SendAsync(new GetGroup.Request(groupId));
         var response = groupDto.Value;
         response.TotalExpenseAmount.ShouldBe(amount);
-        response.Expenses
-            .ShouldHaveSingleItem()
+        response
+            .Expenses.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
@@ -470,7 +492,10 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
                 e => e.Amount.ShouldBe(amount),
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Evenly),
                 e => e.Participants.Count.ShouldBe(2),
-                e => e.Participants.ShouldAllBe(p => p.PercentualShare == null && p.ExactShare == null),
+                e =>
+                    e.Participants.ShouldAllBe(p =>
+                        p.PercentualShare == null && p.ExactShare == null
+                    ),
                 e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Bob.Id),
                 e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Charlie.Id)
             );
@@ -485,16 +510,19 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithDescription("initial description")
-                    .WithAmount(200m)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithExactAmountSplit(new Dictionary<Guid, decimal>
-                    {
-                        { TestMembers.Alice.Id, 120m },
-                        { TestMembers.Bob.Id, 80m }
-                    })
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithDescription("initial description")
+                        .WithAmount(200m)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithExactAmountSplit(
+                            new Dictionary<Guid, decimal>
+                            {
+                                { TestMembers.Alice.Id, 120m },
+                                { TestMembers.Bob.Id, 80m },
+                            }
+                        )
                 )
                 .Build()
         );
@@ -511,25 +539,27 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithTimestamp(timestamp)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.Percentual)
-            .WithParticipants(new List<UpdateExpense.Request.Participant>
-            {
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithPercentualShare(60),
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithPercentualShare(40),
-            })
+            .WithParticipants(
+                new List<UpdateExpense.Request.Participant>
+                {
+                    new ExpenseRequestBuilder.ParticipantBuilder()
+                        .WithMemberId(TestMembers.Bob.Id)
+                        .WithPercentualShare(60),
+                    new ExpenseRequestBuilder.ParticipantBuilder()
+                        .WithMemberId(TestMembers.Charlie.Id)
+                        .WithPercentualShare(40),
+                }
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Updated>();
 
-        var expense = await Application
-            .FindAsync<Expense>(e => e.Id == expenseId,
-                e => e.Participants
-            );
+        var expense = await Application.FindAsync<Expense>(
+            e => e.Id == expenseId,
+            e => e.Participants
+        );
         expense
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
@@ -540,15 +570,21 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.ExactShare == null),
-                e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Bob.Id && p.PercentualShare == 60),
-                e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Charlie.Id && p.PercentualShare == 40)
+                e =>
+                    e.Participants.ShouldContain(p =>
+                        p.MemberId == TestMembers.Bob.Id && p.PercentualShare == 60
+                    ),
+                e =>
+                    e.Participants.ShouldContain(p =>
+                        p.MemberId == TestMembers.Charlie.Id && p.PercentualShare == 40
+                    )
             );
 
         var groupDto = await Application.SendAsync(new GetGroup.Request(groupId));
         var response = groupDto.Value;
         response.TotalExpenseAmount.ShouldBe(amount);
-        response.Expenses
-            .ShouldHaveSingleItem()
+        response
+            .Expenses.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
@@ -557,8 +593,14 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
                 e => e.SplitType.ShouldBe(ExpenseSplitType.Percentual),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.ExactShare == null),
-                e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Bob.Id && p.PercentualShare == 60),
-                e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Charlie.Id && p.PercentualShare == 40)
+                e =>
+                    e.Participants.ShouldContain(p =>
+                        p.MemberId == TestMembers.Bob.Id && p.PercentualShare == 60
+                    ),
+                e =>
+                    e.Participants.ShouldContain(p =>
+                        p.MemberId == TestMembers.Charlie.Id && p.PercentualShare == 40
+                    )
             );
     }
 
@@ -571,16 +613,19 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithDescription("initial description")
-                    .WithAmount(200m)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithPercentualSplit(new Dictionary<Guid, int>
-                    {
-                        { TestMembers.Alice.Id, 60 },
-                        { TestMembers.Bob.Id, 40 }
-                    })
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithDescription("initial description")
+                        .WithAmount(200m)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithPercentualSplit(
+                            new Dictionary<Guid, int>
+                            {
+                                { TestMembers.Alice.Id, 60 },
+                                { TestMembers.Bob.Id, 40 },
+                            }
+                        )
                 )
                 .Build()
         );
@@ -597,25 +642,27 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithTimestamp(timestamp)
             .WithAmount(amount)
             .WithSplitType(ExpenseSplitType.ExactAmount)
-            .WithParticipants(new List<UpdateExpense.Request.Participant>
-            {
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id)
-                    .WithExactShare(180m),
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id)
-                    .WithExactShare(120m),
-            })
+            .WithParticipants(
+                new List<UpdateExpense.Request.Participant>
+                {
+                    new ExpenseRequestBuilder.ParticipantBuilder()
+                        .WithMemberId(TestMembers.Bob.Id)
+                        .WithExactShare(180m),
+                    new ExpenseRequestBuilder.ParticipantBuilder()
+                        .WithMemberId(TestMembers.Charlie.Id)
+                        .WithExactShare(120m),
+                }
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeFalse();
         result.Value.ShouldBeOfType<Updated>();
 
-        var expense = await Application
-            .FindAsync<Expense>(e => e.Id == expenseId,
-                e => e.Participants
-            );
+        var expense = await Application.FindAsync<Expense>(
+            e => e.Id == expenseId,
+            e => e.Participants
+        );
         expense
             .ShouldNotBeNull()
             .ShouldSatisfyAllConditions(
@@ -626,15 +673,21 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null),
-                e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Bob.Id && p.ExactShare == 180m),
-                e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Charlie.Id && p.ExactShare == 120m)
+                e =>
+                    e.Participants.ShouldContain(p =>
+                        p.MemberId == TestMembers.Bob.Id && p.ExactShare == 180m
+                    ),
+                e =>
+                    e.Participants.ShouldContain(p =>
+                        p.MemberId == TestMembers.Charlie.Id && p.ExactShare == 120m
+                    )
             );
 
         var groupDto = await Application.SendAsync(new GetGroup.Request(groupId));
         var response = groupDto.Value;
         response.TotalExpenseAmount.ShouldBe(amount);
-        response.Expenses
-            .ShouldHaveSingleItem()
+        response
+            .Expenses.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Description.ShouldBe(description),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Bob.Id),
@@ -643,8 +696,14 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
                 e => e.SplitType.ShouldBe(ExpenseSplitType.ExactAmount),
                 e => e.Participants.Count.ShouldBe(2),
                 e => e.Participants.ShouldAllBe(p => p.PercentualShare == null),
-                e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Bob.Id && p.ExactShare == 180m),
-                e => e.Participants.ShouldContain(p => p.MemberId == TestMembers.Charlie.Id && p.ExactShare == 120m)
+                e =>
+                    e.Participants.ShouldContain(p =>
+                        p.MemberId == TestMembers.Bob.Id && p.ExactShare == 180m
+                    ),
+                e =>
+                    e.Participants.ShouldContain(p =>
+                        p.MemberId == TestMembers.Charlie.Id && p.ExactShare == 120m
+                    )
             );
     }
 
@@ -657,12 +716,13 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             new GroupBuilder()
                 .WithId(groupId)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id, TestMembers.Charlie.Id])
-                .AddExpense(new ExpenseBuilder()
-                    .WithId(expenseId)
-                    .WithDescription("initial description")
-                    .WithAmount(200m)
-                    .WithPaidByMemberId(TestMembers.Alice.Id)
-                    .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .AddExpense(
+                    new ExpenseBuilder()
+                        .WithId(expenseId)
+                        .WithDescription("initial description")
+                        .WithAmount(200m)
+                        .WithPaidByMemberId(TestMembers.Alice.Id)
+                        .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
                 )
                 .Build()
         );
@@ -675,13 +735,15 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
             .WithAmount(300m)
             .WithPaidByMemberId(TestMembers.Bob.Id)
             .WithSplitType(ExpenseSplitType.Evenly)
-            .WithParticipants(new List<UpdateExpense.Request.Participant>
-            {
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Bob.Id),
-                new ExpenseRequestBuilder.ParticipantBuilder()
-                    .WithMemberId(TestMembers.Charlie.Id),
-            })
+            .WithParticipants(
+                new List<UpdateExpense.Request.Participant>
+                {
+                    new ExpenseRequestBuilder.ParticipantBuilder().WithMemberId(TestMembers.Bob.Id),
+                    new ExpenseRequestBuilder.ParticipantBuilder().WithMemberId(
+                        TestMembers.Charlie.Id
+                    ),
+                }
+            )
             .BuildUpdateRequest();
         var result = await Application.SendAsync(request);
 
@@ -690,13 +752,13 @@ internal sealed class UpdateExpenseTests : ApplicationTestBase
 
         var expenseParticipants = await Application.CountAsync<ExpenseParticipant>();
         expenseParticipants.ShouldBe(2);
-        var participant1 =
-            await Application.FindAsync<ExpenseParticipant>(ep =>
-                ep.ExpenseId == expenseId && ep.MemberId == TestMembers.Bob.Id);
+        var participant1 = await Application.FindAsync<ExpenseParticipant>(ep =>
+            ep.ExpenseId == expenseId && ep.MemberId == TestMembers.Bob.Id
+        );
         participant1.ShouldNotBeNull();
-        var participant2 =
-            await Application.FindAsync<ExpenseParticipant>(ep =>
-                ep.ExpenseId == expenseId && ep.MemberId == TestMembers.Charlie.Id);
+        var participant2 = await Application.FindAsync<ExpenseParticipant>(ep =>
+            ep.ExpenseId == expenseId && ep.MemberId == TestMembers.Charlie.Id
+        );
         participant2.ShouldNotBeNull();
     }
 }

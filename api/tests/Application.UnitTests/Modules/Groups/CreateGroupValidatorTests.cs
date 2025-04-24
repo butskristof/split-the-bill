@@ -17,41 +17,29 @@ internal sealed class CreateGroupValidatorTests
     [MethodDataSource(typeof(TestValues), nameof(TestValues.EmptyStrings))]
     public void NullOrEmptyName_Fails(string? name)
     {
-        var request = new GroupRequestBuilder()
-            .WithName(name)
-            .BuildCreateRequest();
+        var request = new GroupRequestBuilder().WithName(name).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Name)
-            .WithErrorMessage(ErrorCodes.Required);
+        result.ShouldHaveValidationErrorFor(r => r.Name).WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
     public void EmptyName_OnlyReturnsOneErrorCode()
     {
-        var request = new GroupRequestBuilder()
-            .WithName(null)
-            .BuildCreateRequest();
+        var request = new GroupRequestBuilder().WithName(null).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Name)
-            .Count().ShouldBe(1);
+        result.ShouldHaveValidationErrorFor(r => r.Name).Count().ShouldBe(1);
     }
 
     [Test]
     public void NameTooLong_Fails()
     {
         var name = TestUtilities.GenerateString(513);
-        var request = new GroupRequestBuilder()
-            .WithName(name)
-            .BuildCreateRequest();
+        var request = new GroupRequestBuilder().WithName(name).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Name)
-            .WithErrorMessage(ErrorCodes.TooLong);
+        result.ShouldHaveValidationErrorFor(r => r.Name).WithErrorMessage(ErrorCodes.TooLong);
     }
 
     [Test]
@@ -61,13 +49,10 @@ internal sealed class CreateGroupValidatorTests
     public void NameValidLength_Passes(int length)
     {
         var name = TestUtilities.GenerateString(length);
-        var request = new GroupRequestBuilder()
-            .WithName(name)
-            .BuildCreateRequest();
+        var request = new GroupRequestBuilder().WithName(name).BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.Name);
+        result.ShouldNotHaveValidationErrorFor(r => r.Name);
     }
 
     #endregion
@@ -77,9 +62,7 @@ internal sealed class CreateGroupValidatorTests
     [Test]
     public void ValidRequest_Passes()
     {
-        var request = new GroupRequestBuilder()
-            .WithName("group name")
-            .BuildCreateRequest();
+        var request = new GroupRequestBuilder().WithName("group name").BuildCreateRequest();
         var result = _sut.TestValidate(request);
 
         result.ShouldNotHaveAnyValidationErrors();

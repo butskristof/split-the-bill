@@ -10,6 +10,6 @@ public sealed class Member : IAggregateRoot<Guid>
 
     public required string Username { get; set; }
     public required string? UserId { get; set; }
-    
+
     public List<Group> Groups { get; init; } = [];
 }

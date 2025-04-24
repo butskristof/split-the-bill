@@ -34,13 +34,15 @@ public sealed class ExpenseParticipantBuilder
         return this;
     }
 
-    public ExpenseParticipant Build() => new()
-    {
-        ExpenseId = _expenseId,
-        MemberId = _memberId,
-        PercentualShare = _percentualShare,
-        ExactShare = _exactShare,
-    };
+    public ExpenseParticipant Build() =>
+        new()
+        {
+            ExpenseId = _expenseId,
+            MemberId = _memberId,
+            PercentualShare = _percentualShare,
+            ExactShare = _exactShare,
+        };
 
-    public static implicit operator ExpenseParticipant(ExpenseParticipantBuilder builder) => builder.Build();
+    public static implicit operator ExpenseParticipant(ExpenseParticipantBuilder builder) =>
+        builder.Build();
 }

@@ -10,9 +10,7 @@ public static class GetMembers
 {
     public sealed record Request : IQuery<ErrorOr<Response>>;
 
-    public sealed record Response(
-        List<Response.MemberDto> Members
-    )
+    public sealed record Response(List<Response.MemberDto> Members)
     {
         public sealed record MemberDto(Guid Id, string Name);
     }
@@ -24,10 +22,7 @@ public static class GetMembers
         private readonly ILogger<Handler> _logger;
         private readonly IAppDbContext _dbContext;
 
-        public Handler(
-            ILogger<Handler> logger,
-            IAppDbContext dbContext
-        )
+        public Handler(ILogger<Handler> logger, IAppDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -35,13 +30,15 @@ public static class GetMembers
 
         #endregion
 
-        public async ValueTask<ErrorOr<Response>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Response>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Fetching all members from database");
 
             var members = await _dbContext
-                .Members
-                .AsNoTracking()
+                .Members.AsNoTracking()
                 .Select(m => new Response.MemberDto(m.Id, m.Name))
                 .ToListAsync(cancellationToken);
             _logger.LogDebug("Fetched mapped Member entities from database");

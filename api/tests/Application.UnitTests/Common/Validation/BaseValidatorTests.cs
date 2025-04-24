@@ -16,9 +16,7 @@ internal sealed class TestValidator : BaseValidator<TestRequest>
             .WithMessage(ErrorCodes.Required)
             .NotEmpty()
             .WithMessage(ErrorCodes.Invalid);
-        RuleFor(r => r.OtherValue)
-            .NotNull()
-            .WithMessage(ErrorCodes.Required);
+        RuleFor(r => r.OtherValue).NotNull().WithMessage(ErrorCodes.Required);
     }
 }
 
@@ -34,9 +32,7 @@ internal sealed class BaseValidatorTests
         result
             .ShouldHaveValidationErrorFor(r => r.Value)
             .ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(
-                e => e.ErrorMessage.ShouldBe(ErrorCodes.Required)
-            );
+            .ShouldSatisfyAllConditions(e => e.ErrorMessage.ShouldBe(ErrorCodes.Required));
     }
 
     [Test]
@@ -45,13 +41,10 @@ internal sealed class BaseValidatorTests
         // verify whether each property is validated individually (with 'Stop' cascade mode tested above), if
         // configured wrong it would stop after the first failure
         var result = _sut.TestValidate(new TestRequest(null, null));
-        result
-            .Errors.Count.ShouldBe(2);
+        result.Errors.Count.ShouldBe(2);
 
         result.Errors.Count.ShouldBe(2);
-        result
-            .ShouldHaveValidationErrorFor(r => r.Value);
-        result
-            .ShouldHaveValidationErrorFor(r => r.OtherValue);
+        result.ShouldHaveValidationErrorFor(r => r.Value);
+        result.ShouldHaveValidationErrorFor(r => r.OtherValue);
     }
 }

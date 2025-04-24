@@ -40,34 +40,36 @@ public sealed class PaymentRequestBuilder
         _amount = amount;
         return this;
     }
-    
+
     public PaymentRequestBuilder WithTimestamp(DateTimeOffset? timestamp)
     {
         _timestamp = timestamp;
         return this;
     }
 
-    public UpdatePayment.Request BuildUpdateRequest() => new()
-    {
-        GroupId = _groupId,
-        PaymentId = _paymentId,
-        SendingMemberId = _sendingMemberId,
-        ReceivingMemberId = _receivingMemberId,
-        Amount = _amount,
-        Timestamp = _timestamp,
-    };
+    public UpdatePayment.Request BuildUpdateRequest() =>
+        new()
+        {
+            GroupId = _groupId,
+            PaymentId = _paymentId,
+            SendingMemberId = _sendingMemberId,
+            ReceivingMemberId = _receivingMemberId,
+            Amount = _amount,
+            Timestamp = _timestamp,
+        };
 
     public static implicit operator UpdatePayment.Request(PaymentRequestBuilder builder) =>
         builder.BuildUpdateRequest();
 
-    public CreatePayment.Request BuildCreateRequest() => new()
-    {
-        GroupId = _groupId,
-        SendingMemberId = _sendingMemberId,
-        ReceivingMemberId = _receivingMemberId,
-        Amount = _amount,
-        Timestamp = _timestamp,
-    };
+    public CreatePayment.Request BuildCreateRequest() =>
+        new()
+        {
+            GroupId = _groupId,
+            SendingMemberId = _sendingMemberId,
+            ReceivingMemberId = _receivingMemberId,
+            Amount = _amount,
+            Timestamp = _timestamp,
+        };
 
     public static implicit operator CreatePayment.Request(PaymentRequestBuilder builder) =>
         builder.BuildCreateRequest();

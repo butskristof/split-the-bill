@@ -73,7 +73,7 @@ public sealed class ExpenseBuilder
         _paidByMemberId = member;
         return this;
     }
-    
+
     public ExpenseBuilder WithTimestamp(DateTimeOffset timestamp)
     {
         _timestamp = timestamp;
@@ -97,10 +97,16 @@ public sealed class ExpenseBuilder
                 expense.SetAmountAndParticipantsWithEvenSplit(_amount, _evenSplitParticipants);
                 break;
             case ExpenseSplitType.Percentual:
-                expense.SetAmountAndParticipantsWithPercentualSplit(_amount, _percentualSplitParticipants);
+                expense.SetAmountAndParticipantsWithPercentualSplit(
+                    _amount,
+                    _percentualSplitParticipants
+                );
                 break;
             case ExpenseSplitType.ExactAmount:
-                expense.SetAmountAndParticipantsWithExactSplit(_amount, _exactAmountSplitParticipants);
+                expense.SetAmountAndParticipantsWithExactSplit(
+                    _amount,
+                    _exactAmountSplitParticipants
+                );
                 break;
             default:
                 throw new InvalidOperationException("Unsupported split type");

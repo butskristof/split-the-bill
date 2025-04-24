@@ -33,17 +33,11 @@ public static class CreateExpense
     {
         public Validator()
         {
-            RuleFor(r => r.GroupId)
-                .NotNullOrEmptyWithErrorCode();
-            RuleFor(r => r.Description)
-                .ValidString(true);
-            RuleFor(r => r.PaidByMemberId)
-                .NotNullOrEmptyWithErrorCode();
-            RuleFor(r => r.Timestamp)
-                .NotNullWithErrorCode();
-            RuleFor(r => r.Amount)
-                .NotNullWithErrorCode()
-                .PositiveDecimal(false);
+            RuleFor(r => r.GroupId).NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.Description).ValidString(true);
+            RuleFor(r => r.PaidByMemberId).NotNullOrEmptyWithErrorCode();
+            RuleFor(r => r.Timestamp).NotNullWithErrorCode();
+            RuleFor(r => r.Amount).NotNullWithErrorCode().PositiveDecimal(false);
             RuleFor(r => r.SplitType)
                 .NotNullWithErrorCode()
                 .IsInEnum()
@@ -53,8 +47,8 @@ public static class CreateExpense
                 .NotEmpty()
                 .WithMessage(ErrorCodes.Required)
                 .Must(participants =>
-                    participants.Count == 1 ||
-                    participants.DistinctBy(p => p?.MemberId).Count() == participants.Count
+                    participants.Count == 1
+                    || participants.DistinctBy(p => p?.MemberId).Count() == participants.Count
                 )
                 .WithMessage(ErrorCodes.NotUnique);
 
@@ -62,37 +56,40 @@ public static class CreateExpense
                 .NotNullWithErrorCode(ErrorCodes.Invalid)
                 .ChildRules(v =>
                 {
-                    v.RuleFor(p => p!.MemberId)
-                        .NotNullOrEmptyWithErrorCode();
+                    v.RuleFor(p => p!.MemberId).NotNullOrEmptyWithErrorCode();
                 });
 
-            When(r => r.SplitType == ExpenseSplitType.Evenly, () =>
-            {
-                RuleForEach(r => r.Participants)
-                    .ChildRules(v =>
+            When(
+                r => r.SplitType == ExpenseSplitType.Evenly,
+                () =>
+                {
+                    RuleForEach(r => r.Participants)
+                        .ChildRules(v =>
+                        {
+                            v.RuleFor(p => p!.PercentualShare)
+                                .Null()
+                                .WithMessage(ErrorCodes.Invalid);
+                            v.RuleFor(p => p!.ExactShare).Null().WithMessage(ErrorCodes.Invalid);
+                        });
+                }
+            );
+
+            When(
+                    r => r.SplitType == ExpenseSplitType.Percentual,
+                    () =>
                     {
-                        v.RuleFor(p => p!.PercentualShare)
-                            .Null()
+                        RuleForEach(r => r.Participants)
+                            .ChildRules(v =>
+                            {
+                                v.RuleFor(p => p!.PercentualShare)
+                                    .NotNullWithErrorCode(ErrorCodes.Required)
+                                    .PositiveInteger(true);
+                            });
+                        RuleFor(r => r.Participants)
+                            .Must(c => c.Sum(p => p!.PercentualShare) == 100)
                             .WithMessage(ErrorCodes.Invalid);
-                        v.RuleFor(p => p!.ExactShare)
-                            .Null()
-                            .WithMessage(ErrorCodes.Invalid);
-                    });
-            });
-
-            When(r => r.SplitType == ExpenseSplitType.Percentual, () =>
-                {
-                    RuleForEach(r => r.Participants)
-                        .ChildRules(v =>
-                        {
-                            v.RuleFor(p => p!.PercentualShare)
-                                .NotNullWithErrorCode(ErrorCodes.Required)
-                                .PositiveInteger(true);
-                        });
-                    RuleFor(r => r.Participants)
-                        .Must(c => c.Sum(p => p!.PercentualShare) == 100)
-                        .WithMessage(ErrorCodes.Invalid);
-                })
+                    }
+                )
                 .Otherwise(() =>
                 {
                     RuleForEach(r => r.Participants)
@@ -104,27 +101,28 @@ public static class CreateExpense
                         });
                 });
 
-            When(r => r.SplitType == ExpenseSplitType.ExactAmount, () =>
-                {
-                    RuleForEach(r => r.Participants)
-                        .ChildRules(v =>
-                        {
-                            v.RuleFor(p => p!.ExactShare)
-                                .NotNullWithErrorCode(ErrorCodes.Required)
-                                .PositiveDecimal(true);
-                        });
-                    RuleFor(r => r.Participants)
-                        .Must((rr, c) => c.Sum(p => p!.ExactShare) == rr.Amount)
-                        .WithMessage(ErrorCodes.Invalid);
-                })
+            When(
+                    r => r.SplitType == ExpenseSplitType.ExactAmount,
+                    () =>
+                    {
+                        RuleForEach(r => r.Participants)
+                            .ChildRules(v =>
+                            {
+                                v.RuleFor(p => p!.ExactShare)
+                                    .NotNullWithErrorCode(ErrorCodes.Required)
+                                    .PositiveDecimal(true);
+                            });
+                        RuleFor(r => r.Participants)
+                            .Must((rr, c) => c.Sum(p => p!.ExactShare) == rr.Amount)
+                            .WithMessage(ErrorCodes.Invalid);
+                    }
+                )
                 .Otherwise(() =>
                 {
                     RuleForEach(r => r.Participants)
                         .ChildRules(v =>
                         {
-                            v.RuleFor(p => p!.ExactShare)
-                                .Null()
-                                .WithMessage(ErrorCodes.Invalid);
+                            v.RuleFor(p => p!.ExactShare).Null().WithMessage(ErrorCodes.Invalid);
                         });
                 });
         }
@@ -145,7 +143,10 @@ public static class CreateExpense
 
         #endregion
 
-        public async ValueTask<ErrorOr<Created>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<Created>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Adding new Expense to Group with id {GroupId}", request.GroupId);
 
@@ -157,16 +158,23 @@ public static class CreateExpense
             if (group is null)
             {
                 _logger.LogDebug("No group with id {Id} found in database", request.GroupId);
-                return Error.NotFound(nameof(request.GroupId), $"Could not find group with id {request.GroupId}");
+                return Error.NotFound(
+                    nameof(request.GroupId),
+                    $"Could not find group with id {request.GroupId}"
+                );
             }
 
-            _logger.LogDebug("Fetched Group to add Expense to from database with related navigation properties");
+            _logger.LogDebug(
+                "Fetched Group to add Expense to from database with related navigation properties"
+            );
 
             if (group.Members.All(m => m.Id != request.PaidByMemberId))
             {
                 _logger.LogDebug("No member found in group with id {Id}", request.PaidByMemberId);
-                return Error.NotFound(nameof(request.PaidByMemberId),
-                    $"Could not find member with id {request.PaidByMemberId} in group with id {request.GroupId}");
+                return Error.NotFound(
+                    nameof(request.PaidByMemberId),
+                    $"Could not find member with id {request.PaidByMemberId} in group with id {request.GroupId}"
+                );
             }
 
             for (var i = 0; i < request.Participants.Count; ++i)
@@ -174,9 +182,14 @@ public static class CreateExpense
                 var participant = request.Participants[i];
                 if (group.Members.All(m => m.Id != participant!.MemberId))
                 {
-                    _logger.LogDebug("No member found in group with id {Id}", participant!.MemberId);
-                    return Error.NotFound($"{nameof(request.Participants)}[{i}].{nameof(participant.MemberId)}",
-                        $"Could not find member with id {participant.MemberId} in group with id {request.GroupId}");
+                    _logger.LogDebug(
+                        "No member found in group with id {Id}",
+                        participant!.MemberId
+                    );
+                    return Error.NotFound(
+                        $"{nameof(request.Participants)}[{i}].{nameof(participant.MemberId)}",
+                        $"Could not find member with id {participant.MemberId} in group with id {request.GroupId}"
+                    );
                 }
             }
 
@@ -200,13 +213,19 @@ public static class CreateExpense
                 case ExpenseSplitType.Percentual:
                     expense.SetAmountAndParticipantsWithPercentualSplit(
                         request.Amount!.Value,
-                        request.Participants.ToDictionary(p => p!.MemberId!.Value, p => p!.PercentualShare!.Value)
+                        request.Participants.ToDictionary(
+                            p => p!.MemberId!.Value,
+                            p => p!.PercentualShare!.Value
+                        )
                     );
                     break;
                 case ExpenseSplitType.ExactAmount:
                     expense.SetAmountAndParticipantsWithExactSplit(
                         request.Amount!.Value,
-                        request.Participants.ToDictionary(p => p!.MemberId!.Value, p => p!.ExactShare!.Value)
+                        request.Participants.ToDictionary(
+                            p => p!.MemberId!.Value,
+                            p => p!.ExactShare!.Value
+                        )
                     );
                     break;
                 default:

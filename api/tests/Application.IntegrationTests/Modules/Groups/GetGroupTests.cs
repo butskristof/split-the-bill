@@ -18,8 +18,8 @@ internal sealed class GetGroupTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(request.Id)),
@@ -34,8 +34,8 @@ internal sealed class GetGroupTests : ApplicationTestBase
         var result = await Application.SendAsync(new GetGroup.Request(id));
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(Group.Id))
@@ -46,17 +46,13 @@ internal sealed class GetGroupTests : ApplicationTestBase
     public async Task UserIdNotAGroupMember_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
-        await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .Build()
-        );
+        await Application.AddAsync(new GroupBuilder().WithId(groupId).Build());
         Application.SetUserId(TestMembers.Bob.UserId);
 
         var result = await Application.SendAsync(new GetGroup.Request(groupId));
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(Group.Id))
@@ -74,16 +70,19 @@ internal sealed class GetGroupTests : ApplicationTestBase
                 .WithId(groupId)
                 .WithName(groupName)
                 .WithMembers([TestMembers.Alice.Id, TestMembers.Bob.Id])
-                .WithExpenses([
-                    new ExpenseBuilder()
+                .WithExpenses(
+                    [
+                        new ExpenseBuilder()
+                            .WithAmount(100)
+                            .WithPaidByMemberId(TestMembers.Alice.Id)
+                            .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id]),
+                    ]
+                )
+                .AddPayment(
+                    new PaymentBuilder()
+                        .WithSendingMemberId(TestMembers.Bob.Id)
+                        .WithReceivingMemberId(TestMembers.Alice.Id)
                         .WithAmount(100)
-                        .WithPaidByMemberId(TestMembers.Alice.Id)
-                        .WithEvenSplit([TestMembers.Alice.Id, TestMembers.Bob.Id])
-                ])
-                .AddPayment(new PaymentBuilder()
-                    .WithSendingMemberId(TestMembers.Bob.Id)
-                    .WithReceivingMemberId(TestMembers.Alice.Id)
-                    .WithAmount(100)
                 )
                 .Build()
         );
@@ -104,21 +103,19 @@ internal sealed class GetGroupTests : ApplicationTestBase
         // indicating all the necessary data was loaded to make the calculations
         // in-depth testing of the mapping itself is done in the unit tests
         response.Members.Count.ShouldBe(2);
-        response.Members
-            .ShouldContain(m => m.Id == TestMembers.Alice.Id);
-        response.Members
-            .ShouldContain(m => m.Id == TestMembers.Bob.Id);
+        response.Members.ShouldContain(m => m.Id == TestMembers.Alice.Id);
+        response.Members.ShouldContain(m => m.Id == TestMembers.Bob.Id);
 
-        response.Expenses
-            .ShouldHaveSingleItem()
+        response
+            .Expenses.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Amount.ShouldBe(100),
                 e => e.PaidByMemberId.ShouldBe(TestMembers.Alice.Id),
                 e => e.Participants.Count.ShouldBe(2)
             );
 
-        response.Payments
-            .ShouldHaveSingleItem()
+        response
+            .Payments.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 p => p.Amount.ShouldBe(100),
                 p => p.SendingMemberId.ShouldBe(TestMembers.Bob.Id),

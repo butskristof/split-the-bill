@@ -17,14 +17,11 @@ internal sealed class GetMembersTests() : ApplicationTestBase(false)
         response.ShouldNotBeNull();
         response.Members.ShouldBeEmpty();
     }
-    
+
     [Test]
     public async Task ReturnsAllMappedEntities()
     {
-        await Application.AddAsync(
-            TestMembers.Alice,
-            TestMembers.Bob
-        );
+        await Application.AddAsync(TestMembers.Alice, TestMembers.Bob);
 
         var result = await Application.SendAsync(new GetMembers.Request());
 
@@ -32,11 +29,11 @@ internal sealed class GetMembersTests() : ApplicationTestBase(false)
         var response = result.Value;
         response.ShouldNotBeNull();
         response.Members.Count.ShouldBe(2);
-            response.Members.ShouldContain(m =>
-            m.Id == TestMembers.Alice.Id &&
-            m.Name == TestMembers.Alice.Name);
         response.Members.ShouldContain(m =>
-            m.Id == TestMembers.Bob.Id &&
-            m.Name == TestMembers.Bob.Name);
+            m.Id == TestMembers.Alice.Id && m.Name == TestMembers.Alice.Name
+        );
+        response.Members.ShouldContain(m =>
+            m.Id == TestMembers.Bob.Id && m.Name == TestMembers.Bob.Name
+        );
     }
 }

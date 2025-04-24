@@ -19,12 +19,16 @@ internal static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddValidatedSettings<TOptions>(this IServiceCollection services)
-        where TOptions : class, ISettings
-        => services.AddValidatedSettings<TOptions>(TOptions.SectionName);
+    private static IServiceCollection AddValidatedSettings<TOptions>(
+        this IServiceCollection services
+    )
+        where TOptions : class, ISettings =>
+        services.AddValidatedSettings<TOptions>(TOptions.SectionName);
 
-    private static IServiceCollection AddValidatedSettings<TOptions>(this IServiceCollection services,
-        string sectionName)
+    private static IServiceCollection AddValidatedSettings<TOptions>(
+        this IServiceCollection services,
+        string sectionName
+    )
         where TOptions : class
     {
         services
@@ -43,45 +47,57 @@ internal static class DependencyInjection
     internal static IServiceCollection AddApi(this IServiceCollection services)
     {
         // add runtime-generated OpenAPI documentation
-        services.AddOpenApi(ApiConstants.OpenApiDocumentName, options =>
-        {
-            options.CustomSchemaIds(type =>
+        services.AddOpenApi(
+            ApiConstants.OpenApiDocumentName,
+            options =>
             {
-                // build the full type name by traversing up its declaring types, this will result in e.g.
-                // "CreateExpense.Request.Participant"
-                var schemaId = type.Name;
-                for (Type current = type; current.DeclaringType is not null; current = current.DeclaringType)
-                    schemaId = $"{current.DeclaringType.Name}.{schemaId}";
-
-                return schemaId;
-            });
-            
-            options.AddDocumentTransformer((document, _, _) =>
-            {
-                var scheme = new OpenApiSecurityScheme
+                options.CustomSchemaIds(type =>
                 {
-                    BearerFormat = "JSON Web Token",
-                    Description = "Bearer authentication using a JWT",
-                    Scheme = "bearer",
-                    Type = SecuritySchemeType.Http,
-                    Reference = new OpenApiReference
+                    // build the full type name by traversing up its declaring types, this will result in e.g.
+                    // "CreateExpense.Request.Participant"
+                    var schemaId = type.Name;
+                    for (
+                        Type current = type;
+                        current.DeclaringType is not null;
+                        current = current.DeclaringType
+                    )
+                        schemaId = $"{current.DeclaringType.Name}.{schemaId}";
+
+                    return schemaId;
+                });
+
+                options.AddDocumentTransformer(
+                    (document, _, _) =>
                     {
-                        Id = "Bearer",
-                        Type = ReferenceType.SecurityScheme
+                        var scheme = new OpenApiSecurityScheme
+                        {
+                            BearerFormat = "JSON Web Token",
+                            Description = "Bearer authentication using a JWT",
+                            Scheme = "bearer",
+                            Type = SecuritySchemeType.Http,
+                            Reference = new OpenApiReference
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme,
+                            },
+                        };
+
+                        document.Components ??= new OpenApiComponents();
+                        document.Components.SecuritySchemes ??=
+                            new Dictionary<string, OpenApiSecurityScheme>();
+                        document.Components.SecuritySchemes[scheme.Reference.Id] = scheme;
+
+                        // Also register the scheme with the security requirements
+                        document.SecurityRequirements ??= [];
+                        document.SecurityRequirements.Add(
+                            new OpenApiSecurityRequirement { [scheme] = [] }
+                        );
+
+                        return Task.FromResult(document);
                     }
-                };
-
-                document.Components ??= new OpenApiComponents();
-                document.Components.SecuritySchemes ??= new Dictionary<string, OpenApiSecurityScheme>();
-                document.Components.SecuritySchemes[scheme.Reference.Id] = scheme;
-
-                // Also register the scheme with the security requirements
-                document.SecurityRequirements ??= [];
-                document.SecurityRequirements.Add(new OpenApiSecurityRequirement { [scheme] = [] });
-                
-                return Task.FromResult(document);
-            });
-        });
+                );
+            }
+        );
 
         // add support for ProblemDetails to handle failed requests
         // it's effectively a default implementation of the IProblemDetailsService and can be
@@ -90,30 +106,22 @@ internal static class DependencyInjection
         // that don't have body content yet
         services.AddProblemDetails();
 
-        services
-            .AddHealthChecks();
+        services.AddHealthChecks();
 
-        services
-            .AddAuthentication()
-            .AddJwtBearer();
+        services.AddAuthentication().AddJwtBearer();
         services.AddAuthorization();
-        services
-            .AddHttpContextAccessor()
-            .AddScoped<IAuthenticationInfo, ApiAuthenticationInfo>();
+        services.AddHttpContextAccessor().AddScoped<IAuthenticationInfo, ApiAuthenticationInfo>();
 
         // TODO remove after BFF/Proxy setup
         services.AddCors(options =>
         {
             using var serviceProvider = services.BuildServiceProvider();
-            var settings = serviceProvider
-                .GetRequiredService<IOptions<CorsSettings>>()
-                .Value;
-            if (!settings.AllowCors) return;
+            var settings = serviceProvider.GetRequiredService<IOptions<CorsSettings>>().Value;
+            if (!settings.AllowCors)
+                return;
 
-            options.AddDefaultPolicy(policy => policy
-                .WithOrigins(settings.AllowedOrigins)
-                .AllowAnyHeader()
-                .AllowAnyMethod()
+            options.AddDefaultPolicy(policy =>
+                policy.WithOrigins(settings.AllowedOrigins).AllowAnyHeader().AllowAnyMethod()
             );
         });
 

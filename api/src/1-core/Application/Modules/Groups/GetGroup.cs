@@ -15,8 +15,7 @@ public static class GetGroup
     {
         public Validator()
         {
-            RuleFor(r => r.Id)
-                .NotEmptyWithErrorCode(ErrorCodes.Invalid);
+            RuleFor(r => r.Id).NotEmptyWithErrorCode(ErrorCodes.Invalid);
         }
     }
 
@@ -35,7 +34,10 @@ public static class GetGroup
 
         #endregion
 
-        public async ValueTask<ErrorOr<GroupDto>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<ErrorOr<GroupDto>> Handle(
+            Request request,
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogDebug("Fetching Group with id {Id}", request.Id);
 
@@ -49,10 +51,13 @@ public static class GetGroup
             if (group is null)
             {
                 _logger.LogDebug("No group with id {Id} found in database", request.Id);
-                return Error.NotFound(nameof(request.Id), $"Could not find group with id {request.Id}");
+                return Error.NotFound(
+                    nameof(request.Id),
+                    $"Could not find group with id {request.Id}"
+                );
             }
             _logger.LogDebug("Fetched (unmapped) entity from database");
-            
+
             var groupDto = new GroupDto(group);
             return groupDto;
         }

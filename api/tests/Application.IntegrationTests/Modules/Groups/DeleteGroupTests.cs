@@ -18,8 +18,8 @@ internal sealed class DeleteGroupTests : ApplicationTestBase
         var result = await Application.SendAsync(request);
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.Validation),
                 e => e.Code.ShouldBe(nameof(request.Id)),
@@ -30,17 +30,16 @@ internal sealed class DeleteGroupTests : ApplicationTestBase
     [Test]
     public async Task GroupDoesNotExist_ReturnsNotFoundError()
     {
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(Guid.NewGuid())
-            .WithName("group name")
-            .Build());
+        await Application.AddAsync(
+            new GroupBuilder().WithId(Guid.NewGuid()).WithName("group name").Build()
+        );
         var id = Guid.NewGuid();
 
         var result = await Application.SendAsync(new DeleteGroup.Request(id));
 
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(Group.Id))
@@ -55,18 +54,13 @@ internal sealed class DeleteGroupTests : ApplicationTestBase
     public async Task UserIdNotAGroupMember_ReturnsNotFoundError()
     {
         var groupId = Guid.NewGuid();
-        await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(groupId)
-                .WithDefaultMember()
-                .Build()
-        );
+        await Application.AddAsync(new GroupBuilder().WithId(groupId).WithDefaultMember().Build());
         Application.SetUserId(TestMembers.Bob.UserId);
 
         var result = await Application.SendAsync(new DeleteGroup.Request(groupId));
         result.IsError.ShouldBeTrue();
-        result.ErrorsOrEmptyList
-            .ShouldHaveSingleItem()
+        result
+            .ErrorsOrEmptyList.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 e => e.Type.ShouldBe(ErrorType.NotFound),
                 e => e.Code.ShouldBe(nameof(Group.Id))
@@ -77,11 +71,8 @@ internal sealed class DeleteGroupTests : ApplicationTestBase
     public async Task DeletesGroup()
     {
         var id = Guid.NewGuid();
-        await Application.AddAsync(new GroupBuilder()
-            .WithId(id)
-            .WithDefaultMember()
-            .WithName("group name")
-            .Build()
+        await Application.AddAsync(
+            new GroupBuilder().WithId(id).WithDefaultMember().WithName("group name").Build()
         );
 
         var result = await Application.SendAsync(new DeleteGroup.Request(id));
@@ -100,11 +91,7 @@ internal sealed class DeleteGroupTests : ApplicationTestBase
     {
         var id = Guid.NewGuid();
         await Application.AddAsync(
-            new GroupBuilder()
-                .WithId(id)
-                .WithDefaultMember()
-                .WithName("group name")
-                .Build(),
+            new GroupBuilder().WithId(id).WithDefaultMember().WithName("group name").Build(),
             new GroupBuilder()
                 .WithId(Guid.NewGuid())
                 .WithDefaultMember()

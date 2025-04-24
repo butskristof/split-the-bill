@@ -11,11 +11,7 @@ internal sealed class CorsSettingsValidatorTests
     [Test]
     public void AllowCorsFalse_EmptyOrigins_Passes()
     {
-        var settings = new CorsSettings
-        {
-            AllowCors = false,
-            AllowedOrigins = [],
-        };
+        var settings = new CorsSettings { AllowCors = false, AllowedOrigins = [] };
         var result = _sut.TestValidate(settings);
         result.IsValid.ShouldBeTrue();
         result.ShouldNotHaveValidationErrorFor(r => r.AllowedOrigins);
@@ -25,11 +21,7 @@ internal sealed class CorsSettingsValidatorTests
     [Test]
     public void AllowCorsTrue_EmptyOrigins_Fails()
     {
-        var settings = new CorsSettings
-        {
-            AllowCors = true,
-            AllowedOrigins = [],
-        };
+        var settings = new CorsSettings { AllowCors = true, AllowedOrigins = [] };
         var result = _sut.TestValidate(settings);
         result.IsValid.ShouldBeFalse();
         result.ShouldHaveValidationErrorFor(r => r.AllowedOrigins);
@@ -46,8 +38,9 @@ internal sealed class CorsSettingsValidatorTests
         var result = _sut.TestValidate(settings);
         result.IsValid.ShouldBeTrue();
         result.ShouldNotHaveValidationErrorFor(r => r.AllowedOrigins);
-        result.Errors
-            .ShouldNotContain(e => e.PropertyName.Contains(nameof(settings.AllowedOrigins)));
+        result.Errors.ShouldNotContain(e =>
+            e.PropertyName.Contains(nameof(settings.AllowedOrigins))
+        );
     }
 
     [Test]
@@ -56,10 +49,7 @@ internal sealed class CorsSettingsValidatorTests
         var settings = new CorsSettings
         {
             AllowCors = true,
-            AllowedOrigins = [
-                "http://validorigin:3000",
-                "invalidorigin"
-            ],
+            AllowedOrigins = ["http://validorigin:3000", "invalidorigin"],
         };
         var result = _sut.TestValidate(settings);
         result.IsValid.ShouldBeFalse();
@@ -72,9 +62,7 @@ internal sealed class CorsSettingsValidatorTests
         var settings = new CorsSettings
         {
             AllowCors = true,
-            AllowedOrigins = [
-                "invalidorigin?q=value",
-            ],
+            AllowedOrigins = ["invalidorigin?q=value"],
         };
         var result = _sut.TestValidate(settings);
         result.Errors.Count.ShouldBe(1);
@@ -131,11 +119,7 @@ internal sealed class CorsSettingsValidatorTests
     [Arguments("http://*")]
     public void InvalidOrigin_Fails(string value)
     {
-        var settings = new CorsSettings
-        {
-            AllowCors = true,
-            AllowedOrigins = [value],
-        };
+        var settings = new CorsSettings { AllowCors = true, AllowedOrigins = [value] };
         var result = _sut.TestValidate(settings);
         result.IsValid.ShouldBeFalse();
         result.ShouldHaveValidationErrorFor($"{nameof(settings.AllowedOrigins)}[0]");
@@ -160,15 +144,12 @@ internal sealed class CorsSettingsValidatorTests
     [Arguments("http://xn--fsqu00a.xn--0zwm56d")]
     public void ValidOrigin_Passes(string value)
     {
-        var settings = new CorsSettings
-        {
-            AllowCors = true,
-            AllowedOrigins = [value],
-        };
+        var settings = new CorsSettings { AllowCors = true, AllowedOrigins = [value] };
         var result = _sut.TestValidate(settings);
         result.IsValid.ShouldBeTrue();
-        result.Errors
-            .ShouldNotContain(e => e.PropertyName.Contains(nameof(settings.AllowedOrigins)));
+        result.Errors.ShouldNotContain(e =>
+            e.PropertyName.Contains(nameof(settings.AllowedOrigins))
+        );
         result.ShouldNotHaveAnyValidationErrors();
     }
 }

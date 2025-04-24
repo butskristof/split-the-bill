@@ -14,10 +14,14 @@ public sealed class ExpenseRequestBuilder
     private ExpenseSplitType? _splitType = ExpenseSplitType.Evenly;
 
     private IReadOnlyList<CreateExpense.Request.Participant> _createParticipants =
-        [new ParticipantBuilder().BuildCreateParticipant()];
+    [
+        new ParticipantBuilder().BuildCreateParticipant(),
+    ];
 
     private IReadOnlyList<UpdateExpense.Request.Participant> _updateParticipants =
-        [new ParticipantBuilder().BuildUpdateParticipant()];
+    [
+        new ParticipantBuilder().BuildUpdateParticipant(),
+    ];
 
     public ExpenseRequestBuilder WithGroupId(Guid? groupId)
     {
@@ -42,7 +46,7 @@ public sealed class ExpenseRequestBuilder
         _paidByMemberId = paidByMemberId;
         return this;
     }
-    
+
     public ExpenseRequestBuilder WithTimestamp(DateTimeOffset? timestamp)
     {
         _timestamp = timestamp;
@@ -61,43 +65,49 @@ public sealed class ExpenseRequestBuilder
         return this;
     }
 
-    public ExpenseRequestBuilder WithParticipants(IReadOnlyList<CreateExpense.Request.Participant> participants)
+    public ExpenseRequestBuilder WithParticipants(
+        IReadOnlyList<CreateExpense.Request.Participant> participants
+    )
     {
         _createParticipants = participants;
         return this;
     }
 
-    public ExpenseRequestBuilder WithParticipants(IReadOnlyList<UpdateExpense.Request.Participant> participants)
+    public ExpenseRequestBuilder WithParticipants(
+        IReadOnlyList<UpdateExpense.Request.Participant> participants
+    )
     {
         _updateParticipants = participants;
         return this;
     }
 
-    public CreateExpense.Request BuildCreateRequest() => new()
-    {
-        GroupId = _groupId,
-        Description = _description,
-        PaidByMemberId = _paidByMemberId,
-        Timestamp = _timestamp,
-        Amount = _amount,
-        SplitType = _splitType,
-        Participants = _createParticipants,
-    };
+    public CreateExpense.Request BuildCreateRequest() =>
+        new()
+        {
+            GroupId = _groupId,
+            Description = _description,
+            PaidByMemberId = _paidByMemberId,
+            Timestamp = _timestamp,
+            Amount = _amount,
+            SplitType = _splitType,
+            Participants = _createParticipants,
+        };
 
     public static implicit operator CreateExpense.Request(ExpenseRequestBuilder builder) =>
         builder.BuildCreateRequest();
 
-    public UpdateExpense.Request BuildUpdateRequest() => new()
-    {
-        GroupId = _groupId,
-        ExpenseId = _expenseId,
-        Description = _description,
-        PaidByMemberId = _paidByMemberId,
-        Timestamp = _timestamp,
-        Amount = _amount,
-        SplitType = _splitType,
-        Participants = _updateParticipants,
-    };
+    public UpdateExpense.Request BuildUpdateRequest() =>
+        new()
+        {
+            GroupId = _groupId,
+            ExpenseId = _expenseId,
+            Description = _description,
+            PaidByMemberId = _paidByMemberId,
+            Timestamp = _timestamp,
+            Amount = _amount,
+            SplitType = _splitType,
+            Participants = _updateParticipants,
+        };
 
     public static implicit operator UpdateExpense.Request(ExpenseRequestBuilder builder) =>
         builder.BuildUpdateRequest();
@@ -126,24 +136,28 @@ public sealed class ExpenseRequestBuilder
             return this;
         }
 
-        public CreateExpense.Request.Participant BuildCreateParticipant() => new()
-        {
-            MemberId = _memberId,
-            PercentualShare = _percentualShare,
-            ExactShare = _exactShare
-        };
+        public CreateExpense.Request.Participant BuildCreateParticipant() =>
+            new()
+            {
+                MemberId = _memberId,
+                PercentualShare = _percentualShare,
+                ExactShare = _exactShare,
+            };
 
-        public static implicit operator CreateExpense.Request.Participant(ParticipantBuilder builder) =>
-            builder.BuildCreateParticipant();
+        public static implicit operator CreateExpense.Request.Participant(
+            ParticipantBuilder builder
+        ) => builder.BuildCreateParticipant();
 
-        public UpdateExpense.Request.Participant BuildUpdateParticipant() => new()
-        {
-            MemberId = _memberId,
-            PercentualShare = _percentualShare,
-            ExactShare = _exactShare
-        };
+        public UpdateExpense.Request.Participant BuildUpdateParticipant() =>
+            new()
+            {
+                MemberId = _memberId,
+                PercentualShare = _percentualShare,
+                ExactShare = _exactShare,
+            };
 
-        public static implicit operator UpdateExpense.Request.Participant(ParticipantBuilder builder) =>
-            builder.BuildUpdateParticipant();
+        public static implicit operator UpdateExpense.Request.Participant(
+            ParticipantBuilder builder
+        ) => builder.BuildUpdateParticipant();
     }
 }

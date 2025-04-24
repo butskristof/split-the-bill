@@ -14,39 +14,28 @@ internal sealed class UpdatePaymentValidatorTests
     [Test]
     public void NullOrEmptyGroupId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(null)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithGroupId(null).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.GroupId)
-            .WithErrorMessage(ErrorCodes.Required);
+        result.ShouldHaveValidationErrorFor(r => r.GroupId).WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
     public void EmptyGroupId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(Guid.Empty)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithGroupId(Guid.Empty).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.GroupId)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.GroupId).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]
     public void NonEmptyGroupId_Passes()
     {
-        var request = new PaymentRequestBuilder()
-            .WithGroupId(Guid.NewGuid())
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithGroupId(Guid.NewGuid()).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.GroupId);
+        result.ShouldNotHaveValidationErrorFor(r => r.GroupId);
     }
 
     #endregion
@@ -56,27 +45,19 @@ internal sealed class UpdatePaymentValidatorTests
     [Test]
     public void NullPaymentId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithPaymentId(null)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithPaymentId(null).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.PaymentId)
-            .WithErrorMessage(ErrorCodes.Required);
+        result.ShouldHaveValidationErrorFor(r => r.PaymentId).WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
     public void EmptyPaymentId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithPaymentId(Guid.Empty)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithPaymentId(Guid.Empty).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.PaymentId)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.PaymentId).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]
@@ -87,8 +68,7 @@ internal sealed class UpdatePaymentValidatorTests
             .BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.PaymentId);
+        result.ShouldNotHaveValidationErrorFor(r => r.PaymentId);
     }
 
     #endregion
@@ -98,9 +78,7 @@ internal sealed class UpdatePaymentValidatorTests
     [Test]
     public void NullSendingMemberId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithSendingMemberId(null)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithSendingMemberId(null).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -129,8 +107,7 @@ internal sealed class UpdatePaymentValidatorTests
             .BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.SendingMemberId);
+        result.ShouldNotHaveValidationErrorFor(r => r.SendingMemberId);
     }
 
     #endregion
@@ -140,9 +117,7 @@ internal sealed class UpdatePaymentValidatorTests
     [Test]
     public void NullReceivingMemberId_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithReceivingMemberId(null)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithReceivingMemberId(null).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
         result
@@ -162,7 +137,7 @@ internal sealed class UpdatePaymentValidatorTests
             .ShouldHaveValidationErrorFor(r => r.ReceivingMemberId)
             .WithErrorMessage(ErrorCodes.Invalid);
     }
-    
+
     [Test]
     public void SendingMemberIdEqualsReceivingMemberId_Fails()
     {
@@ -186,8 +161,7 @@ internal sealed class UpdatePaymentValidatorTests
             .BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.ReceivingMemberId);
+        result.ShouldNotHaveValidationErrorFor(r => r.ReceivingMemberId);
     }
 
     #endregion
@@ -197,14 +171,10 @@ internal sealed class UpdatePaymentValidatorTests
     [Test]
     public void NullAmount_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithAmount(null)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithAmount(null).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Amount)
-            .WithErrorMessage(ErrorCodes.Required);
+        result.ShouldHaveValidationErrorFor(r => r.Amount).WithErrorMessage(ErrorCodes.Required);
     }
 
     [Test]
@@ -212,26 +182,19 @@ internal sealed class UpdatePaymentValidatorTests
     [Arguments(0)]
     public void NegativeOrZeroAmount_Fails(decimal amount)
     {
-        var request = new PaymentRequestBuilder()
-            .WithAmount(amount)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithAmount(amount).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldHaveValidationErrorFor(r => r.Amount)
-            .WithErrorMessage(ErrorCodes.Invalid);
+        result.ShouldHaveValidationErrorFor(r => r.Amount).WithErrorMessage(ErrorCodes.Invalid);
     }
 
     [Test]
     public void PositiveAmount_Passes()
     {
-        var request = new PaymentRequestBuilder()
-            .WithAmount(1.0m)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithAmount(1.0m).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
 
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.Amount);
+        result.ShouldNotHaveValidationErrorFor(r => r.Amount);
     }
 
     #endregion
@@ -241,16 +204,12 @@ internal sealed class UpdatePaymentValidatorTests
     [Test]
     public void NullTimestamp_Fails()
     {
-        var request = new PaymentRequestBuilder()
-            .WithTimestamp(null)
-            .BuildUpdateRequest();
+        var request = new PaymentRequestBuilder().WithTimestamp(null).BuildUpdateRequest();
         var result = _sut.TestValidate(request);
-        
-        result
-            .ShouldHaveValidationErrorFor(r => r.Timestamp)
-            .WithErrorMessage(ErrorCodes.Required);
+
+        result.ShouldHaveValidationErrorFor(r => r.Timestamp).WithErrorMessage(ErrorCodes.Required);
     }
-    
+
     [Test]
     public void ValidTimestamp_Passes()
     {
@@ -258,9 +217,8 @@ internal sealed class UpdatePaymentValidatorTests
             .WithTimestamp(new DateTimeOffset(2025, 04, 03, 01, 14, 21, TimeSpan.Zero))
             .BuildUpdateRequest();
         var result = _sut.TestValidate(request);
-        
-        result
-            .ShouldNotHaveValidationErrorFor(r => r.Timestamp);
+
+        result.ShouldNotHaveValidationErrorFor(r => r.Timestamp);
     }
 
     #endregion

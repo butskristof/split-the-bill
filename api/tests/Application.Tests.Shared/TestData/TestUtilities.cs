@@ -6,7 +6,7 @@ public static class TestUtilities
     {
         if (length < 0)
             throw new ArgumentException("Length cannot be negative", nameof(length));
-        
+
         return new string('a', length);
     }
 }

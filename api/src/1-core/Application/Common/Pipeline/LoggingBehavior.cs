@@ -16,7 +16,10 @@ internal sealed class LoggingBehavior<TMessage, TResponse> : IPipelineBehavior<T
     private readonly ILogger<LoggingBehavior<TMessage, TResponse>> _logger;
     private readonly TimeProvider _timeProvider;
 
-    public LoggingBehavior(ILogger<LoggingBehavior<TMessage, TResponse>> logger, TimeProvider timeProvider)
+    public LoggingBehavior(
+        ILogger<LoggingBehavior<TMessage, TResponse>> logger,
+        TimeProvider timeProvider
+    )
     {
         _logger = logger;
         _timeProvider = timeProvider;
@@ -45,8 +48,11 @@ internal sealed class LoggingBehavior<TMessage, TResponse> : IPipelineBehavior<T
             // these steps belong in the finally, so even in case an exception occurs, we can still close our logging
             var end = _timeProvider.GetTimestamp(); // stop the timer
             var diff = _timeProvider.GetElapsedTime(start, end); // calculate the time spent
-            _logger.LogDebug("Completed processing message of type {MessageType} in {ElapsedMilliseconds} ms",
-                messageTypeName, diff.TotalMilliseconds);
+            _logger.LogDebug(
+                "Completed processing message of type {MessageType} in {ElapsedMilliseconds} ms",
+                messageTypeName,
+                diff.TotalMilliseconds
+            );
         }
     }
 }

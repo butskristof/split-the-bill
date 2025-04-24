@@ -1,6 +1,6 @@
 namespace SplitTheBill.Application.IntegrationTests.Common.Database;
 
-// this factory initialises an ITestDatabase instance for use in the test fixture 
+// this factory initialises an ITestDatabase instance for use in the test fixture
 // various database providers are possible through configuration
 
 internal static class TestDatabaseFactory
