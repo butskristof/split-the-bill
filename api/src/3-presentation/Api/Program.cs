@@ -24,9 +24,8 @@ try
         )
         .AddApi();
 
-    builder.Host.UseSerilog(
-        (context, configuration) =>
-            configuration.Enrich.FromLogContext().ReadFrom.Configuration(context.Configuration)
+    builder.Host.UseSerilog((context, configuration) =>
+        configuration.Enrich.FromLogContext().ReadFrom.Configuration(context.Configuration)
     );
 
     var app = builder.Build();
@@ -37,9 +36,9 @@ try
     app.UseAuthorization();
 
     app
-    // the default exception handler will catch unhandled exceptions and return
-    // them as ProblemDetails with status code 500 Internal Server Error
-    .UseExceptionHandler()
+        // the default exception handler will catch unhandled exceptions and return
+        // them as ProblemDetails with status code 500 Internal Server Error
+        .UseExceptionHandler()
         // the status code pages will map additional failed requests (outside of
         // those throwing exceptions) to responses with ProblemDetails body content
         // this includes 404, method not allowed, ... (all status codes between 400 and 599)
@@ -49,7 +48,9 @@ try
 
     app.MapHealthChecks("/health");
     app.MapOpenApiEndpoints();
-    app.MapMembersEndpoints().MapGroupsEndpoints();
+    app
+        .MapMembersEndpoints()
+        .MapGroupsEndpoints();
 
     app.Run();
 }
