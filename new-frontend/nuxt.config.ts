@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint', '@primevue/nuxt-module', '@nuxt/fonts'],
+  modules: ['@nuxt/eslint', '@primevue/nuxt-module', '@nuxt/fonts', '@nuxtjs/color-mode'],
+  css: ['~/assets/styles/reset.css', '~/assets/styles/main.css', '~/assets/styles/base.scss'],
   components: {
     dirs: [],
   },
@@ -19,6 +20,9 @@ export default defineNuxtConfig({
     options: {
       theme: {
         preset: Aura,
+        options: {
+          darkModeSelector: '.dark-mode',
+        },
       },
     },
   },
