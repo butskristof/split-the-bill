@@ -7,7 +7,13 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxtjs/color-mode', '@primevue/nuxt-module'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/fonts',
+    '@nuxtjs/color-mode',
+    '@primevue/nuxt-module',
+    '@nuxt/icon',
+  ],
   css: ['~/assets/styles/reset.css', '~/assets/styles/main.scss'],
   components: {
     dirs: [],

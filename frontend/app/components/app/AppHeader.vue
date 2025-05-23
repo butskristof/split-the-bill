@@ -1,11 +1,14 @@
 <template>
   <header>
-    <div>left</div>
+    <AppHeaderTitle />
     <div>right</div>
   </header>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppHeaderTitle from '~/components/app/AppHeaderTitle.vue';
+</script>
+
 <style scoped lang="scss">
 @use '~/assets/styles/utilities';
 
