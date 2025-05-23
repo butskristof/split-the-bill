@@ -2,10 +2,10 @@
   <div>
     <NuxtRouteAnnouncer />
     <div>Hello, world!</div>
-    <AppColorModeButton />
+    <ColorModeButton />
   </div>
 </template>
 
 <script setup lang="ts">
-import AppColorModeButton from '~/components/app/AppColorModeButton.vue';
+import ColorModeButton from '~/components/app/ColorModeButton.vue';
 </script>
