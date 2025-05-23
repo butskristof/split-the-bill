@@ -1,7 +1,12 @@
 <template>
   <header>
     <AppHeaderTitle />
-    <div>right</div>
+    <Button
+      class="nav-toggle"
+      variant="text"
+      severity="secondary"
+      icon="pi pi-bars"
+    />
   </header>
 </template>
 
@@ -30,5 +35,12 @@ header {
     background-color: var(--p-surface-900);
     border-bottom: 1px solid var(--p-surface-800);
   }
+}
+
+.nav-toggle {
+  //color: var(--surface-700);
+  //@include utilities.dark-mode {
+  //  color: var(--p-surface-100);
+  //}
 }
 </style>

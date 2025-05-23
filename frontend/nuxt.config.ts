@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     '@primevue/nuxt-module',
     '@nuxt/icon',
   ],
-  css: ['~/assets/styles/reset.css', '~/assets/styles/main.scss'],
+  css: ['~/assets/styles/reset.css', 'primeicons/primeicons.css', '~/assets/styles/main.scss'],
   components: {
     dirs: [],
   },
