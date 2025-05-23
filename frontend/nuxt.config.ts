@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   modules: ['@nuxt/eslint', '@nuxt/fonts', '@nuxtjs/color-mode', '@primevue/nuxt-module'],
-  css: ['~/assets/styles/main.scss'],
+  css: ['~/assets/styles/reset.css', '~/assets/styles/main.scss'],
   components: {
     dirs: [],
   },

@@ -44,3 +44,9 @@
   font-weight: var(--font-weight-bold);
 }
 
+// THEMING
+@mixin dark-mode {
+  html.dark-mode & {
+    @content;
+  }
+}

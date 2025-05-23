@@ -1,8 +1,7 @@
-@use './utilities.scss';
+@use 'utilities';
 
 :root {
-  --app-spacing: 0.25rem;
-  --app-header-height: calc(var(--app-spacing) * 16);
+  --app-header-height: calc(var(--default-spacing) * 4);
 
   --default-radius: 0.25rem;
   --default-spacing: 1rem;
