@@ -1,6 +1,5 @@
 // @ts-check
 import withNuxt from './.nuxt/eslint.config.mjs';
-// @ts-ignore
 import pluginVueScopedCss from 'eslint-plugin-vue-scoped-css';
 
 export default withNuxt(
@@ -18,9 +17,9 @@ export default withNuxt(
       'build/**',
       '.nuxt/**',
       '.output/**',
-      'shared/api-clients/split-the-bill-api/spec.d.t',
     ],
   },
+  // @ts-ignore
   ...pluginVueScopedCss.configs['flat/recommended'],
   {
     name: 'app/custom-rules',
