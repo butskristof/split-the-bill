@@ -1,9 +1,4 @@
 {
   // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json",
-  "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noUncheckedIndexedAccess": true
-  }
+  "extends": "./.nuxt/tsconfig.json"
 }

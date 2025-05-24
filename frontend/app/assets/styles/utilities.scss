@@ -1,5 +1,6 @@
-// LAYOUT
+@use './_variables.scss';
 
+// LAYOUT
 @mixin flex($apply-gap: true) {
   display: flex;
   @if $apply-gap {
@@ -33,7 +34,6 @@
 }
 
 // FONTS
-
 @mixin font-size($size) {
   font-size: var(--text-#{$size});
 }
@@ -46,22 +46,100 @@
   font-weight: var(--font-weight-bold);
 }
 
-// LISTS
-@mixin list-item-hover {
-  &:hover {
-    background-color: var(--ui-bg-elevated);
+@mixin reset-link($color-inherit: true) {
+  text-decoration: none;
+  @if $color-inherit {
+    color: inherit;
   }
 }
 
-@mixin list-item-separator {
-  position: relative;
+// THEMING
+@mixin dark-mode {
+  html.dark-mode & {
+    @content;
+  }
+}
 
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 0.5rem;
-    right: 0.5rem;
-    bottom: 0;
-    border-bottom: 1px solid var(--ui-border);
+// RESPONSIVENESS
+@mixin app-container {
+  max-width: var(--app-container);
+
+  // no CSS vars in media queries...
+  // app container is 80rem, same as $breakpoint-xl
+  @include media-min-width(variables.$breakpoint-xl) {
+    margin-inline: auto;
+    width: 100%;
+  }
+}
+
+@mixin media-max-width($breakpoint) {
+  @media (max-width: calc($breakpoint - 1px)) {
+    @content;
+  }
+}
+
+@mixin media-min-width($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin media-min-sm {
+  @include media-min-width(variables.$breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin media-max-sm {
+  @include media-max-width(variables.$breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin media-min-md {
+  @include media-min-width(variables.$breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin media-max-md {
+  @include media-max-width(variables.$breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin media-min-lg {
+  @include media-min-width(variables.$breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin media-max-lg {
+  @include media-max-width(variables.$breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin media-min-xl {
+  @include media-min-width(variables.$breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin media-max-xl {
+  @include media-max-width(variables.$breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin media-min-2xl {
+  @include media-min-width(variables.$breakpoint-2xl) {
+    @content;
+  }
+}
+
+@mixin media-max-2xl {
+  @include media-max-width(variables.$breakpoint-2xl) {
+    @content;
   }
 }

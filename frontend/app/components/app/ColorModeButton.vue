@@ -1,11 +1,9 @@
 <template>
   <ClientOnly>
-    <UButton
+    <Button
       v-if="!isUnknown"
       :icon="icon"
-      aria-label="Toggle color mode"
-      color="neutral"
-      variant="ghost"
+      label="Toggle color mode"
       @click="toggleColorMode"
     />
   </ClientOnly>

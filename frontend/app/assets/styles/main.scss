@@ -1,0 +1,34 @@
+@use 'utilities';
+
+:root {
+  --app-header-height: calc(var(--default-spacing) * 4);
+  --app-container: 80rem; // 1280px
+
+  --default-radius: 0.25rem;
+  --default-spacing: 1rem;
+
+  --text-base: 1rem;
+  --text-sm: 0.875rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+}
+
+html, body {
+  font-family: Nunito, sans-serif;
+}
+
+h1 {
+  @include utilities.bold;
+  @include utilities.font-size(2xl);
+}
+
+h2 {
+  @include utilities.semibold;
+  @include utilities.font-size(xl);
+}

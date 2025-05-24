@@ -1,1 +1,3 @@
-shared/api-clients/split-the-bill-api/spec.d.ts
+.roo
+*.css
+*.scss

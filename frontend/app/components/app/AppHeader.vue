@@ -1,37 +1,137 @@
 <template>
-  <header class="backdrop-blur bg-(--ui-bg)/75">
-    <UContainer class="header-content">
-      <AppHeaderTitle />
-
-      <div class="header-actions">
-        <UAvatar />
+  <div class="header-container">
+    <header>
+      <AppHeaderTitle class="app-title" />
+      <Button
+        class="nav-toggle"
+        variant="text"
+        severity="secondary"
+        icon="pi pi-bars"
+        @click="toggleDropdown"
+      />
+      <div
+        v-show="showDropdown || atLeastLg"
+        class="dropdown-menu"
+      >
+        <AppHeaderMenuItems class="menu-items" />
+        <div class="actions-user-info">
+          <AppHeaderActions class="actions" />
+          <div class="separator" />
+          <AppHeaderUserInfo class="user-info" />
+        </div>
       </div>
-    </UContainer>
-  </header>
+    </header>
+  </div>
 </template>
 
 <script setup lang="ts">
-import AppHeaderTitle from './AppHeaderTitle.vue';
-// falling back to setting the backdrop and bg classes in the markup since they don't work with
-// apply and can't easily be replicated in plain (S)CSS
+import AppHeaderTitle from '~/components/app/AppHeaderTitle.vue';
+import AppHeaderActions from '~/components/app/AppHeaderActions.vue';
+import AppHeaderUserInfo from '~/components/app/AppHeaderUserInfo.vue';
+import AppHeaderMenuItems from '~/components/app/AppHeaderMenuItems.vue';
+
+const showDropdown = ref(false);
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value;
+};
+
+const breakpoints = useAppBreakpoints();
+const atLeastLg = computed(() => breakpoints.lg.value);
 </script>
 
 <style scoped lang="scss">
-@use '~/assets/styles/utilities.scss';
+@use '~/assets/styles/utilities';
 
-header {
+.header-container {
   // header always has a predefined height and should always still to the top
-  height: var(--ui-header-height);
+  height: var(--app-header-height);
   position: sticky;
   top: 0;
   z-index: 1;
-  border-bottom: 1px solid var(--ui-border);
+
+  display: flex;
+
+  background-color: var(--p-surface-0);
+  border-bottom: 1px solid var(--p-surface-200);
+
+  @include utilities.dark-mode {
+    background-color: var(--p-surface-900);
+    border-bottom: 1px solid var(--p-surface-800);
+  }
+
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+header {
+  @include utilities.app-container;
+  width: 100%;
 
   // vertically center the content inside the header
-  @include utilities.flex-row-align-center;
+  @include utilities.flex-row-justify-between-align-center(false);
+  gap: calc(var(--default-spacing) * 2);
+  padding-inline: var(--default-spacing);
 
-  .header-content {
-    @include utilities.flex-row-justify-between-align-center;
+  .app-title {
+    flex-shrink: 0;
+  }
+
+  .nav-toggle {
+    @include utilities.media-min-lg {
+      display: none;
+    }
+  }
+
+  .dropdown-menu {
+    //background-color: red;
+    background-color: var(--p-surface-0);
+
+    position: absolute;
+    //top: var(--app-header-height);
+    left: 0;
+    top: 100%;
+    width: 100%;
+
+    @include utilities.flex-column;
+
+    .menu-items {
+      flex-grow: 1;
+    }
+
+    .actions-user-info {
+      @include utilities.flex-row-align-center;
+      justify-content: flex-end;
+
+      .separator {
+        width: 1px;
+        height: 1.5rem;
+        background-color: var(--p-surface-200);
+        @include utilities.dark-mode {
+          background-color: var(--p-surface-700);
+        }
+
+        @include utilities.media-min-lg {
+          display: none;
+        }
+      }
+    }
+
+    @include utilities.media-max-lg {
+      padding: var(--default-spacing);
+      border-bottom: 1px solid var(--p-surface-200);
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+
+    @include utilities.media-min-lg {
+      //display: none;
+      position: static;
+      @include utilities.flex-row-align-center;
+      gap: var(--default-spacing);
+    }
+
+    @include utilities.dark-mode {
+      background-color: var(--p-surface-900);
+      border-color: var(--p-surface-800);
+    }
   }
 }
 </style>
