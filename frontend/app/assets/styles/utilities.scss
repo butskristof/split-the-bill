@@ -46,6 +46,13 @@
   font-weight: var(--font-weight-bold);
 }
 
+@mixin reset-link($color-inherit: true) {
+  text-decoration: none;
+  @if $color-inherit {
+    color: inherit;
+  }
+}
+
 // THEMING
 @mixin dark-mode {
   html.dark-mode & {

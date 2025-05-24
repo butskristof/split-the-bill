@@ -15,14 +15,15 @@
 @use '~/assets/styles/utilities';
 
 .app-title {
-  @include utilities.flex-row-align-center;
+  @include utilities.flex-row-align-center(false);
   gap: 0.5rem;
 
-  font-size: var(--text-2xl);
+  //font-size: var(--text-md);
   font-weight: var(--font-weight-bold);
   @include utilities.reset-link;
 
   .icon {
+    margin-top: -1px;
     font-size: 125%;
   }
 }
