@@ -39,7 +39,6 @@ footer {
 
   @include utilities.flex-row-justify-between-align-center;
 
-  margin-top: var(--default-spacing);
   margin-bottom: calc(var(--default-spacing) * 2);
   padding-inline: var(--default-spacing);
 
