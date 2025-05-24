@@ -1,25 +1,27 @@
 <template>
-  <header>
-    <AppHeaderTitle class="app-title" />
-    <Button
-      class="nav-toggle"
-      variant="text"
-      severity="secondary"
-      icon="pi pi-bars"
-      @click="toggleDropdown"
-    />
-    <div
-      v-show="showDropdown || atLeastLg"
-      class="dropdown-menu"
-    >
-      <AppHeaderMenuItems class="menu-items" />
-      <div class="actions-user-info">
-        <AppHeaderActions class="actions" />
-        <div class="separator" />
-        <AppHeaderUserInfo class="user-info" />
+  <div class="header-container">
+    <header>
+      <AppHeaderTitle class="app-title" />
+      <Button
+        class="nav-toggle"
+        variant="text"
+        severity="secondary"
+        icon="pi pi-bars"
+        @click="toggleDropdown"
+      />
+      <div
+        v-show="showDropdown || atLeastLg"
+        class="dropdown-menu"
+      >
+        <AppHeaderMenuItems class="menu-items" />
+        <div class="actions-user-info">
+          <AppHeaderActions class="actions" />
+          <div class="separator" />
+          <AppHeaderUserInfo class="user-info" />
+        </div>
       </div>
-    </div>
-  </header>
+    </header>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -40,17 +42,14 @@ const atLeastLg = computed(() => breakpoints.lg.value);
 <style scoped lang="scss">
 @use '~/assets/styles/utilities';
 
-header {
+.header-container {
   // header always has a predefined height and should always still to the top
   height: var(--app-header-height);
   position: sticky;
   top: 0;
   z-index: 1;
 
-  // vertically center the content inside the header
-  @include utilities.flex-row-justify-between-align-center(false);
-  gap: calc(var(--default-spacing) * 2);
-  padding-inline: var(--default-spacing);
+  display: flex;
 
   background-color: var(--p-surface-0);
   border-bottom: 1px solid var(--p-surface-200);
@@ -59,6 +58,17 @@ header {
     background-color: var(--p-surface-900);
     border-bottom: 1px solid var(--p-surface-800);
   }
+
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+header {
+  @include utilities.app-container;
+
+  // vertically center the content inside the header
+  @include utilities.flex-row-justify-between-align-center(false);
+  gap: calc(var(--default-spacing) * 2);
+  padding-inline: var(--default-spacing);
 
   .app-title {
     flex-shrink: 0;
@@ -107,6 +117,7 @@ header {
     @include utilities.media-max-lg {
       padding: var(--default-spacing);
       border-bottom: 1px solid var(--p-surface-200);
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     }
 
     @include utilities.media-min-lg {

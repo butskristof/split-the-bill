@@ -34,6 +34,8 @@ import AppFooter from '~/components/app/AppFooter.vue';
     @include utilities.flex-column(false);
 
     main {
+      @include utilities.app-container;
+
       //margin-top: var(--default-spacing);
       //margin-bottom: var(--default-spacing);
       flex-grow: 1;

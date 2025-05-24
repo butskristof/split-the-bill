@@ -35,11 +35,19 @@ const links = [
 @use '~/assets/styles/utilities.scss';
 
 footer {
+  @include utilities.app-container;
+
   @include utilities.flex-row-justify-between-align-center;
 
   margin-top: var(--default-spacing);
   margin-bottom: calc(var(--default-spacing) * 2);
-  margin-inline: var(--default-spacing);
+  padding-inline: var(--default-spacing);
+
+  .right {
+    :last-of-type {
+      margin-right: calc(var(--default-spacing) * -0.5);
+    }
+  }
 
   .link {
     @include utilities.reset-link(false);

@@ -4,7 +4,7 @@
     <div>
       <ColorModeButton />
     </div>
-    <div v-if="false">
+    <div v-if="true">
       <div>hey</div>
       <div>hey</div>
       <div>hey</div>
