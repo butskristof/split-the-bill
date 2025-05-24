@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@primevue/nuxt-module',
     '@nuxt/icon',
+    '@vueuse/nuxt',
   ],
   css: ['~/assets/styles/reset.css', 'primeicons/primeicons.css', '~/assets/styles/main.scss'],
   components: {
@@ -26,6 +27,11 @@ export default defineNuxtConfig({
           darkModeSelector: '.dark-mode',
         },
       },
+    },
+  },
+  fonts: {
+    defaults: {
+      weights: [200, 300, 400, 500, 600, 700, 800, 900],
     },
   },
 });
