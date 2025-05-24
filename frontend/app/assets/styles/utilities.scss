@@ -63,8 +63,13 @@
 // RESPONSIVENESS
 @mixin app-container {
   max-width: var(--app-container);
-  margin-inline: auto;
-  width: 100%;
+
+  // no CSS vars in media queries...
+  // app container is 80rem, same as $breakpoint-xl
+  @include media-min-width($breakpoint-xl) {
+    margin-inline: auto;
+    width: 100%;
+  }
 }
 
 @mixin media-max-width($breakpoint) {
@@ -138,3 +143,12 @@
     @content;
   }
 }
+
+
+//@mixin page-container {
+//  @include app-container;
+//  width: auto;
+//  flex-grow: 1;
+//  margin: var(--default-spacing);
+//  padding: var(--default-spacing);
+//}

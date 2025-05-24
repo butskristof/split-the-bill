@@ -2,9 +2,9 @@
   <div class="app">
     <AppHeader />
     <div class="content">
-      <main>
+      <div class="page">
         <NuxtPage />
-      </main>
+      </div>
 
       <AppFooter />
     </div>
@@ -33,12 +33,10 @@ import AppFooter from '~/components/app/AppFooter.vue';
     min-height: calc(100vh - var(--app-header-height));
     @include utilities.flex-column(false);
 
-    main {
+    .page {
       @include utilities.app-container;
-
-      //margin-top: var(--default-spacing);
-      //margin-bottom: var(--default-spacing);
       flex-grow: 1;
+      margin: var(--default-spacing);
     }
   }
 }
