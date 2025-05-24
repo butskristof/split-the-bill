@@ -64,6 +64,7 @@ const atLeastLg = computed(() => breakpoints.lg.value);
 
 header {
   @include utilities.app-container;
+  width: 100%;
 
   // vertically center the content inside the header
   @include utilities.flex-row-justify-between-align-center(false);

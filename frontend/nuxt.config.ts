@@ -34,4 +34,7 @@ export default defineNuxtConfig({
       weights: [200, 300, 400, 500, 600, 700, 800, 900],
     },
   },
+  routeRules: {
+    '/': { redirect: '/groups' },
+  },
 });
