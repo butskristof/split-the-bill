@@ -15,9 +15,17 @@
       >
         <AppHeaderMenuItems class="menu-items" />
         <div class="actions-user-info">
-          <AppHeaderActions class="actions" />
-          <div class="separator" />
-          <AppHeaderUserInfo class="user-info" />
+          <AppHeaderActions
+            v-if="false"
+            class="actions"
+          />
+          <template v-if="loggedIn">
+            <div
+              v-if="false"
+              class="separator"
+            />
+            <AppHeaderUserInfo class="user-info" />
+          </template>
         </div>
       </div>
     </header>
@@ -29,6 +37,8 @@ import AppHeaderTitle from '~/components/app/AppHeaderTitle.vue';
 import AppHeaderActions from '~/components/app/AppHeaderActions.vue';
 import AppHeaderUserInfo from '~/components/app/AppHeaderUserInfo.vue';
 import AppHeaderMenuItems from '~/components/app/AppHeaderMenuItems.vue';
+
+const { loggedIn } = useOidcAuth();
 
 const showDropdown = ref(false);
 const toggleDropdown = () => {

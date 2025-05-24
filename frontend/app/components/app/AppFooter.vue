@@ -1,34 +1,34 @@
 <template>
   <footer>
     <AppFooterTitle />
-    <div class="right">
-      <Button
-        v-for="link in links"
-        :key="link.name"
-        class="link"
-        :aria-label="link.name"
-        :icon="link.icon"
-        variant="text"
-        severity="secondary"
-        :href="link.to"
-        as="a"
+    <div class="icon-row">
+      <ColorModeButtonHeadless v-slot="{ icon, toggleColorMode, nextMode }">
+        <button
+          v-tooltip.top="`Switch to ${nextMode} mode`"
+          aria-label="Toggle color mode"
+          @click="toggleColorMode"
+        >
+          <i :class="icon" />
+        </button>
+      </ColorModeButtonHeadless>
+      <a
+        v-tooltip.top="'GitHub'"
+        href="https://github.com/butskristof/split-the-bill"
         target="_blank"
         rel="noopener"
-      />
+      >
+        <i
+          class="pi pi-github"
+          aria-label="GitHub"
+        />
+      </a>
     </div>
   </footer>
 </template>
 
 <script setup lang="ts">
 import AppFooterTitle from '~/components/app/AppFooterTitle.vue';
-
-const links = [
-  {
-    name: 'GitHub',
-    icon: 'pi pi-github',
-    to: 'https://github.com/butskristof/split-the-bill',
-  },
-];
+import ColorModeButtonHeadless from '~/components/app/ColorModeButtonHeadless.vue';
 </script>
 
 <style scoped lang="scss">
@@ -42,9 +42,22 @@ footer {
   margin-bottom: calc(var(--default-spacing) * 2);
   padding-inline: var(--default-spacing);
 
-  .right {
-    :last-of-type {
-      margin-right: calc(var(--default-spacing) * -0.5);
+  .icon-row {
+    @include utilities.flex-row-align-center;
+
+    button {
+      all: unset;
+
+      &:focus {
+        outline: revert;
+      }
+    }
+
+    button,
+    a {
+      cursor: pointer;
+      font-size: var(--text-lg);
+      @include utilities.icon-color;
     }
   }
 

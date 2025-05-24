@@ -143,3 +143,20 @@
     @content;
   }
 }
+
+// COLOURS
+@mixin icon-color {
+  color: var(--p-surface-500);
+
+  &:hover {
+    color: var(--p-surface-900);
+  }
+
+  @include dark-mode {
+    color: var(--p-surface-400);
+
+    &:hover {
+      color: var(--p-surface-0);
+    }
+  }
+}
