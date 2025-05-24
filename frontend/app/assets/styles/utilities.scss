@@ -1,4 +1,4 @@
-@import './_variables.scss';
+@use './_variables.scss';
 
 // LAYOUT
 @mixin flex($apply-gap: true) {
@@ -66,7 +66,7 @@
 
   // no CSS vars in media queries...
   // app container is 80rem, same as $breakpoint-xl
-  @include media-min-width($breakpoint-xl) {
+  @include media-min-width(variables.$breakpoint-xl) {
     margin-inline: auto;
     width: 100%;
   }
@@ -85,70 +85,61 @@
 }
 
 @mixin media-min-sm {
-  @include media-min-width($breakpoint-sm) {
+  @include media-min-width(variables.$breakpoint-sm) {
     @content;
   }
 }
 
 @mixin media-max-sm {
-  @include media-max-width($breakpoint-sm) {
+  @include media-max-width(variables.$breakpoint-sm) {
     @content;
   }
 }
 
 @mixin media-min-md {
-  @include media-min-width($breakpoint-md) {
+  @include media-min-width(variables.$breakpoint-md) {
     @content;
   }
 }
 
 @mixin media-max-md {
-  @include media-max-width($breakpoint-md) {
+  @include media-max-width(variables.$breakpoint-md) {
     @content;
   }
 }
 
 @mixin media-min-lg {
-  @include media-min-width($breakpoint-lg) {
+  @include media-min-width(variables.$breakpoint-lg) {
     @content;
   }
 }
 
 @mixin media-max-lg {
-  @include media-max-width($breakpoint-lg) {
+  @include media-max-width(variables.$breakpoint-lg) {
     @content;
   }
 }
 
 @mixin media-min-xl {
-  @include media-min-width($breakpoint-xl) {
+  @include media-min-width(variables.$breakpoint-xl) {
     @content;
   }
 }
 
 @mixin media-max-xl {
-  @include media-max-width($breakpoint-xl) {
+  @include media-max-width(variables.$breakpoint-xl) {
     @content;
   }
 }
 
 @mixin media-min-2xl {
-  @include media-min-width($breakpoint-2xl) {
+  @include media-min-width(variables.$breakpoint-2xl) {
     @content;
   }
 }
 
 @mixin media-max-2xl {
-  @include media-max-width($breakpoint-2xl) {
+  @include media-max-width(variables.$breakpoint-2xl) {
     @content;
   }
 }
-
-
-//@mixin page-container {
-//  @include app-container;
-//  width: auto;
-//  flex-grow: 1;
-//  margin: var(--default-spacing);
-//  padding: var(--default-spacing);
-//}
