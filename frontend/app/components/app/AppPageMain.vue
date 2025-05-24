@@ -13,6 +13,8 @@ main {
   padding: var(--default-spacing);
   border-radius: var(--default-radius);
 
+  @include utilities.flex-column;
+
   background-color: var(--p-surface-0);
   border: 1px solid var(--p-surface-200);
   @include utilities.dark-mode {
