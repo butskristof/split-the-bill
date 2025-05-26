@@ -40,7 +40,7 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // route to the groups overview by default
-    '/': { redirect: '/groups' },
+    '/': { redirect: '/bff-test' },
   },
   oidc: {
     defaultProvider: 'oidc',
@@ -79,6 +79,20 @@ export default defineNuxtConfig({
       automaticRefresh: true,
       expirationCheck: true,
       expirationThreshold: 60, // seconds
+      cookie: {
+        sameSite: 'lax', // TODO strict possible?
+      },
     },
+  },
+  nitro: {
+    storage: {
+      oidc: {
+        driver: 'redis',
+        base: 'oidcstorage',
+      },
+    },
+  },
+  runtimeConfig: {
+    backendBaseUrl: '', // set in env
   },
 });
