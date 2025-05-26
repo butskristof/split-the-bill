@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   // setting a custom header triggers a CORS preflight check on EVERY request (even "simple" ones
   // such as a GET without additional configuration), this way we effectively force "same site" to be
   // "same (or allowed) origin"
-  if (!event.headers.get('x-csrf'))
+  if (event.headers.get('x-csrf') !== '1')
     throw createError({ statusCode: 400, statusMessage: 'Missing CSRF protection header' });
 
   // /api/backend/[whatever] -> extract [whatever]
