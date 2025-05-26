@@ -99,6 +99,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     backendBaseUrl: '', // set in env
+    redis: {
+      host: '',
+      port: 0,
+      password: '',
+    },
   },
   security: {},
 });
