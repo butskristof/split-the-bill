@@ -100,4 +100,5 @@ export default defineNuxtConfig({
   runtimeConfig: {
     backendBaseUrl: '', // set in env
   },
+  security: {},
 });

@@ -1,6 +1,8 @@
 // @ts-check
 import withNuxt from './.nuxt/eslint.config.mjs';
 import pluginVueScopedCss from 'eslint-plugin-vue-scoped-css';
+// @ts-expect-error
+import pluginNodeSecurity from 'eslint-plugin-security-node';
 
 export default withNuxt(
   {
@@ -19,8 +21,9 @@ export default withNuxt(
       '.output/**',
     ],
   },
-  // @ts-ignore
+  // @ts-expect-error
   ...pluginVueScopedCss.configs['flat/recommended'],
+  ...pluginNodeSecurity.configs.recommended,
   {
     name: 'app/custom-rules',
     rules: {
