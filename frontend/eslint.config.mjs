@@ -19,7 +19,7 @@ export default withNuxt(
       '.output/**',
     ],
   },
-  // @ts-ignore
+  // @ts-expect-error
   ...pluginVueScopedCss.configs['flat/recommended'],
   {
     name: 'app/custom-rules',
