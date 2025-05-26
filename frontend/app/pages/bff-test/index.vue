@@ -5,6 +5,10 @@
       <PreformattedText :value="composable" />
     </div>
     <div class="session">
+      <Button
+        label="refresh"
+        @click="refresh"
+      />
       <PreformattedText :value="error" />
       <PreformattedText :value="session" />
     </div>
@@ -16,7 +20,11 @@ import AppPageMain from '~/components/app/AppPageMain.vue';
 import PreformattedText from '~/components/common/PreformattedText.vue';
 
 const { user: composable } = useOidcAuth();
-const { data: session, error } = await useFetch('/api/backend/members', {
+const {
+  data: session,
+  error,
+  refresh,
+} = await useFetch('/api/backend/members?q=hello', {
   headers: {
     'x-csrf': '1',
   },

@@ -1,14 +1,27 @@
 import { getUserSession } from 'nuxt-oidc-auth/runtime/server/utils/session.js';
 import { getAccessToken } from '~~/server/utils/auth';
 import { joinURL } from 'ufo';
+import { stringIsNullOrWhitespace } from '~~/shared/utils';
 
 // This catch-all endpoint proxies all incoming requests to the "backend" remote API
 export default defineEventHandler(async (event) => {
-  if (!event.headers.get('x-csrf'))
-    throw createError({ statusCode: 401, statusMessage: 'Missing CSRF protection header' });
+  // no use in continuing if the upstream base URL is missing
+  const baseUrl = useRuntimeConfig(event).backendBaseUrl;
+  if (stringIsNullOrWhitespace(baseUrl))
+    throw createError({ statusCode: 500, statusMessage: 'Failed to retrieve backend base URL' });
 
-  // get the full path from the request and strip out the `/api/backend` prefix
-  const path = event.path.replace(/^\/api\/backend\//, '');
+  // custom header must be set to protect against CSRF attacks
+  // https://docs.duendesoftware.com/bff/#csrf-attacks
+  // setting a custom header triggers a CORS preflight check on EVERY request (even "simple" ones
+  // such as a GET without additional configuration), this way we effectively force "same site" to be
+  // "same (or allowed) origin"
+  if (!event.headers.get('x-csrf'))
+    throw createError({ statusCode: 400, statusMessage: 'Missing CSRF protection header' });
+
+  // /api/backend/[whatever] -> extract [whatever]
+  const remotePath = event.path.replace(/\/api\/backend/, '');
+  if (stringIsNullOrWhitespace(remotePath))
+    throw createError({ statusCode: 500, statusMessage: 'Failed to determine remote path' });
 
   // handle authentication
   // since nuxt-oidc-auth in its current version cannot return the access tokens in the UserSession
@@ -29,14 +42,19 @@ export default defineEventHandler(async (event) => {
   // make sure session exists, will throw 401 error otherwise
   await getUserSession(event);
   const accessToken = await getAccessToken(event); // extract access token manually
+  if (stringIsNullOrWhitespace(accessToken))
+    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' });
 
-  const baseUrl = useRuntimeConfig(event).backendBaseUrl;
-  console.log(baseUrl);
-  const target = joinURL(baseUrl, path);
-  console.log(target);
+  const target = joinURL(baseUrl, remotePath!);
   return proxyRequest(event, target, {
     headers: {
-      authorization: `Bearer ${accessToken}`,
+      // all headers from original request are also passed along
+      authorization: `Bearer ${accessToken!}`, // set auth header
+      cookie: '', // do not forward (auth) cookies to remote API
+    },
+    fetchOptions: {
+      // do not follow redirect (such as to login pages), but pass back the 3XX response
+      redirect: 'manual',
     },
   });
 });

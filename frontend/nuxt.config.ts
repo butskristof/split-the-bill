@@ -51,7 +51,7 @@ export default defineNuxtConfig({
         // IDP passes back a code which we can exchange for tokens
         responseType: 'code',
         grantType: 'authorization_code',
-        authenticationScheme: 'header',
+        authenticationScheme: 'header', // authenticate token request w/ header
         // responseMode: 'form_post',
         // @ts-expect-error is required but not defined in types by current library version
         openIdConfiguration: '', // set in env
@@ -66,7 +66,7 @@ export default defineNuxtConfig({
         // ensure tokens are valid
         validateAccessToken: true,
         validateIdToken: true,
-        // keep tokens out of client-side
+        // do not expose tokens in user session
         exposeAccessToken: false,
         exposeIdToken: false,
         // make sure to include offline_access to get back refresh token
@@ -80,8 +80,13 @@ export default defineNuxtConfig({
       expirationCheck: true,
       expirationThreshold: 60, // seconds
       cookie: {
-        sameSite: 'lax', // TODO strict possible?
+        // https://docs.duendesoftware.com/bff/fundamentals/session/handlers/#choosing-between-samesitelax-and-samesitestrict
+        // can't do strict since IdP will be hosted on other site
+        sameSite: 'lax',
       },
+    },
+    middleware: {
+      globalMiddlewareEnabled: true, // protect everything except /auth by default
     },
   },
   nitro: {
