@@ -36,11 +36,11 @@ import ColorModeButtonHeadless from '~/components/app/ColorModeButtonHeadless.vu
 
 footer {
   @include utilities.app-container;
-
-  @include utilities.flex-row-justify-between-align-center;
-
-  margin-bottom: calc(var(--default-spacing) * 2);
-  padding-inline: var(--default-spacing);
+  & {
+    @include utilities.flex-row-justify-between-align-center;
+    margin-bottom: calc(var(--default-spacing) * 2);
+    padding-inline: var(--default-spacing);
+  }
 
   .icon-row {
     @include utilities.flex-row-align-center;
