@@ -15,7 +15,10 @@ internal static class DependencyInjection
 
     internal static IServiceCollection AddConfiguration(this IServiceCollection services)
     {
-        services.AddValidatedSettings<CorsSettings>();
+        services
+            .AddValidatedSettings<CorsSettings>()
+            .AddValidatedSettings<AuthenticationSettings>();
+        
         return services;
     }
 
