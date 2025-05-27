@@ -70,7 +70,8 @@ internal static class DependencyInjection
                     return schemaId;
                 });
 
-                options.AddDocumentTransformer((document, _, _) =>
+                options.AddDocumentTransformer(
+                    (document, _, _) =>
                     {
                         var scheme = new OpenApiSecurityScheme
                         {

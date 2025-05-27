@@ -30,8 +30,6 @@ internal sealed class AuthenticationSettingsValidator : BaseValidator<Authentica
             .NotEmpty()
             .WithMessage(ErrorCodes.Required);
 
-        RuleForEach(r => r.Audiences)
-            .NotEmpty()
-            .WithMessage(ErrorCodes.Invalid);
+        RuleForEach(r => r.Audiences).NotEmpty().WithMessage(ErrorCodes.Invalid);
     }
 }

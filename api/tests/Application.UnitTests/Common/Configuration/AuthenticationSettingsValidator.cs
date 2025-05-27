@@ -13,11 +13,7 @@ internal sealed class AuthenticationSettingsValidatorTests
     [MethodDataSource(typeof(TestValues), nameof(TestValues.EmptyStrings))]
     public void Authority_Empty_Fails(string value)
     {
-        var settings = new AuthenticationSettings
-        {
-            Authority = value,
-            Audiences = [],
-        };
+        var settings = new AuthenticationSettings { Authority = value, Audiences = [] };
 
         var result = _sut.TestValidate(settings);
         result.ShouldHaveValidationErrorFor(r => r.Authority);
@@ -39,11 +35,7 @@ internal sealed class AuthenticationSettingsValidatorTests
     [Arguments("notauri/path/")]
     public void Authority_InvalidIssuer_Fails(string value)
     {
-        var settings = new AuthenticationSettings
-        {
-            Authority = value,
-            Audiences = []
-        };
+        var settings = new AuthenticationSettings { Authority = value, Audiences = [] };
 
         var result = _sut.TestValidate(settings);
         result.ShouldHaveValidationErrorFor(r => r.Authority);
@@ -64,11 +56,7 @@ internal sealed class AuthenticationSettingsValidatorTests
     [Arguments("http://domain.com/path")]
     public void Authority_ValidIssuer_Passes(string value)
     {
-        var settings = new AuthenticationSettings
-        {
-            Authority = value,
-            Audiences = [],
-        };
+        var settings = new AuthenticationSettings { Authority = value, Audiences = [] };
 
         var result = _sut.TestValidate(settings);
         result.ShouldNotHaveValidationErrorFor(r => r.Authority);
@@ -105,11 +93,13 @@ internal sealed class AuthenticationSettingsValidatorTests
     [Test]
     public void Audiences_WithEmptyValue_Fails()
     {
-        var settings = new AuthenticationSettings { Audiences = [string.Empty, "valid"], Authority = string.Empty };
+        var settings = new AuthenticationSettings
+        {
+            Audiences = [string.Empty, "valid"],
+            Authority = string.Empty,
+        };
         var result = _sut.TestValidate(settings);
-        result
-            .ShouldHaveValidationErrorFor("Audiences[0]")
-            .WithErrorMessage("Invalid");
+        result.ShouldHaveValidationErrorFor("Audiences[0]").WithErrorMessage("Invalid");
     }
 
     [Test]
@@ -128,7 +118,7 @@ internal sealed class AuthenticationSettingsValidatorTests
         var settings = new AuthenticationSettings
         {
             Authority = "https://issuer.example.com/",
-            Audiences = ["aud1", "aud2"]
+            Audiences = ["aud1", "aud2"],
         };
 
         var result = _sut.TestValidate(settings);
