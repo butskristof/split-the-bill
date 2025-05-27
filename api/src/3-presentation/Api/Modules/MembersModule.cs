@@ -11,7 +11,7 @@ internal static class MembersModule
 
     internal static IEndpointRouteBuilder MapMembersEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup($"/{GroupName}").WithTags(GroupName);
+        var group = endpoints.MapGroup($"/{GroupName}").RequireAuthorization().WithTags(GroupName);
 
         group.MapGet("", GetMembers).WithName(nameof(GetMembers)).ProducesOk<GetMembers.Response>();
 

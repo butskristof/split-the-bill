@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SplitTheBill.Api.Common.Authentication;
 using SplitTheBill.Api.Constants;
@@ -15,7 +16,10 @@ internal static class DependencyInjection
 
     internal static IServiceCollection AddConfiguration(this IServiceCollection services)
     {
-        services.AddValidatedSettings<CorsSettings>();
+        services
+            .AddValidatedSettings<CorsSettings>()
+            .AddValidatedSettings<AuthenticationSettings>();
+
         return services;
     }
 
@@ -108,11 +112,31 @@ internal static class DependencyInjection
 
         services.AddHealthChecks();
 
-        services.AddAuthentication().AddJwtBearer();
+        services
+            .AddAuthentication()
+            .AddJwtBearer(options =>
+            {
+                using var serviceProvider = services.BuildServiceProvider();
+                var configuration = serviceProvider
+                    .GetRequiredService<IOptions<AuthenticationSettings>>()
+                    .Value;
+
+                options.Authority = configuration.Authority;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = true,
+                    ValidAudiences = configuration.Audiences,
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration.Authority,
+                    ValidateIssuerSigningKey = true,
+                    RequireSignedTokens = true,
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true,
+                };
+            });
         services.AddAuthorization();
         services.AddHttpContextAccessor().AddScoped<IAuthenticationInfo, ApiAuthenticationInfo>();
 
-        // TODO remove after BFF/Proxy setup
         services.AddCors(options =>
         {
             using var serviceProvider = services.BuildServiceProvider();

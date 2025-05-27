@@ -13,7 +13,7 @@ internal static class GroupsModule
 
     internal static IEndpointRouteBuilder MapGroupsEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup($"/{GroupName}").WithTags(GroupName);
+        var group = endpoints.MapGroup($"/{GroupName}").RequireAuthorization().WithTags(GroupName);
 
         group.MapGet("", GetGroups).WithName(nameof(GetGroups)).ProducesOk<GetGroups.Response>();
 
