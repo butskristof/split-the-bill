@@ -35,8 +35,11 @@ import AppFooter from '~/components/app/AppFooter.vue';
 
     .page {
       @include utilities.app-container;
-      flex-grow: 1;
-      margin: var(--default-spacing);
+
+      & {
+        flex-grow: 1;
+        margin: var(--default-spacing);
+      }
     }
   }
 }

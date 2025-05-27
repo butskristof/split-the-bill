@@ -19,7 +19,7 @@
   gap: 0.5rem;
 
   font-size: var(--text-2xl);
-  font-weight: var(--font-weight-bold);
+  @include utilities.bold;
   @include utilities.reset-link;
 
   .icon {

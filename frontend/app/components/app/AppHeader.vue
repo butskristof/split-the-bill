@@ -63,23 +63,25 @@ const atLeastLg = computed(() => breakpoints.lg.value);
 
   background-color: var(--p-surface-0);
   border-bottom: 1px solid var(--p-surface-200);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 
   @include utilities.dark-mode {
     background-color: var(--p-surface-900);
     border-bottom: 1px solid var(--p-surface-800);
   }
-
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 header {
   @include utilities.app-container;
-  width: 100%;
 
-  // vertically center the content inside the header
-  @include utilities.flex-row-justify-between-align-center(false);
-  gap: calc(var(--default-spacing) * 2);
-  padding-inline: var(--default-spacing);
+  & {
+    width: 100%;
+
+    // vertically center the content inside the header
+    @include utilities.flex-row-justify-between-align-center(false);
+    gap: calc(var(--default-spacing) * 2);
+    padding-inline: var(--default-spacing);
+  }
 
   .app-title {
     flex-shrink: 0;
@@ -135,7 +137,6 @@ header {
       //display: none;
       position: static;
       @include utilities.flex-row-align-center;
-      gap: var(--default-spacing);
     }
 
     @include utilities.dark-mode {
