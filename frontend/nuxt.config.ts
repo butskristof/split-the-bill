@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@vueuse/nuxt',
     'nuxt-oidc-auth',
+    'nuxt-open-fetch',
   ],
   css: ['~/assets/styles/reset.css', 'primeicons/primeicons.css', '~/assets/styles/main.scss'],
   components: {
@@ -106,4 +107,15 @@ export default defineNuxtConfig({
     },
   },
   security: {},
+  openFetch: {
+    clients: {
+      backendApi: {
+        baseURL: '/api/backend',
+        schema: './openapi/backend-api/spec.json',
+        headers: {
+          'x-csrf': '1',
+        },
+      },
+    },
+  },
 });

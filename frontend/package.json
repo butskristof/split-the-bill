@@ -34,6 +34,7 @@
     "@primevue/nuxt-module": "^4.3.4",
     "eslint": "^9.27.0",
     "eslint-plugin-vue-scoped-css": "^2.10.0",
+    "nuxt-open-fetch": "^0.9.5",
     "prettier": "^3.5.3",
     "sass": "^1.89.0",
     "typescript": "^5.8.3",
