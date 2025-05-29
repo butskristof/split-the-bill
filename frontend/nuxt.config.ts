@@ -40,7 +40,7 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // route to the groups overview by default
-    '/': { redirect: '/bff-test' },
+    // '/': { redirect: '/groups' },
   },
   oidc: {
     defaultProvider: 'oidc',
