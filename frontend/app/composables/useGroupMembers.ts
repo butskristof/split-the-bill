@@ -4,7 +4,8 @@ const useGroupMembers = () => {
   const group = inject<ComputedRef<Group>>('group');
   const members = computed<GroupMember[]>(() => group?.value?.members ?? []);
 
-  const getMember = (id: string): GroupMember => members.value?.find((m) => m.id === id);
+  const getMember = (id: string): GroupMember | undefined =>
+    members.value?.find((m) => m.id === id);
 
   return {
     members,

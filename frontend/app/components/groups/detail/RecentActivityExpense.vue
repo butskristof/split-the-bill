@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Expense } from './types';
+import type { Expense, GroupMember } from './types';
 import { formatTimestamp, formatCurrency } from '#shared/utils';
 
 const props = defineProps<{
@@ -20,5 +20,7 @@ const props = defineProps<{
 }>();
 
 const { getMember } = useGroupMembers();
-const paidByMember = computed(() => getMember(props.expense.paidByMemberId));
+const paidByMember = computed<GroupMember | undefined>(() =>
+  getMember(props.expense.paidByMemberId),
+);
 </script>
