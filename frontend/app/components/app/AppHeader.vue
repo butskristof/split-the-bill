@@ -1,6 +1,6 @@
 <template>
   <div class="header-container">
-    <header>
+    <header ref="header">
       <AppHeaderTitle class="app-title" />
       <Button
         class="nav-toggle"
@@ -44,9 +44,18 @@ const showDropdown = ref(false);
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
 };
+const closeDropdown = () => {
+  showDropdown.value = false;
+};
+
+const header = ref<HTMLElement>();
+onClickOutside(header, closeDropdown);
 
 const breakpoints = useAppBreakpoints();
 const atLeastLg = computed(() => breakpoints.lg.value);
+
+const router = useRouter();
+router.beforeEach(closeDropdown);
 </script>
 
 <style scoped lang="scss">

@@ -24,11 +24,9 @@ const icon = computed(() => `pi pi-${isDark.value ? 'sun' : 'moon'}`);
 
 const nextMode = computed(() => (isDark.value ? 'light' : 'dark'));
 
-const toggleColorMode = () => {
-  colorMode.value = nextMode.value;
-};
+const toggleColorMode = () => setColorMode(nextMode.value);
 
 const setColorMode = (mode: 'light' | 'dark') => {
-  colorMode.value = mode;
+  colorMode.preference = mode;
 };
 </script>
