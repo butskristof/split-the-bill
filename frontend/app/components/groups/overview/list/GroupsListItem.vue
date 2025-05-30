@@ -39,10 +39,7 @@ const label = computed(() => getUpperCaseFirstLetter(props.group.name));
   }
 
   .pi {
-    color: var(--p-surface-500);
-    @include utilities.dark-mode {
-      color: var(--p-surface-400);
-    }
+    color: var(--p-surface-400);
   }
 
   &:hover {
@@ -56,7 +53,7 @@ const label = computed(() => getUpperCaseFirstLetter(props.group.name));
     .pi {
       transition: all 0.1s;
       translate: -0.25rem;
-      color: var(--p-surface-800);
+      color: var(--p-surface-600);
 
       @include utilities.dark-mode {
         color: var(--p-surface-0);

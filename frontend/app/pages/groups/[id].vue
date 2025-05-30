@@ -1,6 +1,6 @@
 <template>
   <div class="group-detail-page">
-    <AppPageBackButton />
+    <AppPageBackButton :default-route="{ name: 'groups' }" />
     <AppPageMain>
       <h1>{{ groupId }}</h1>
     </AppPageMain>
