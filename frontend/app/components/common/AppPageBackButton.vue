@@ -38,11 +38,17 @@ const to = computed<RouteLocationRaw>(() => {
   &:focus {
     background: transparent !important;
     color: var(--p-surface-600) !important;
+    @include utilities.dark-mode {
+      color: var(--p-surface-300) !important;
+    }
   }
 
   &:active,
   &:focus {
     color: var(--p-surface-800) !important;
+    @include utilities.dark-mode {
+      color: var(--p-surface-100) !important;
+    }
   }
 }
 </style>

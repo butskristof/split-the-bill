@@ -9,7 +9,11 @@
       />
       <template v-if="group">
         <h1>{{ group.name }}</h1>
-        <PreformattedText :value="group" />
+        <GroupDetailRecentActivity :group="group" />
+        <PreformattedText
+          v-if="false"
+          :value="group"
+        />
       </template>
     </AppPageMain>
   </div>
@@ -21,6 +25,7 @@ import AppPageBackButton from '~/components/common/AppPageBackButton.vue';
 import ApiError from '~/components/common/ApiError.vue';
 import LoadingIndicator from '~/components/common/LoadingIndicator.vue';
 import PreformattedText from '~/components/common/PreformattedText.vue';
+import GroupDetailRecentActivity from '~/components/groups/detail/GroupDetailRecentActivity.vue';
 
 const route = useRoute();
 const groupId = route.params.id as string;
@@ -30,4 +35,5 @@ const {
   status,
   error,
 } = await useLazyBackendApi('/Groups/{id}', { key, path: { id: groupId } });
+provide('group', readonly(group));
 </script>
