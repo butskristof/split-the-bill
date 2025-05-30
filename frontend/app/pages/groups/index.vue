@@ -1,7 +1,15 @@
 <template>
   <div class="groups-page">
     <AppPageMain class="main">
-      <h1>Groups</h1>
+      <div class="header">
+        <h1>Groups</h1>
+        <div class="actions">
+          <Button
+            label="Create group"
+            icon="pi pi-plus"
+          />
+        </div>
+      </div>
       <GroupsList />
     </AppPageMain>
   </div>
@@ -17,5 +25,9 @@ import GroupsList from '~/components/groups/overview/list/GroupsList.vue';
 
 .main {
   @include utilities.flex-column;
+}
+
+.header {
+  @include utilities.flex-row-justify-between-align-center;
 }
 </style>

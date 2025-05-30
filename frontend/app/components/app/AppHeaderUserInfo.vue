@@ -56,6 +56,7 @@
 
 <script setup lang="ts">
 import type { MenuItem } from 'primevue/menuitem';
+import { getUpperCaseFirstLetter } from '#shared/utils';
 
 const menu = ref();
 const menuItems: MenuItem[] = [
@@ -77,7 +78,7 @@ const toggle = (event: Event) => {
 
 const { user, logout } = useOidcAuth();
 const name = computed<string | undefined>(() => user.value?.userInfo?.name as string);
-const label = computed<string>(() => name.value?.charAt(0).toUpperCase() ?? '');
+const label = computed(() => getUpperCaseFirstLetter(name));
 </script>
 
 <style scoped lang="scss">
