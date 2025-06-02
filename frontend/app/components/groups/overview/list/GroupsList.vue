@@ -23,7 +23,17 @@ import ApiError from '~/components/common/ApiError.vue';
 import GroupsListItem from '~/components/groups/overview/list/GroupsListItem.vue';
 import GroupsListItemSkeleton from '~/components/groups/overview/list/GroupsListItemSkeleton.vue';
 
-const { data, status, error } = useLazyBackendApi('/Groups', { key: 'groups' });
+const props = defineProps<{
+  refreshKey?: number;
+}>();
+watch(
+  () => props.refreshKey,
+  () => {
+    refresh();
+  },
+);
+
+const { data, status, error, refresh } = useLazyBackendApi('/Groups', { key: 'groups' });
 const groups = computed(() => data.value?.groups);
 </script>
 

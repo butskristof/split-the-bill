@@ -7,10 +7,15 @@
           <Button
             label="Create group"
             icon="pi pi-plus"
+            @click="showCreateGroup = true"
           />
         </div>
       </div>
-      <GroupsList />
+      <GroupsList :refresh-key="refreshKey" />
+      <CreateGroup
+        v-if="showCreateGroup"
+        @close="closeCreateGroup"
+      />
     </AppPageMain>
   </div>
 </template>
@@ -18,6 +23,14 @@
 <script setup lang="ts">
 import AppPageMain from '~/components/app/AppPageMain.vue';
 import GroupsList from '~/components/groups/overview/list/GroupsList.vue';
+import CreateGroup from '~/components/groups/edit/CreateGroup.vue';
+
+const refreshKey = ref(0);
+const showCreateGroup = ref(false);
+const closeCreateGroup = () => {
+  showCreateGroup.value = false;
+  ++refreshKey.value; // Trigger refresh of groups list
+};
 </script>
 
 <style scoped lang="scss">
