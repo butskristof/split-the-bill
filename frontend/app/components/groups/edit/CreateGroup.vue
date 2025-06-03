@@ -6,6 +6,7 @@
     <Form
       v-slot="$form"
       class="form"
+      :initial-values="initialValues"
       :resolver="resolver"
       @submit="onFormSubmit"
     >
@@ -46,32 +47,34 @@
 import * as v from 'valibot';
 import { valibotResolver } from '@primevue/forms/resolvers/valibot';
 import AppModal from '~/components/common/AppModal.vue';
+import type { FormSubmitEvent } from '@primevue/forms';
 
 const { $backendApi } = useNuxtApp();
 const toast = useToast();
 
-const emit = defineEmits<{
+// always declare, even with empty strings to avoid default null (and ugly error messages)
+const initialValues = {
+  name: '',
+};
+const schema = v.object({
+  name: v.pipe(v.string(), v.minLength(1, 'Name is required')),
+});
+type FormType = v.InferInput<typeof schema>;
+const resolver = valibotResolver(schema);
+
+defineEmits<{
   close: [];
 }>();
 
-const resolver = valibotResolver(
-  v.object({
-    name: v.pipe(v.string(), v.minLength(1, 'Name is required')),
-  }),
-);
+const onFormSubmit = async ({ valid, values }: FormSubmitEvent<FormType>) => {
+  if (!valid) return;
 
-const onFormSubmit = async ({ valid, values }) => {
-  if (valid) {
-    const result = await $backendApi('/Groups', {
-      method: 'POST',
-      body: {
-        name: values.name,
-      },
-    });
-    console.log(result);
-    toast.add({ severity: 'success', summary: 'Group created successfully' });
-    emit('close');
-  }
+  const result = await $backendApi('/Groups', {
+    method: 'POST',
+    body: values,
+  });
+  toast.add({ severity: 'success', summary: 'Group created successfully' });
+  await navigateTo({ name: 'groups-id', params: { id: result.id } });
 };
 </script>
 
