@@ -160,3 +160,19 @@
     }
   }
 }
+
+@mixin app-card {
+  width: auto;
+  flex-grow: 1;
+  padding: var(--default-spacing);
+  border-radius: var(--default-radius);
+
+  @include flex-column;
+
+  background-color: var(--p-surface-0);
+  border: 1px solid var(--p-surface-200);
+  @include dark-mode {
+    background-color: var(--p-surface-900);
+    border: 1px solid var(--p-surface-700);
+  }
+}
