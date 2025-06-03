@@ -17,8 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Group } from './types';
 import { getUpperCaseFirstLetter } from '#shared/utils';
+import type { GetGroupsResponse } from '~/components/groups/overview/types';
+
+type Group = GetGroupsResponse['groups'][number];
 
 const props = defineProps<{
   group: Group;

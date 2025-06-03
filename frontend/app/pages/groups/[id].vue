@@ -2,7 +2,7 @@
   <div class="group-detail-page">
     <AppPageBackButton :default-route="{ name: 'groups' }" />
     <AppPageMain>
-      <LoadingIndicator v-if="status === 'pending'" />
+      <PageLoadingIndicator v-if="status === 'pending'" />
       <ApiError
         v-if="error"
         :error="error"
@@ -23,9 +23,9 @@
 import AppPageMain from '~/components/app/AppPageMain.vue';
 import AppPageBackButton from '~/components/common/AppPageBackButton.vue';
 import ApiError from '~/components/common/ApiError.vue';
-import LoadingIndicator from '~/components/common/LoadingIndicator.vue';
 import PreformattedText from '~/components/common/PreformattedText.vue';
 import GroupDetailRecentActivity from '~/components/groups/detail/GroupDetailRecentActivity.vue';
+import PageLoadingIndicator from '~/components/common/PageLoadingIndicator.vue';
 
 const route = useRoute();
 const groupId = route.params.id as string;

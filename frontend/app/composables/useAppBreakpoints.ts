@@ -5,7 +5,10 @@ const useAppBreakpoints = () => {
   // can use the preset here
   // make sure to keep those in sync should other breakpoints be used
   const vueUseBreakpoints = useBreakpoints(breakpointsTailwind);
-  return vueUseBreakpoints;
+  return {
+    ...vueUseBreakpoints,
+    values: { ...breakpointsTailwind },
+  };
 };
 
 export default useAppBreakpoints;
