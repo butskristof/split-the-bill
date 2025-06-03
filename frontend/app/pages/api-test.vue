@@ -3,9 +3,9 @@
     <h1>API test</h1>
     <Button
       label="refresh"
-      @click="refresh"
+      @click="() => refresh()"
     />
-    <LoadingIndicator
+    <PageLoadingIndicator
       v-if="isPending"
       entity="group"
     />
@@ -24,7 +24,8 @@
 import AppPageMain from '~/components/app/AppPageMain.vue';
 import PreformattedText from '~/components/common/PreformattedText.vue';
 import ApiError from '~/components/common/ApiError.vue';
-import LoadingIndicator from '~/components/common/LoadingIndicator.vue';
+import PageLoadingIndicator from '~/components/common/PageLoadingIndicator.vue';
+
 const { data, error, refresh, status } = await useLazyBackendApi('/Members', {
   key: 'members',
 });

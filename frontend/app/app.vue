@@ -1,6 +1,7 @@
 <template>
   <div>
     <NuxtRouteAnnouncer />
+    <Toast />
     <AppShell />
   </div>
 </template>
