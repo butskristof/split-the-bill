@@ -39,6 +39,11 @@ import AppFooter from '~/components/app/AppFooter.vue';
       & {
         flex-grow: 1;
         margin: var(--default-spacing);
+
+        @include utilities.media-min-xl {
+          margin-inline: auto;
+          width: 100%;
+        }
       }
     }
   }
