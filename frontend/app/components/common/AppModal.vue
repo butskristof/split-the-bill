@@ -12,6 +12,9 @@
 </template>
 
 <script setup lang="ts">
+// this component provides a ready-to-use modal
+// prefer updating and expanding this component to keep it uniform across the application
+// possible future expansions: header slot, click outside, ...
 defineProps<{
   header: string;
 }>();
@@ -27,6 +30,8 @@ const dialogStyle = {
   margin: 'var(--default-spacing)',
 };
 
+// capture updates from the Dialog (e.g. close button in header clicked)
+// and propagate as close emit if applicable
 const updateVisible = (visible: boolean) => {
   if (!visible) {
     emit('close');

@@ -4,7 +4,7 @@
       v-if="error"
       :error="error"
     />
-    <template v-if="status === 'pending'">
+    <template v-if="!groups && status === 'pending'">
       <GroupsListItemSkeleton
         v-for="i in 3"
         :key="i"
@@ -22,18 +22,14 @@
 import ApiError from '~/components/common/ApiError.vue';
 import GroupsListItem from '~/components/groups/overview/list/GroupsListItem.vue';
 import GroupsListItemSkeleton from '~/components/groups/overview/list/GroupsListItemSkeleton.vue';
+import type { GetGroupsResponse } from '~/components/groups/overview/types';
+import type { Query } from '~/types';
 
 const props = defineProps<{
-  refreshKey?: number;
+  query: Query<GetGroupsResponse>;
 }>();
-watch(
-  () => props.refreshKey,
-  () => {
-    refresh();
-  },
-);
 
-const { data, status, error, refresh } = useLazyBackendApi('/Groups', { key: 'groups' });
+const { data, status, error } = props.query;
 const groups = computed(() => data.value?.groups);
 </script>
 

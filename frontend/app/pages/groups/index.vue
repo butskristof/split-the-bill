@@ -4,6 +4,7 @@
       <div class="header">
         <h1>Groups</h1>
         <div class="actions">
+          <LoadingIndicator v-if="isLoading" />
           <Button
             label="Create group"
             icon="pi pi-plus"
@@ -11,7 +12,7 @@
           />
         </div>
       </div>
-      <GroupsList :refresh-key="refreshKey" />
+      <GroupsList :query="query" />
       <CreateGroup
         v-if="showCreateGroup"
         @close="closeCreateGroup"
@@ -24,12 +25,15 @@
 import AppPageMain from '~/components/app/AppPageMain.vue';
 import GroupsList from '~/components/groups/overview/list/GroupsList.vue';
 import CreateGroup from '~/components/groups/edit/CreateGroup.vue';
+import LoadingIndicator from '~/components/common/LoadingIndicator.vue';
 
-const refreshKey = ref(0);
+const query = await useLazyBackendApi('/Groups', { key: 'groups' });
+const isLoading = computed(() => query.status.value === 'pending');
+
 const showCreateGroup = ref(false);
 const closeCreateGroup = () => {
   showCreateGroup.value = false;
-  ++refreshKey.value; // Trigger refresh of groups list
+  query.refresh();
 };
 </script>
 
@@ -42,5 +46,9 @@ const closeCreateGroup = () => {
 
 .header {
   @include utilities.flex-row-justify-between-align-center;
+
+  .actions {
+    @include utilities.flex-row-align-center;
+  }
 }
 </style>
