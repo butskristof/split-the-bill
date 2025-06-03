@@ -31,9 +31,9 @@ const query = await useLazyBackendApi('/Groups', { key: 'groups' });
 const isLoading = computed(() => query.status.value === 'pending');
 
 const showCreateGroup = ref(false);
-const closeCreateGroup = () => {
+const closeCreateGroup = (created: boolean) => {
   showCreateGroup.value = false;
-  query.refresh();
+  if (created) query.refresh();
 };
 </script>
 
