@@ -15,6 +15,20 @@
         <AppPageCard>
           <GroupDetailRecentActivity :group="group" />
         </AppPageCard>
+        <div class="delete">
+          <Button
+            icon="pi pi-trash"
+            label="Delete group"
+            severity="danger"
+            variant="text"
+            @click="showDelete = true"
+          />
+          <DeleteGroup
+            v-if="showDelete"
+            :group="group"
+            @close="showDelete = false"
+          />
+        </div>
       </main>
     </template>
   </div>
@@ -27,6 +41,7 @@ import GroupDetailRecentActivity from '~/components/groups/detail/GroupDetailRec
 import PageLoadingIndicator from '~/components/common/PageLoadingIndicator.vue';
 import AppPageCard from '~/components/app/AppPageCard.vue';
 import GroupDetailMembers from '~/components/groups/detail/GroupDetailMembers.vue';
+import DeleteGroup from '~/components/groups/edit/DeleteGroup.vue';
 
 const route = useRoute();
 const groupId = route.params.id as string;
@@ -37,6 +52,8 @@ const {
   error,
 } = await useLazyBackendApi('/Groups/{id}', { key, path: { id: groupId } });
 provide('group', readonly(group));
+
+const showDelete = ref(false);
 </script>
 
 <style scoped lang="scss">
@@ -44,5 +61,10 @@ provide('group', readonly(group));
 
 main {
   @include utilities.flex-column;
+}
+
+.delete {
+  @include utilities.flex-row;
+  justify-content: flex-end;
 }
 </style>
