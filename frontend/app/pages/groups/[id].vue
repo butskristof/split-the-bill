@@ -6,31 +6,29 @@
       v-if="error"
       :error="error"
     />
-    <template v-if="group">
-      <main>
-        <h1>{{ group.name }}</h1>
-        <AppPageCard>
-          <GroupDetailMembers :members="group.members!" />
-        </AppPageCard>
-        <AppPageCard>
-          <GroupDetailRecentActivity :group="group" />
-        </AppPageCard>
-        <div class="delete">
-          <Button
-            icon="pi pi-trash"
-            label="Delete group"
-            severity="danger"
-            variant="text"
-            @click="showDelete = true"
-          />
-          <DeleteGroup
-            v-if="showDelete"
-            :group="group"
-            @close="showDelete = false"
-          />
-        </div>
-      </main>
-    </template>
+    <main v-if="group">
+      <h1>{{ group.name }}</h1>
+      <AppPageCard>
+        <GroupDetailMembers :members="group.members!" />
+      </AppPageCard>
+      <AppPageCard>
+        <GroupDetailRecentActivity :group="group" />
+      </AppPageCard>
+      <div class="delete">
+        <Button
+          icon="pi pi-trash"
+          label="Delete group"
+          severity="danger"
+          variant="text"
+          @click="showDelete = true"
+        />
+        <DeleteGroup
+          v-if="showDelete"
+          :group="group"
+          @close="showDelete = false"
+        />
+      </div>
+    </main>
   </div>
 </template>
 
@@ -64,7 +62,6 @@ main {
 }
 
 .delete {
-  @include utilities.flex-row;
-  justify-content: flex-end;
+  @include utilities.flex-row-justify-end;
 }
 </style>

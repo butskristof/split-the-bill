@@ -16,6 +16,14 @@
         />
       </template>
     </Timeline>
+    <div class="actions">
+      <Button
+        icon="pi pi-arrow-right"
+        icon-pos="right"
+        label="All activity"
+        variant="text"
+      />
+    </div>
   </div>
 </template>
 
@@ -60,5 +68,9 @@ const activities = computed<Activity[]>(() => {
       padding-bottom: var(--default-spacing);
     }
   }
+}
+
+.actions {
+  @include utilities.flex-row-justify-end;
 }
 </style>

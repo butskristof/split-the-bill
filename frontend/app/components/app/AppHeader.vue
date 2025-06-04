@@ -119,8 +119,7 @@ header {
     }
 
     .actions-user-info {
-      @include utilities.flex-row-align-center;
-      justify-content: flex-end;
+      @include utilities.flex-row-justify-end-align-center;
 
       .separator {
         width: 1px;
