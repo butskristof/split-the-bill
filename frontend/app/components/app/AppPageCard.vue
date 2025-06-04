@@ -1,13 +1,15 @@
 <template>
-  <main>
+  <div class="app-card">
     <slot />
-  </main>
+  </div>
 </template>
+
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 @use '~/assets/styles/utilities';
 
-main {
+.app-card {
   @include utilities.app-card;
 }
 </style>
