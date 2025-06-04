@@ -1,6 +1,23 @@
 <template>
   <div class="recent-activity">
-    <h2>Recent activity</h2>
+    <div class="header">
+      <h2>Recent activity</h2>
+      <div class="add">
+        <Button
+          icon="pi pi-plus"
+          label="Add"
+          aria-haspopup="true"
+          aria-controls="add_activity_menu"
+          @click="toggleMenu"
+        />
+        <Menu
+          id="add_activity_menu"
+          ref="menu"
+          :model="menuItems"
+          :popup="true"
+        />
+      </div>
+    </div>
     <Timeline
       :value="activities"
       class="timeline"
@@ -46,6 +63,19 @@ const activities = computed<Activity[]>(() => {
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 3);
 });
+
+const menuItems = [
+  {
+    icon: 'pi pi-tag',
+    label: 'Expense',
+  },
+  {
+    icon: 'pi pi-money-bill',
+    label: 'Payment',
+  },
+];
+const menu = ref();
+const toggleMenu = (event: Event) => menu.value?.toggle(event);
 </script>
 
 <style scoped lang="scss">
@@ -68,6 +98,10 @@ const activities = computed<Activity[]>(() => {
       padding-bottom: var(--default-spacing);
     }
   }
+}
+
+.header {
+  @include utilities.flex-row-justify-between-align-center;
 }
 
 .actions {
