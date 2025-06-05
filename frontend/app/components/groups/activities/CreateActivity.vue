@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import CreateExpenseModal from '~/components/groups/activities/CreateExpenseModal.vue';
 
-const showCreateExpense = ref<boolean>(true);
+const showCreateExpense = ref<boolean>(false);
 const openCreateExpense = (): void => {
   showCreateExpense.value = true;
 };

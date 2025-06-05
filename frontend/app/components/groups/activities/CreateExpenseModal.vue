@@ -144,7 +144,7 @@ import * as v from 'valibot';
 import { valibotResolver } from '@primevue/forms/resolvers/valibot';
 import type { FormSubmitEvent } from '@primevue/forms';
 import FormFieldLabel from '~/components/form/FormFieldLabel.vue';
-import { ExpenseSplitType } from '~/types';
+import { ExpenseSplitType } from '~/enums';
 
 const { $backendApi } = useNuxtApp();
 const toast = useToast();
