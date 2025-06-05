@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import AppFooterTitle from '~/components/app/AppFooterTitle.vue';
+import AppFooterTitle from '~/components/app/footer/AppFooterTitle.vue';
 import ColorModeButtonHeadless from '~/components/app/ColorModeButtonHeadless.vue';
 </script>
 

@@ -23,6 +23,16 @@
   align-items: center;
 }
 
+@mixin flex-row-justify-end($apply-gap: true) {
+  @include flex-row($apply-gap);
+  justify-content: flex-end;
+}
+
+@mixin flex-row-justify-end-align-center($apply-gap: true) {
+  @include flex-row-justify-end($apply-gap);
+  align-items: center;
+}
+
 @mixin flex-row-justify-between($apply-gap: true) {
   @include flex-row($apply-gap);
   justify-content: space-between;

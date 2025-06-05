@@ -33,10 +33,10 @@
 </template>
 
 <script setup lang="ts">
-import AppHeaderTitle from '~/components/app/AppHeaderTitle.vue';
-import AppHeaderActions from '~/components/app/AppHeaderActions.vue';
-import AppHeaderUserInfo from '~/components/app/AppHeaderUserInfo.vue';
-import AppHeaderMenuItems from '~/components/app/AppHeaderMenuItems.vue';
+import AppHeaderTitle from '~/components/app/header/AppHeaderTitle.vue';
+import AppHeaderActions from '~/components/app/header/AppHeaderActions.vue';
+import AppHeaderUserInfo from '~/components/app/header/AppHeaderUserInfo.vue';
+import AppHeaderMenuItems from '~/components/app/header/AppHeaderMenuItems.vue';
 
 const { loggedIn } = useOidcAuth();
 
@@ -119,8 +119,7 @@ header {
     }
 
     .actions-user-info {
-      @include utilities.flex-row-align-center;
-      justify-content: flex-end;
+      @include utilities.flex-row-justify-end-align-center;
 
       .separator {
         width: 1px;
