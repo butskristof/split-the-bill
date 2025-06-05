@@ -210,7 +210,7 @@ const onFormSubmit = async ({
 
     toast.add({
       severity: 'success',
-      summary: 'Group created successfully',
+      summary: 'Expense created successfully',
     });
     closeModal(true);
   } catch (error) {
