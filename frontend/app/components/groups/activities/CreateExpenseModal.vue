@@ -1,6 +1,6 @@
 <template>
   <AppModal
-    header="Create new group"
+    header="Add new expense"
     @close="closeModal"
   >
     <Form
@@ -13,24 +13,24 @@
       <div class="form-field">
         <FormFieldLabel
           required
-          html-for="name"
+          html-for="description"
         >
-          Name
+          Description
         </FormFieldLabel>
         <InputText
-          id="name"
-          name="name"
+          id="description"
+          name="description"
           type="text"
           :disabled="isSubmitting"
           fluid
         />
         <Message
-          v-if="$form.name?.invalid"
+          v-if="$form.description?.invalid"
           severity="error"
           size="small"
           variant="simple"
         >
-          {{ $form.name.error?.message }}
+          {{ $form.description.error?.message }}
         </Message>
       </div>
 
@@ -38,7 +38,7 @@
         v-if="isError"
         severity="error"
         icon="pi pi-exclamation-circle"
-        >Failed to create a new group, please review any errors and try again later.</Message
+        >Failed to add a new expense, please review any errors and try again later.</Message
       >
 
       <div class="actions">
@@ -62,14 +62,11 @@
 </template>
 
 <script setup lang="ts">
-import * as v from 'valibot';
 import AppModal from '~/components/common/AppModal.vue';
+import * as v from 'valibot';
 import { valibotResolver } from '@primevue/forms/resolvers/valibot';
-import FormFieldLabel from '~/components/form/FormFieldLabel.vue';
 import type { FormSubmitEvent } from '@primevue/forms';
-
-const { $backendApi } = useNuxtApp();
-const toast = useToast();
+import FormFieldLabel from '~/components/form/FormFieldLabel.vue';
 
 const emit = defineEmits<{
   close: [created: boolean];
@@ -78,62 +75,43 @@ const closeModal = (created: boolean = false): void => {
   emit('close', created);
 };
 
-const createGroupSchema = v.object({
-  name: v.pipe(
-    v.string('Group name must be a string'),
+/*
+public string? Description { get; init; }
+public Guid? PaidByMemberId { get; init; }
+public DateTimeOffset? Timestamp { get; init; }
+public decimal? Amount { get; init; }
+ */
+const createExpenseSchema = v.object({
+  description: v.pipe(
+    v.string('Description must be a string'),
     v.trim(),
-    v.nonEmpty('Group name is required'),
+    v.nonEmpty('Description is required'),
   ),
 });
-type CreateGroupForm = v.InferInput<typeof createGroupSchema>;
-const resolver = valibotResolver(createGroupSchema);
+type CreateExpenseForm = v.InferInput<typeof createExpenseSchema>;
+const resolver = valibotResolver(createExpenseSchema);
 
-const initialValues: CreateGroupForm = {
-  name: '',
+const initialValues: CreateExpenseForm = {
+  description: '',
 };
 
 const isSubmitting = ref<boolean>(false);
 const isError = ref<boolean>(false);
 
-const onFormSubmit = async ({ valid, values }: FormSubmitEvent<CreateGroupForm>): Promise<void> => {
+const onFormSubmit = async ({
+  valid,
+  values,
+}: FormSubmitEvent<CreateExpenseForm>): Promise<void> => {
   if (!valid) return;
 
   // Clear previous errors and set submitting state
   isError.value = false;
   isSubmitting.value = true;
-
-  try {
-    const response = await $backendApi('/Groups', {
-      method: 'POST',
-      body: values,
-    });
-
-    toast.add({
-      severity: 'success',
-      summary: 'Group created successfully',
-    });
-    closeModal(true);
-    await navigateTo({ name: 'groups-id', params: { id: response.id } });
-  } catch (error) {
-    isError.value = true;
-    console.error(error);
-  } finally {
-    isSubmitting.value = false;
-  }
 };
 </script>
 
 <style scoped lang="scss">
-@use '~/assets/styles/utilities.scss';
-
-.form {
-  @include utilities.flex-column;
-}
-
-.form-field {
-  @include utilities.flex-column(false);
-  gap: calc(var(--default-spacing) / 2);
-}
+@use '~/assets/styles/utilities';
 
 .actions {
   @include utilities.flex-row-justify-between-align-center;

@@ -4,6 +4,7 @@
     <AppCard>
       <GroupDetailMembers :members="group.members!" />
     </AppCard>
+    <RecentActivity />
     <AppCard>
       <GroupDetailRecentActivity :group="group" />
     </AppCard>
@@ -16,6 +17,7 @@ import AppCard from '~/components/common/AppCard.vue';
 import GroupDetailMembers from '~/components/groups/detail/GroupDetailMembers.vue';
 import GroupDetailRecentActivity from '~/components/groups/detail/GroupDetailRecentActivity.vue';
 import DeleteGroup from '~/components/groups/edit/DeleteGroup.vue';
+import RecentActivity from '~/components/groups/detail/RecentActivity.vue';
 
 const { group } = useDetailPageGroup();
 </script>
