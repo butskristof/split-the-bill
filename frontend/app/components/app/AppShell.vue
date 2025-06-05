@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import AppHeader from '~/components/app/AppHeader.vue';
-import AppFooter from '~/components/app/AppFooter.vue';
+import AppHeader from '~/components/app/header/AppHeader.vue';
+import AppFooter from '~/components/app/footer/AppFooter.vue';
 </script>
 
 <style scoped lang="scss">

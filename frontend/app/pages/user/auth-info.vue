@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import PreformattedText from '~/components/common/PreformattedText.vue';
-import AppCard from '~/components/app/AppCard.vue';
+import AppCard from '~/components/common/AppCard.vue';
 
 const { user } = useOidcAuth();
 </script>

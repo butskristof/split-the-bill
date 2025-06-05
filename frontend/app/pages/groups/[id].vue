@@ -1,12 +1,12 @@
 <template>
   <div class="group-detail-page">
     <AppPageBackButton :default-route="{ name: 'groups' }" />
-    <PageLoadingIndicator v-if="status === 'pending'" />
+    <PageLoadingIndicator v-if="isPending" />
     <ApiError
-      v-if="error"
+      v-if="isError"
       :error="error"
     />
-    <NuxtPage v-if="group" />
+    <NuxtPage v-if="isSuccess" />
   </div>
 </template>
 
@@ -14,15 +14,19 @@
 import AppPageBackButton from '~/components/common/AppPageBackButton.vue';
 import ApiError from '~/components/common/ApiError.vue';
 import PageLoadingIndicator from '~/components/common/PageLoadingIndicator.vue';
+import type { Group, Query } from '~/types';
 
 const route = useRoute();
-const groupId = route.params.id as string;
+const groupId: string = route.params.id as string;
 const key = computed(() => `groups/${groupId}`);
 const {
   data: group,
   status,
   error,
-} = await useLazyBackendApi('/Groups/{id}', { key, path: { id: groupId } });
+}: Query<Group> = await useLazyBackendApi('/Groups/{id}', { key, path: { id: groupId } });
+const isPending = computed<boolean>(() => status.value === 'pending');
+const isError = computed<boolean>(() => status.value === 'error');
+const isSuccess = computed<boolean>(() => status.value === 'success');
 
 const { provideGroup } = useDetailPageGroup();
 provideGroup(group);

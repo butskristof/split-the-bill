@@ -7,30 +7,15 @@
     <AppCard>
       <GroupDetailRecentActivity :group="group" />
     </AppCard>
-    <div class="delete">
-      <Button
-        icon="pi pi-trash"
-        label="Delete group"
-        severity="danger"
-        variant="text"
-        @click="showDelete = true"
-      />
-      <DeleteGroup
-        v-if="showDelete"
-        :group="group"
-        @close="showDelete = false"
-      />
-    </div>
+    <DeleteGroup :group="group" />
   </main>
 </template>
 
 <script setup lang="ts">
-import AppCard from '~/components/app/AppCard.vue';
+import AppCard from '~/components/common/AppCard.vue';
 import GroupDetailMembers from '~/components/groups/detail/GroupDetailMembers.vue';
 import GroupDetailRecentActivity from '~/components/groups/detail/GroupDetailRecentActivity.vue';
 import DeleteGroup from '~/components/groups/edit/DeleteGroup.vue';
-
-const showDelete = ref(false);
 
 const { group } = useDetailPageGroup();
 </script>
@@ -40,9 +25,5 @@ const { group } = useDetailPageGroup();
 
 main {
   @include utilities.flex-column;
-}
-
-.delete {
-  @include utilities.flex-row-justify-end;
 }
 </style>
