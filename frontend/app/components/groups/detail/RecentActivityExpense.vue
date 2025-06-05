@@ -12,14 +12,14 @@
 </template>
 
 <script setup lang="ts">
-import type { Expense, GroupMember } from './types';
+import type { Expense, GroupMember } from '~/types';
 import { formatTimestamp, formatCurrency } from '#shared/utils';
 
 const props = defineProps<{
   expense: Expense;
 }>();
 
-const { getMember } = useGroupMembers();
+const { getMember } = useDetailPageGroup();
 const paidByMember = computed<GroupMember | undefined>(() =>
   getMember(props.expense.paidByMemberId),
 );

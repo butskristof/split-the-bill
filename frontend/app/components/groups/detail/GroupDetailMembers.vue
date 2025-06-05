@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import type { GroupMember } from '~/components/groups/detail/types';
+import type { GroupMember } from '~/types';
 import GroupDetailMemberListItem from '~/components/groups/detail/GroupDetailMemberListItem.vue';
 
 defineProps<{

@@ -14,14 +14,14 @@
 </template>
 
 <script setup lang="ts">
-import type { GroupMember, Payment } from './types';
+import type { GroupMember, Payment } from '~/types';
 import { formatTimestamp, formatCurrency } from '#shared/utils';
 
 const props = defineProps<{
   payment: Payment;
 }>();
 
-const { getMember } = useGroupMembers();
+const { getMember } = useDetailPageGroup();
 const sendingMember = computed<GroupMember | undefined>(() =>
   getMember(props.payment.sendingMemberId),
 );

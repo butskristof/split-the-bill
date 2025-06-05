@@ -34,18 +34,20 @@
       </template>
     </Timeline>
     <div class="actions">
-      <Button
-        icon="pi pi-arrow-right"
-        icon-pos="right"
-        label="All activity"
-        variant="text"
-      />
+      <NuxtLink :to="{ name: 'groups-id-activity', params: { id: group.id } }">
+        <Button
+          icon="pi pi-arrow-right"
+          icon-pos="right"
+          label="All activity"
+          variant="text"
+        />
+      </NuxtLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Group, Activity } from './types';
+import type { Group, Activity } from '~/types';
 import RecentActivityExpense from '~/components/groups/detail/RecentActivityExpense.vue';
 import RecentActivityPayment from '~/components/groups/detail/RecentActivityPayment.vue';
 

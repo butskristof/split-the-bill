@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import AppModal from '~/components/common/AppModal.vue';
-import type { Group } from '~/components/groups/detail/types';
+import type { Group } from '~/types';
 
 const { $backendApi } = useNuxtApp();
 const toast = useToast();

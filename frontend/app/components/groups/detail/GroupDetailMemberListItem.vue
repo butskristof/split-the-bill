@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { formatCurrency, getUpperCaseFirstLetter } from '#shared/utils';
-import type { GroupMember } from '~/components/groups/detail/types';
+import type { GroupMember } from '~/types';
 
 const props = defineProps<{
   member: GroupMember;
