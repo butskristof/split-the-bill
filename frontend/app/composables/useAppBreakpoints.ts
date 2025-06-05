@@ -1,6 +1,6 @@
 import { breakpointsTailwind } from '@vueuse/core';
 
-const useAppBreakpoints = () => {
+export const useAppBreakpoints = () => {
   // currently, the breakpoints in _variables.scss are aligned to the Tailwind values, so we
   // can use the preset here
   // make sure to keep those in sync should other breakpoints be used
@@ -10,5 +10,3 @@ const useAppBreakpoints = () => {
     values: { ...breakpointsTailwind },
   };
 };
-
-export default useAppBreakpoints;
