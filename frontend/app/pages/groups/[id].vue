@@ -1,6 +1,5 @@
 <template>
   <div class="group-detail-page">
-    <AppPageBackButton :default-route="{ name: 'groups' }" />
     <PageLoadingIndicator v-if="isPending" />
     <ApiError
       v-if="isError"
@@ -11,7 +10,6 @@
 </template>
 
 <script setup lang="ts">
-import AppPageBackButton from '~/components/common/AppPageBackButton.vue';
 import ApiError from '~/components/common/ApiError.vue';
 import PageLoadingIndicator from '~/components/common/PageLoadingIndicator.vue';
 import type { Group, Query } from '~/types';

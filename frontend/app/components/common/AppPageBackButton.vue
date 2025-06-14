@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="to">
+  <NuxtLink :to>
     <Button
       class="back-button"
       label="Back to overview"
@@ -13,17 +13,9 @@
 <script setup lang="ts">
 import type { RouteLocationRaw } from '#vue-router';
 
-const props = defineProps<{
-  defaultRoute?: RouteLocationRaw;
+defineProps<{
+  to: RouteLocationRaw;
 }>();
-const router = useRouter();
-const previousRoute = computed(() => router.options.history.state.back);
-
-const to = computed<RouteLocationRaw>(() => {
-  if (previousRoute.value) return { path: previousRoute.value as string };
-  if (props.defaultRoute) return props.defaultRoute;
-  return { name: 'index' };
-});
 </script>
 
 <style scoped lang="scss">
