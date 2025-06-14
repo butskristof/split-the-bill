@@ -11,15 +11,17 @@
       :expense="expense"
     />
     <h2>Payments</h2>
-    <PreformattedText :value="payments" />
-    <AppCard />
+    <GroupPayment
+      v-for="payment in payments"
+      :key="payment.id"
+      :payment="payment"
+    />
   </main>
 </template>
 
 <script setup lang="ts">
-import AppCard from '~/components/common/AppCard.vue';
 import GroupExpense from '~/components/groups/activities/expenses/GroupExpense.vue';
-import PreformattedText from '~/components/common/PreformattedText.vue';
+import GroupPayment from '~/components/groups/activities/payments/GroupPayment.vue';
 
 const { group } = useDetailPageGroup();
 const expenses = computed(() => group.value?.expenses || []);
