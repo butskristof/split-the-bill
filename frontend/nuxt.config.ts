@@ -111,7 +111,7 @@ export default defineNuxtConfig({
     clients: {
       backendApi: {
         baseURL: '/api/backend',
-        schema: './openapi/backend-api/spec.json',
+        schema: 'openapi/backend-api/spec.json',
         headers: {
           'x-csrf': '1',
         },
