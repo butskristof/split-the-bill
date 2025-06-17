@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-Migrations-4925bf9b-aedc-4d78-b6e2-a83d03cea9b0</UserSecretsId>
+        <AssemblyName>SplitTheBill.Migrations</AssemblyName>
+        <RootNamespace>SplitTheBill.Migrations</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\1-core\ServiceDefaults\ServiceDefaults.csproj" />
+        <ProjectReference Include="..\..\2-infrastructure\Persistence\Persistence.csproj" />
+    </ItemGroup>
+</Project>

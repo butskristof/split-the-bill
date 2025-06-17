@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <UserSecretsId>7437cb7a-87f9-4387-a05d-3bf070fe5809</UserSecretsId>
+        <AssemblyName>SplitTheBill.AppHost</AssemblyName>
+        <RootNamespace>SplitTheBill.AppHost</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Aspire.Hosting.AppHost" />
@@ -13,5 +15,6 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Api\Api.csproj" />
+        <ProjectReference Include="..\Migrations\Migrations.csproj" />
     </ItemGroup>
 </Project>

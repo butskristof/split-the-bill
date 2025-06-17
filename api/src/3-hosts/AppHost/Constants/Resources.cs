@@ -1,4 +1,4 @@
-namespace AppHost.Constants;
+namespace SplitTheBill.AppHost.Constants;
 
 internal static class Resources
 {

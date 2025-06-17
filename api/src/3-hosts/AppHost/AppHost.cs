@@ -1,4 +1,4 @@
-using AppHost.Constants;
+using SplitTheBill.AppHost.Constants;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -10,12 +10,19 @@ var postgres = builder
     .WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent);
 var db = postgres.AddDatabase(Resources.Database);
+var migrations = builder
+    .AddProject<Projects.Migrations>("migrations")
+    .WithReference(db)
+    .WaitFor(db);
 
 #endregion
 
 #region API
 
-var api = builder.AddProject<Projects.Api>(Resources.Api).WithReference(db).WaitFor(db);
+// var api = builder
+//     .AddProject<Projects.Api>(Resources.Api)
+//     .WithReference(db)
+//     .WaitForCompletion(migrations);
 
 #endregion
 
