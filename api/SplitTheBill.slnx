@@ -18,6 +18,7 @@
   </Folder>
   <Folder Name="/src/3. Hosts/">
     <Project Path="src/3-hosts/Api/Api.csproj" />
+    <Project Path="src/3-hosts/AppHost/AppHost.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.IntegrationTests/Application.IntegrationTests.csproj" />
