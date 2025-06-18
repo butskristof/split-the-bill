@@ -10,13 +10,15 @@
   <Folder Name="/src/1. Core/">
     <Project Path="src/1-core/Application/Application.csproj" />
     <Project Path="src/1-core/Domain/Domain.csproj" />
+    <Project Path="src/1-core/ServiceDefaults/ServiceDefaults.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/src/2. Infrastructure/">
     <Project Path="src/2-infrastructure/Infrastructure/Infrastructure.csproj" />
     <Project Path="src/2-infrastructure/Persistence/Persistence.csproj" />
   </Folder>
-  <Folder Name="/src/3. Presentation/">
-    <Project Path="src/3-presentation/Api/Api.csproj" />
+  <Folder Name="/src/3. Hosts/">
+    <Project Path="src/3-hosts/Api/Api.csproj" />
+    <Project Path="src/3-hosts/AppHost/AppHost.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.IntegrationTests/Application.IntegrationTests.csproj" />
