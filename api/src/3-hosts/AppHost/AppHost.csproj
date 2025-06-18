@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Sdk Name="Aspire.AppHost.Sdk" Version="9.3.0" />
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <UserSecretsId>3e239b6e-4826-4638-bc18-4598d0940804</UserSecretsId>
+        <AssemblyName>SplitTheBill.AppHost</AssemblyName>
+        <RootNamespace>SplitTheBill.AppHost</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.AppHost" />
+    </ItemGroup>
+</Project>
