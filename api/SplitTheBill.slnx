@@ -15,8 +15,8 @@
     <Project Path="src/2-infrastructure/Infrastructure/Infrastructure.csproj" />
     <Project Path="src/2-infrastructure/Persistence/Persistence.csproj" />
   </Folder>
-  <Folder Name="/src/3. Presentation/">
-    <Project Path="src/3-presentation/Api/Api.csproj" />
+  <Folder Name="/src/3. Hosts/">
+    <Project Path="src/3-hosts/Api/Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Application.IntegrationTests/Application.IntegrationTests.csproj" />
