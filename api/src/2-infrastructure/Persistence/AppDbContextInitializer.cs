@@ -23,8 +23,8 @@ internal sealed class AppDbContextInitializer : IAppDbContextInitializer
     {
         _logger.LogInformation("Initializing application database context...");
 
-        await _dbContext.Database.EnsureCreatedAsync(cancellationToken);
         await _dbContext.Database.MigrateAsync(cancellationToken);
+        _logger.LogInformation("Applied database migrations from DbContext");
 
         _logger.LogInformation("Database context initialized successfully");
     }
