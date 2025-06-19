@@ -1,3 +1,5 @@
+using SplitTheBill.AppHost.Constants;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 #region Database
@@ -7,6 +9,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 #region API
 
+var api = builder.AddProject<Projects.Api>(Resources.Api).WithHttpHealthCheck("/health");
 
 #endregion
 
