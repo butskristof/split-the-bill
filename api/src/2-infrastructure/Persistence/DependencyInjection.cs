@@ -37,13 +37,21 @@ public static class DependencyInjection
 
     public static void AddPersistence(this IHostApplicationBuilder builder)
     {
-        builder.AddNpgsqlDbContext<AppDbContext>("app-db");
+        builder.AddNpgsqlDbContext<AppDbContext>(
+            "app-db",
+            settings =>
+            {
+                // registered manually below to add the ready tag
+                settings.DisableHealthChecks = true;
+            }
+        );
         builder.Services.AddPersistenceServices();
         return;
     }
 
     private static IServiceCollection AddPersistenceServices(this IServiceCollection services)
     {
+        services.AddScoped<IAppDbContextInitializer, AppDbContextInitializer>();
         services.AddScoped<IAppDbContext, AppDbContext>();
         services.AddHealthChecks().AddDbContextCheck<AppDbContext>(tags: ["ready"]);
 
