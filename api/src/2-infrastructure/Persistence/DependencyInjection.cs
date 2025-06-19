@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using SplitTheBill.Application.Common.Persistence;
 
@@ -20,19 +21,31 @@ public static class DependencyInjection
         DbConnection? connection = null
     )
     {
-        services
-            .AddDbContext<AppDbContext>(builder =>
-            {
-                if (connectionString is not null)
-                    builder.UseNpgsql(connectionString, GetDbContextOptionsBuilder());
-                else if (connection is not null)
-                    builder.UseNpgsql(connection, GetDbContextOptionsBuilder());
-                else
-                    throw new ArgumentException("Missing connection details to set up persistence");
-            })
-            .AddScoped<IAppDbContext, AppDbContext>();
+        services.AddDbContext<AppDbContext>(builder =>
+        {
+            if (connectionString is not null)
+                builder.UseNpgsql(connectionString, GetDbContextOptionsBuilder());
+            else if (connection is not null)
+                builder.UseNpgsql(connection, GetDbContextOptionsBuilder());
+            else
+                throw new ArgumentException("Missing connection details to set up persistence");
+        });
+        services.AddPersistenceServices();
 
-        services.AddHealthChecks().AddDbContextCheck<AppDbContext>();
+        return services;
+    }
+
+    public static void AddPersistence(this IHostApplicationBuilder builder)
+    {
+        builder.AddNpgsqlDbContext<AppDbContext>("app-db");
+        builder.Services.AddPersistenceServices();
+        return;
+    }
+
+    private static IServiceCollection AddPersistenceServices(this IServiceCollection services)
+    {
+        services.AddScoped<IAppDbContext, AppDbContext>();
+        services.AddHealthChecks().AddDbContextCheck<AppDbContext>(tags: ["ready"]);
 
         return services;
     }

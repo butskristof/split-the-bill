@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-DatabaseMigrations-36badb40-3a51-47bc-9743-3945e9753290</UserSecretsId>
+        <AssemblyName>SplitTheBill.DatabaseMigrations</AssemblyName>
+        <RootNamespace>SplitTheBill.DatabaseMigrations</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\1-core\ServiceDefaults\ServiceDefaults.csproj" />
+        <ProjectReference Include="..\..\2-infrastructure\Persistence\Persistence.csproj" />
+    </ItemGroup>
+</Project>
