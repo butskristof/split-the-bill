@@ -23,8 +23,25 @@ internal sealed class AppDbContextInitializer : IAppDbContextInitializer
     {
         _logger.LogInformation("Initializing application database context...");
 
-        await _dbContext.Database.MigrateAsync(cancellationToken);
-        _logger.LogInformation("Applied database migrations from DbContext");
+        var migrations = (
+            await _dbContext.Database.GetPendingMigrationsAsync(cancellationToken)
+        ).ToList();
+
+        if (migrations.Count != 0)
+        {
+            _logger.LogInformation(
+                "Applying {Count} pending migrations: {Migrations}",
+                migrations.Count,
+                string.Join(", ", migrations)
+            );
+
+            await _dbContext.Database.MigrateAsync(cancellationToken);
+            _logger.LogInformation("Successfully applied database migrations");
+        }
+        else
+        {
+            _logger.LogInformation("No pending migrations found - database is up to date");
+        }
 
         _logger.LogInformation("Database context initialized successfully");
     }

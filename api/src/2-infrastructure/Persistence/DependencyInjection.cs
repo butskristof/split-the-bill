@@ -35,7 +35,7 @@ public static class DependencyInjection
         return services;
     }
 
-    public static void AddPersistence(this IHostApplicationBuilder builder)
+    public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder)
     {
         builder.AddNpgsqlDbContext<AppDbContext>(
             "app-db",
@@ -46,7 +46,7 @@ public static class DependencyInjection
             }
         );
         builder.Services.AddPersistenceServices();
-        return;
+        return builder;
     }
 
     private static IServiceCollection AddPersistenceServices(this IServiceCollection services)

@@ -20,21 +20,6 @@ public class Worker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // var cts = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
-        // cts.CancelAfter(TimeSpan.FromSeconds(5));
-        //
-        // try
-        // {
-        //     while (!cts.Token.IsCancellationRequested)
-        //     {
-        //         _logger.LogInformation("Worker running at: {Time}", DateTimeOffset.Now);
-        //         await Task.Delay(1000, cts.Token);
-        //     }
-        // }
-        // catch (TaskCanceledException)
-        // {
-        //     _hostApplicationLifetime.StopApplication();
-        // }
         using var scope = _serviceProvider.CreateScope();
         var dbInitializer = scope.ServiceProvider.GetRequiredService<IAppDbContextInitializer>();
         try

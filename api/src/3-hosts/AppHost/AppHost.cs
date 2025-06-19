@@ -22,8 +22,9 @@ var databaseMigrations = builder
 
 var api = builder
     .AddProject<Projects.Api>(Resources.Api)
-    .WithHttpHealthCheck("/health")
-    .WaitForCompletion(databaseMigrations);
+    .WithReference(appDb)
+    .WaitForCompletion(databaseMigrations)
+    .WithHttpHealthCheck("/health");
 
 #endregion
 
