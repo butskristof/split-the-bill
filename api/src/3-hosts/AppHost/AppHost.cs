@@ -20,6 +20,7 @@ var databaseMigrations = builder
 
 #region API
 
+// ReSharper disable once UnusedVariable
 var api = builder
     .AddProject<Projects.Api>(Resources.Api)
     .WithReference(appDb)
