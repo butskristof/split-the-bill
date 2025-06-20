@@ -1,64 +1,40 @@
-using Serilog;
 using SplitTheBill.Api;
 using SplitTheBill.Api.Extensions;
 using SplitTheBill.Api.Modules;
 using SplitTheBill.Application;
-using SplitTheBill.Application.Common.Constants;
 using SplitTheBill.Infrastructure;
 using SplitTheBill.Persistence;
+using SplitTheBill.ServiceDefaults;
+using SplitTheBill.ServiceDefaults.Constants;
 
-Log.Logger = new LoggerConfiguration().CreateBootstrapLogger();
+var builder = WebApplication.CreateBuilder(args);
 
-try
-{
-    var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
-    builder
-        .Services.AddConfiguration()
-        .AddApplication()
-        .AddInfrastructure()
-        .AddPersistence(
-            builder.Configuration.GetConnectionString(
-                ConfigurationConstants.AppDbContextConnectionStringKey
-            )
-        )
-        .AddApi();
+builder.Services.AddConfiguration().AddApplication().AddInfrastructure();
+builder.AddPersistence(Resources.AppDb, [HealthCheckConstants.Tags.Ready]);
+builder.Services.AddApi();
 
-    builder.Host.UseSerilog(
-        (context, configuration) =>
-            configuration.Enrich.FromLogContext().ReadFrom.Configuration(context.Configuration)
-    );
+var app = builder.Build();
 
-    var app = builder.Build();
+app.UseCors();
 
-    app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
 
-    app.UseAuthentication();
-    app.UseAuthorization();
+app
+// the default exception handler will catch unhandled exceptions and return
+// them as ProblemDetails with status code 500 Internal Server Error
+.UseExceptionHandler()
+    // the status code pages will map additional failed requests (outside of
+    // those throwing exceptions) to responses with ProblemDetails body content
+    // this includes 404, method not allowed, ... (all status codes between 400 and 599)
+    // keep in mind that this middleware will only activate if the body is empty when
+    // it reaches it
+    .UseStatusCodePages();
 
-    app
-    // the default exception handler will catch unhandled exceptions and return
-    // them as ProblemDetails with status code 500 Internal Server Error
-    .UseExceptionHandler()
-        // the status code pages will map additional failed requests (outside of
-        // those throwing exceptions) to responses with ProblemDetails body content
-        // this includes 404, method not allowed, ... (all status codes between 400 and 599)
-        // keep in mind that this middleware will only activate if the body is empty when
-        // it reaches it
-        .UseStatusCodePages();
+app.MapDefaultEndpoints();
+app.MapOpenApiEndpoints();
+app.MapMembersEndpoints().MapGroupsEndpoints();
 
-    app.MapHealthChecks("/health");
-    app.MapOpenApiEndpoints();
-    app.MapMembersEndpoints().MapGroupsEndpoints();
-
-    app.Run();
-}
-catch (Exception ex) when (ex is not HostAbortedException)
-{
-    Log.Fatal(ex, "Application terminated unexpectedly");
-    throw;
-}
-finally
-{
-    Log.CloseAndFlush();
-}
+app.Run();

@@ -1,12 +1,32 @@
+using SplitTheBill.ServiceDefaults.Constants;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 #region Database
 
+var postgres = builder
+    .AddPostgres(Resources.Postgres)
+    .WithPgAdmin()
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithDataVolume();
+var appDb = postgres.AddDatabase(Resources.AppDb);
+
+var databaseMigrations = builder
+    .AddProject<Projects.DatabaseMigrations>(Resources.DatabaseMigrations)
+    .WithReference(appDb)
+    .WaitFor(appDb);
 
 #endregion
 
 #region API
 
+// ReSharper disable once UnusedVariable
+var api = builder
+    .AddProject<Projects.Api>(Resources.Api)
+    .WithReference(appDb)
+    .WaitForCompletion(databaseMigrations)
+    .WithHttpHealthCheck("/health/live")
+    .WithHttpHealthCheck("/health/ready");
 
 #endregion
 
