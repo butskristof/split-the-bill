@@ -1,4 +1,4 @@
-using SplitTheBill.AppHost.Constants;
+using SplitTheBill.ServiceDefaults.Constants;
 
 var builder = DistributedApplication.CreateBuilder(args);
 

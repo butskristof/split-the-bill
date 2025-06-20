@@ -5,13 +5,14 @@ using SplitTheBill.Application;
 using SplitTheBill.Infrastructure;
 using SplitTheBill.Persistence;
 using SplitTheBill.ServiceDefaults;
+using SplitTheBill.ServiceDefaults.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
 builder.Services.AddConfiguration().AddApplication().AddInfrastructure();
-builder.AddPersistence();
+builder.AddPersistence(Resources.AppDb);
 builder.Services.AddApi();
 
 var app = builder.Build();

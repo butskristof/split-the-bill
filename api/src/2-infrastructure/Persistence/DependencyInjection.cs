@@ -35,10 +35,10 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder)
+    public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder, string connectionName)
     {
         builder.AddNpgsqlDbContext<AppDbContext>(
-            "app-db",
+            connectionName,
             settings =>
             {
                 // registered manually below to add the ready tag
