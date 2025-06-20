@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 builder.Services.AddConfiguration().AddApplication().AddInfrastructure();
-builder.AddPersistence(Resources.AppDb);
+builder.AddPersistence(Resources.AppDb, [HealthCheckConstants.Tags.Ready]);
 builder.Services.AddApi();
 
 var app = builder.Build();

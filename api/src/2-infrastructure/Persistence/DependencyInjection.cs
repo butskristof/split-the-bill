@@ -18,7 +18,8 @@ public static class DependencyInjection
     public static IServiceCollection AddPersistence(
         this IServiceCollection services,
         string? connectionString = null,
-        DbConnection? connection = null
+        DbConnection? connection = null,
+        IEnumerable<string>? healthCheckTags = null
     )
     {
         services.AddDbContext<AppDbContext>(builder =>
@@ -30,12 +31,16 @@ public static class DependencyInjection
             else
                 throw new ArgumentException("Missing connection details to set up persistence");
         });
-        services.AddPersistenceServices();
+        services.AddPersistenceServices(healthCheckTags);
 
         return services;
     }
 
-    public static IHostApplicationBuilder AddPersistence(this IHostApplicationBuilder builder, string connectionName)
+    public static IHostApplicationBuilder AddPersistence(
+        this IHostApplicationBuilder builder,
+        string connectionName,
+        IEnumerable<string>? healthCheckTags = null
+    )
     {
         builder.AddNpgsqlDbContext<AppDbContext>(
             connectionName,
@@ -45,15 +50,18 @@ public static class DependencyInjection
                 settings.DisableHealthChecks = true;
             }
         );
-        builder.Services.AddPersistenceServices();
+        builder.Services.AddPersistenceServices(healthCheckTags);
         return builder;
     }
 
-    private static IServiceCollection AddPersistenceServices(this IServiceCollection services)
+    private static IServiceCollection AddPersistenceServices(
+        this IServiceCollection services,
+        IEnumerable<string>? healthCheckTags = null
+    )
     {
         services.AddScoped<IAppDbContextInitializer, AppDbContextInitializer>();
         services.AddScoped<IAppDbContext, AppDbContext>();
-        services.AddHealthChecks().AddDbContextCheck<AppDbContext>(tags: ["ready"]);
+        services.AddHealthChecks().AddDbContextCheck<AppDbContext>(tags: healthCheckTags);
 
         return services;
     }

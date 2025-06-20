@@ -6,7 +6,7 @@ using SplitTheBill.ServiceDefaults.Constants;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.AddServiceDefaults();
-builder.AddPersistence(Resources.AppDb);
+builder.AddPersistence(Resources.AppDb, [HealthCheckConstants.Tags.Ready]);
 builder.Services.AddSingleton<IAuthenticationInfo, DummyAuthenticationInfo>();
 builder.Services.AddHostedService<Worker>();
 

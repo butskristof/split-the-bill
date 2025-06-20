@@ -1,16 +1,16 @@
 namespace SplitTheBill.ServiceDefaults.Constants;
 
-internal static class HealthCheckConstants
+public static class HealthCheckConstants
 {
     internal static class Endpoints
     {
         internal const string BasePath = "/health";
     }
 
-    internal static class Tags
+    public static class Tags
     {
-        internal const string Live = "live";
-        internal const string Ready = "ready";
+        public const string Live = "live";
+        public const string Ready = "ready";
     }
 
     internal static class Names
