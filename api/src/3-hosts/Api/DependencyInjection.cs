@@ -135,7 +135,7 @@ internal static class DependencyInjection
                 };
             });
         services.AddAuthorization();
-        services.AddHttpContextAccessor().AddScoped<IAuthenticationInfo, ApiAuthenticationInfo>();
+        services.AddHttpContextAccessor().AddSingleton<IAuthenticationInfo, ApiAuthenticationInfo>();
 
         services.AddCors(options =>
         {
