@@ -19,6 +19,15 @@ var databaseMigrations = builder
 
 #endregion
 
+#region Redis
+
+var redis = builder
+    .AddRedis(Resources.Redis)
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithDataVolume();
+
+#endregion
+
 #region API
 
 var api = builder
@@ -37,13 +46,21 @@ var frontend = builder
     .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
     .WithReference(api)
-    .WaitFor(api);
+    .WaitFor(api)
+    .WithReference(redis)
+    .WaitFor(redis);
 
 // secret parameters
 var oidcClientId = builder.AddParameter(FrontendConfiguration.OidcClientId.Name, secret: true);
-var oidcClientSecret = builder.AddParameter(FrontendConfiguration.OidcClientSecret.Name, secret: true);
+var oidcClientSecret = builder.AddParameter(
+    FrontendConfiguration.OidcClientSecret.Name,
+    secret: true
+);
 var oidcTokenKey = builder.AddParameter(FrontendConfiguration.OidcTokenKey.Name, secret: true);
-var oidcSessionSecret = builder.AddParameter(FrontendConfiguration.OidcSessionSecret.Name, secret: true);
+var oidcSessionSecret = builder.AddParameter(
+    FrontendConfiguration.OidcSessionSecret.Name,
+    secret: true
+);
 var oidcAuthSessionSecret = builder.AddParameter(
     FrontendConfiguration.OidcAuthSessionSecret.Name,
     secret: true
@@ -71,45 +88,33 @@ frontend
             return $"{endpoint.Url}/auth/oidc/callback";
         }
     )
-    .WithEnvironment(
-        FrontendConfiguration.OidcClientId.EnvironmentVariable,
-        oidcClientId
-    )
-    .WithEnvironment(
-        FrontendConfiguration.OidcClientSecret.EnvironmentVariable,
-        oidcClientSecret
-    )
+    .WithEnvironment(FrontendConfiguration.OidcClientId.EnvironmentVariable, oidcClientId)
+    .WithEnvironment(FrontendConfiguration.OidcClientSecret.EnvironmentVariable, oidcClientSecret)
     .WithEnvironment(
         FrontendConfiguration.OidcOpenIdConfiguration.EnvironmentVariable,
         oidcOpenIdConfig
     )
-    .WithEnvironment(
-        FrontendConfiguration.OidcAuthorizationUrl.EnvironmentVariable,
-        oidcAuthUrl
-    )
-    .WithEnvironment(
-        FrontendConfiguration.OidcTokenUrl.EnvironmentVariable,
-        oidcTokenUrl
-    )
-    .WithEnvironment(
-        FrontendConfiguration.OidcUserInfoUrl.EnvironmentVariable,
-        oidcUserInfoUrl
-    )
-    .WithEnvironment(
-        FrontendConfiguration.OidcLogoutUrl.EnvironmentVariable,
-        oidcLogoutUrl
-    )
-    .WithEnvironment(
-        FrontendConfiguration.OidcTokenKey.EnvironmentVariable,
-        oidcTokenKey
-    )
-    .WithEnvironment(
-        FrontendConfiguration.OidcSessionSecret.EnvironmentVariable,
-        oidcSessionSecret
-    )
+    .WithEnvironment(FrontendConfiguration.OidcAuthorizationUrl.EnvironmentVariable, oidcAuthUrl)
+    .WithEnvironment(FrontendConfiguration.OidcTokenUrl.EnvironmentVariable, oidcTokenUrl)
+    .WithEnvironment(FrontendConfiguration.OidcUserInfoUrl.EnvironmentVariable, oidcUserInfoUrl)
+    .WithEnvironment(FrontendConfiguration.OidcLogoutUrl.EnvironmentVariable, oidcLogoutUrl)
+    .WithEnvironment(FrontendConfiguration.OidcTokenKey.EnvironmentVariable, oidcTokenKey)
+    .WithEnvironment(FrontendConfiguration.OidcSessionSecret.EnvironmentVariable, oidcSessionSecret)
     .WithEnvironment(
         FrontendConfiguration.OidcAuthSessionSecret.EnvironmentVariable,
         oidcAuthSessionSecret
+    )
+    .WithEnvironment(
+        FrontendConfiguration.RedisHost.EnvironmentVariable,
+        () => redis.Resource.PrimaryEndpoint.Host
+    )
+    .WithEnvironment(
+        FrontendConfiguration.RedisPort.EnvironmentVariable,
+        () => redis.Resource.PrimaryEndpoint.Port.ToString()
+    )
+    .WithEnvironment(
+        FrontendConfiguration.RedisPassword.EnvironmentVariable,
+        () => redis.Resource.PasswordParameter?.Value ?? string.Empty
     );
 
 #endregion

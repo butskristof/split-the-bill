@@ -51,4 +51,17 @@ internal static class FrontendConfiguration
         "frontend-oidc-auth-session-secret",
         "NUXT_OIDC_AUTH_SESSION_SECRET"
     );
+
+    internal static readonly AspireParameter RedisHost = new(
+        "frontend-redis-host",
+        "NUXT_REDIS_HOST"
+    );
+    internal static readonly AspireParameter RedisPort = new(
+        "frontend-redis-port",
+        "NUXT_REDIS_PORT"
+    );
+    internal static readonly AspireParameter RedisPassword = new(
+        "frontend-redis-password",
+        "NUXT_REDIS_PASSWORD"
+    );
 }
