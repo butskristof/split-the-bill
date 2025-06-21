@@ -40,31 +40,31 @@ var frontend = builder
     .WaitFor(api);
 
 // secret parameters
-var oidcClientId = builder.AddParameter(FrontendEnvironment.OidcClientId, secret: true);
-var oidcClientSecret = builder.AddParameter(FrontendEnvironment.OidcClientSecret, secret: true);
-var oidcTokenKey = builder.AddParameter(FrontendEnvironment.OidcTokenKey, secret: true);
-var oidcSessionSecret = builder.AddParameter(FrontendEnvironment.OidcSessionSecret, secret: true);
+var oidcClientId = builder.AddParameter(FrontendConfiguration.OidcClientId.Name, secret: true);
+var oidcClientSecret = builder.AddParameter(FrontendConfiguration.OidcClientSecret.Name, secret: true);
+var oidcTokenKey = builder.AddParameter(FrontendConfiguration.OidcTokenKey.Name, secret: true);
+var oidcSessionSecret = builder.AddParameter(FrontendConfiguration.OidcSessionSecret.Name, secret: true);
 var oidcAuthSessionSecret = builder.AddParameter(
-    FrontendEnvironment.OidcAuthSessionSecret,
+    FrontendConfiguration.OidcAuthSessionSecret.Name,
     secret: true
 );
 
 // non-secret parameters
-var oidcOpenIdConfig = builder.AddParameter(FrontendEnvironment.OidcOpenIdConfiguration);
-var oidcAuthUrl = builder.AddParameter(FrontendEnvironment.OidcAuthorizationUrl);
-var oidcTokenUrl = builder.AddParameter(FrontendEnvironment.OidcTokenUrl);
-var oidcUserInfoUrl = builder.AddParameter(FrontendEnvironment.OidcUserInfoUrl);
-var oidcLogoutUrl = builder.AddParameter(FrontendEnvironment.OidcLogoutUrl);
+var oidcOpenIdConfig = builder.AddParameter(FrontendConfiguration.OidcOpenIdConfiguration.Name);
+var oidcAuthUrl = builder.AddParameter(FrontendConfiguration.OidcAuthorizationUrl.Name);
+var oidcTokenUrl = builder.AddParameter(FrontendConfiguration.OidcTokenUrl.Name);
+var oidcUserInfoUrl = builder.AddParameter(FrontendConfiguration.OidcUserInfoUrl.Name);
+var oidcLogoutUrl = builder.AddParameter(FrontendConfiguration.OidcLogoutUrl.Name);
 
 frontend
     // Dynamic service discovery URLs
     // use http to avoid certificate issues in dev mode
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.BackendBaseUrl],
+        FrontendConfiguration.BackendBaseUrl.EnvironmentVariable,
         api.GetEndpoint("http")
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcRedirectUri],
+        FrontendConfiguration.OidcRedirectUri.EnvironmentVariable,
         () =>
         {
             var endpoint = frontend.GetEndpoint("http");
@@ -72,43 +72,43 @@ frontend
         }
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcClientId],
+        FrontendConfiguration.OidcClientId.EnvironmentVariable,
         oidcClientId
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcClientSecret],
+        FrontendConfiguration.OidcClientSecret.EnvironmentVariable,
         oidcClientSecret
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcOpenIdConfiguration],
+        FrontendConfiguration.OidcOpenIdConfiguration.EnvironmentVariable,
         oidcOpenIdConfig
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcAuthorizationUrl],
+        FrontendConfiguration.OidcAuthorizationUrl.EnvironmentVariable,
         oidcAuthUrl
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcTokenUrl],
+        FrontendConfiguration.OidcTokenUrl.EnvironmentVariable,
         oidcTokenUrl
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcUserInfoUrl],
+        FrontendConfiguration.OidcUserInfoUrl.EnvironmentVariable,
         oidcUserInfoUrl
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcLogoutUrl],
+        FrontendConfiguration.OidcLogoutUrl.EnvironmentVariable,
         oidcLogoutUrl
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcTokenKey],
+        FrontendConfiguration.OidcTokenKey.EnvironmentVariable,
         oidcTokenKey
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcSessionSecret],
+        FrontendConfiguration.OidcSessionSecret.EnvironmentVariable,
         oidcSessionSecret
     )
     .WithEnvironment(
-        FrontendEnvironment.EnvironmentVariables[FrontendEnvironment.OidcAuthSessionSecret],
+        FrontendConfiguration.OidcAuthSessionSecret.EnvironmentVariable,
         oidcAuthSessionSecret
     );
 
