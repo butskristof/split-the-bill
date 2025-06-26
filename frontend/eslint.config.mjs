@@ -17,6 +17,7 @@ export default withNuxt(
       'build/**',
       '.nuxt/**',
       '.output/**',
+      '*.md',
     ],
   },
   // @ts-expect-error
