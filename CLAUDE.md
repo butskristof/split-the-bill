@@ -119,7 +119,7 @@ Key patterns:
 5. **Authentication**: Never expose tokens to the browser; use the BFF pattern
 
 ### Testing Requirements
-- Backend: Unit tests for domain logic, integration tests for API endpoints
+- Backend: integration tests to cover main paths in handlers, unit tests to complete coverage of edge cases (e.g. validation)
 - Frontend: TypeScript type checking must pass
 - Both: Code must be properly formatted before committing
 

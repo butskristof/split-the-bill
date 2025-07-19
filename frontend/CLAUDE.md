@@ -2,34 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with the Nuxt 3 frontend codebase.
 
-## OpenTelemetry Integration
-
-The frontend includes OpenTelemetry instrumentation for distributed tracing:
-
-### Configuration
-OpenTelemetry is configured via environment variables:
-- `OTEL_EXPORTER_OTLP_ENDPOINT`: OTLP endpoint (default: http://localhost:4317)
-- `OTEL_SERVICE_NAME`: Service name (default: split-the-bill-frontend)
-- `OTEL_SERVICE_VERSION`: Service version (default: 1.0.0)
-- `OTEL_EXPORTER_OTLP_PROTOCOL`: Protocol type (http/protobuf for HTTP, grpc for gRPC)
-
-### What's Traced
-- **HTTP requests** to BFF routes (`/server/api/backend/*`)
-- **Authentication flows** (session retrieval, token extraction)
-- **Proxy requests** to .NET backend API
-- **Redis operations** for session storage
-- **Error handling** and exceptions
-
-### Manual Tracing
-The BFF route includes custom spans for:
-- `bff.proxy_request`: Main request handler
-- `bff.get_user_session`: Session validation
-- `bff.get_access_token`: Token extraction
-- `bff.proxy_to_backend`: Backend API calls
-
-### Distributed Tracing
-Correlation headers are automatically injected when proxying to the backend API to enable end-to-end trace correlation with the .NET Aspire services.
-
 ## Frontend-Specific Development Commands
 
 ### Development Server

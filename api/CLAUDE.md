@@ -194,6 +194,11 @@ var group = await context.Groups
 
 // Save changes pattern
 await context.SaveChangesAsync(CancellationToken.None); // Intentional None
+
+// AsNoTracking for read-only queries
+var groups = await context.Groups
+    .AsNoTracking()
+    .FirstOrDefaultAsync(g => g.Id == groupId, ct);
 ```
 
 ### User Context
