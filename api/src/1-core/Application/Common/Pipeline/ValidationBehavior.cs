@@ -37,8 +37,8 @@ internal sealed class ValidationBehavior<TMessage, TResponse>
 
     public async ValueTask<TResponse> Handle(
         TMessage message,
-        CancellationToken cancellationToken,
-        MessageHandlerDelegate<TMessage, TResponse> next
+        MessageHandlerDelegate<TMessage, TResponse> next,
+        CancellationToken cancellationToken
     )
     {
         var messageTypeName = typeof(TMessage).FullName;

@@ -111,11 +111,14 @@ frontend
     .WithEnvironment(
         FrontendConfiguration.RedisPort.EnvironmentVariable,
         () => redis.Resource.PrimaryEndpoint.Port.ToString()
-    )
-    .WithEnvironment(
-        FrontendConfiguration.RedisPassword.EnvironmentVariable,
-        () => redis.Resource.PasswordParameter?.Value ?? string.Empty
     );
+if (redis.Resource.PasswordParameter is not null)
+{
+    frontend.WithEnvironment(
+        FrontendConfiguration.RedisPassword.EnvironmentVariable,
+        redis.Resource.PasswordParameter
+    );
+}
 
 #endregion
 
