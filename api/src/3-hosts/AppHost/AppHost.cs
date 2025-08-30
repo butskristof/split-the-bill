@@ -23,6 +23,7 @@ var databaseMigrations = builder
 
 var redis = builder
     .AddRedis(Resources.Redis)
+    .WithRedisCommander()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume();
 
