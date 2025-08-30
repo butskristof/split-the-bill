@@ -114,7 +114,7 @@ frontend
     )
     .WithEnvironment(
         FrontendConfiguration.RedisPassword.EnvironmentVariable,
-        () => redis.Resource.PasswordParameter?.Value ?? string.Empty
+        redis.Resource.PasswordParameter!
     );
 
 #endregion
