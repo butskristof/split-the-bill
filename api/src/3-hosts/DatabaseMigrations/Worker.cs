@@ -11,7 +11,8 @@ public class Worker : BackgroundService
     public Worker(
         ILogger<Worker> logger,
         IServiceProvider serviceProvider,
-        IHostApplicationLifetime hostApplicationLifetime)
+        IHostApplicationLifetime hostApplicationLifetime
+    )
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
