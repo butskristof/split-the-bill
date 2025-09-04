@@ -7,6 +7,7 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       pull-requests: write
@@ -26,14 +27,13 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           track_progress: true
-          timeout_minutes: 15
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
             BASE BRANCH: ${{ github.event.pull_request.base.ref }}
             HEAD BRANCH: ${{ github.event.pull_request.head.ref }}
 
-            /review-code ${{ github.event.pull_request.base.ref }}
+            /review-code ${{ github.event.pull_request.base.sha }}
 
             Use inline comments for specific code issues and file-level problems.
             Use top-level PR comments for general observations, summary, and overall recommendations.
