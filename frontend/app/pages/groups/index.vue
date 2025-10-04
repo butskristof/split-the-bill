@@ -8,10 +8,13 @@
           icon="pi pi-plus"
           @click="showCreateGroupDialog = true"
         />
-        <CreateGroupDialog v-model:visible="showCreateGroupDialog" />
+        <CreateGroupDialog
+          v-model:visible="showCreateGroupDialog"
+          @created="onCreated"
+        />
       </div>
     </div>
-    <GroupsList />
+    <GroupsList :groups="groups" />
   </div>
 </template>
 
@@ -19,7 +22,15 @@
 import GroupsList from '~/components/groups/overview/GroupsList.vue';
 import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vue';
 
-const showCreateGroupDialog = ref(true);
+const { data, refresh } = useLazyBackendApi('/Groups');
+const groups = computed(() => data.value?.groups ?? []);
+
+const showCreateGroupDialog = ref(false);
+
+const onCreated = () => {
+  showCreateGroupDialog.value = false;
+  refresh();
+};
 </script>
 
 <style scoped lang="scss">

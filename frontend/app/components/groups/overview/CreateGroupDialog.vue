@@ -46,7 +46,11 @@
 <script setup lang="ts">
 import { stringIsNullOrWhitespace } from '#shared/utils';
 
+// pass through visible model so parent can control it like a bare Dialog
 const visible = defineModel<boolean>('visible', { required: true });
+const emit = defineEmits<{
+  created: [];
+}>();
 
 // TODO warn when exiting when form is dirty
 
@@ -62,9 +66,9 @@ const resolver = ({ values }) => {
   return { values, errors };
 };
 
-const onSubmit = ({ valid }) => {
+const onSubmit = ({ valid }: { valid: boolean }) => {
   if (valid) {
-    console.log('submit');
+    emit('created');
   }
 };
 </script>
