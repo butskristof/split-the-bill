@@ -6,7 +6,9 @@
         <Button
           label="Create new group"
           icon="pi pi-plus"
+          @click="showCreateGroupDialog = true"
         />
+        <CreateGroupDialog v-model:visible="showCreateGroupDialog" />
       </div>
     </div>
     <GroupsList />
@@ -15,6 +17,9 @@
 
 <script setup lang="ts">
 import GroupsList from '~/components/groups/overview/GroupsList.vue';
+import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vue';
+
+const showCreateGroupDialog = ref(false);
 </script>
 
 <style scoped lang="scss">
