@@ -63,7 +63,7 @@ export default defineNuxtConfig({
     // disable auto-import of components
     dirs: [],
   },
-  css: ['~/styles/reset.css', '~/styles/main.scss'],
+  css: ['~/styles/reset.css', 'primeicons/primeicons.css', '~/styles/main.scss'],
   primevue: {
     options: {
       theme: {
