@@ -19,7 +19,7 @@
 import GroupsList from '~/components/groups/overview/GroupsList.vue';
 import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vue';
 
-const showCreateGroupDialog = ref(false);
+const showCreateGroupDialog = ref(true);
 </script>
 
 <style scoped lang="scss">
