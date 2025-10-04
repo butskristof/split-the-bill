@@ -21,7 +21,7 @@
 .app-title {
   @include utilities.flex-row;
   gap: calc(var(--default-spacing) / 2);
-  font-size: var(--text-xl);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
 }
 </style>

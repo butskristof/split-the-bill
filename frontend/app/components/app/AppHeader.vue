@@ -22,12 +22,13 @@ import AppTitle from '~/components/app/AppTitle.vue';
   z-index: 1;
 
   //background-color: var(--p-surface-0);
-  background-color: hsl(from var(--p-surface-50) h s l / 0.5);
   backdrop-filter: blur(4px);
+  background-color: hsl(from var(--p-surface-50) h s l / 0.5);
   border-bottom: 1px solid var(--p-surface-200);
   @include utilities.dark-mode {
     //background-color: var(--p-surface-950);
     background-color: hsl(from var(--p-surface-950) h s l / 0.5);
+    border-bottom: 1px solid var(--p-surface-800);
   }
 }
 

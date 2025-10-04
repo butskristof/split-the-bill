@@ -36,17 +36,17 @@ const theme = definePreset(Lara, {
       dark: {
         surface: {
           0: '#ffffff',
-          50: '{soho.50}',
-          100: '{soho.100}',
-          200: '{soho.200}',
-          300: '{soho.300}',
-          400: '{soho.400}',
-          500: '{soho.500}',
-          600: '{soho.600}',
-          700: '{soho.700}',
-          800: '{soho.800}',
-          900: '{soho.900}',
-          950: '{soho.950}',
+          50: '#ececec',
+          100: '#dedfdf',
+          200: '#c4c4c6',
+          300: '#adaeb0',
+          400: '#97979b',
+          500: '#7f8084',
+          600: '#6a6b70',
+          700: '#55565b',
+          800: '#3f4046',
+          900: '#2c2c34',
+          950: '#16161d',
         },
       },
     },
@@ -75,6 +75,10 @@ export default defineNuxtConfig({
     options: {
       theme: {
         preset: theme,
+        options: {
+          // as set by nuxt color mode module
+          darkModeSelector: '.dark-mode',
+        },
       },
     },
   },
