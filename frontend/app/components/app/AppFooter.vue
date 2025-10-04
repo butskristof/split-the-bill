@@ -1,7 +1,15 @@
 <template>
   <footer class="app-footer">
-    <div class="app-name">Split the bill</div>
-    <div class="links">GitHub</div>
+    <div class="app-name" />
+    <div class="links">
+      <a
+        href="https://github.com/butskristof/split-the-bill"
+        target="_blank"
+        rel="noopener"
+      >
+        <i class="pi pi-github" />
+      </a>
+    </div>
   </footer>
 </template>
 
@@ -14,5 +22,11 @@ footer {
   @include utilities.app-container;
   @include utilities.flex-row-justify-between;
   padding: var(--default-spacing);
+
+  .links {
+    a {
+      @include utilities.reset-link;
+    }
+  }
 }
 </style>

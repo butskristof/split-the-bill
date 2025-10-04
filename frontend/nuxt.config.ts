@@ -57,7 +57,14 @@ const theme = definePreset(Lara, {
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxt/eslint', '@nuxt/fonts', 'nuxt-security', '@primevue/nuxt-module'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/fonts',
+    'nuxt-security',
+    '@primevue/nuxt-module',
+    'nuxt-oidc-auth',
+    'nuxt-open-fetch',
+  ],
   security: {},
   components: {
     // disable auto-import of components
@@ -69,6 +76,88 @@ export default defineNuxtConfig({
       theme: {
         preset: theme,
       },
+    },
+  },
+  fonts: {
+    defaults: {
+      // include all weights by default (it's hard to spot specific ones missing)
+      weights: [200, 300, 400, 500, 600, 700, 800, 900],
+    },
+  },
+  routeRules: {
+    '/': {
+      redirect: '/groups',
+    },
+  },
+  openFetch: {
+    clients: {
+      backendApi: {
+        baseURL: '/api/backend',
+        schema: 'openapi/backend-api/spec.json',
+      },
+    },
+  },
+  runtimeConfig: {
+    backendBaseUrl: '', // set in env
+    redis: {
+      host: '',
+      port: 0,
+      password: '',
+    },
+  },
+  nitro: {
+    storage: {
+      oidc: {
+        driver: 'redis',
+        base: 'oidcstorage',
+      },
+    },
+  },
+  oidc: {
+    defaultProvider: 'oidc',
+    providers: {
+      oidc: {
+        clientId: '', // set in env
+        clientSecret: '', // set in env
+        // IDP passes back a code which we can exchange for tokens
+        responseType: 'code',
+        grantType: 'authorization_code',
+        authenticationScheme: 'header', // authenticate token request w/ header
+        // responseMode: 'form_post',
+        // @ts-expect-error is required but not defined in types by current library version
+        openIdConfiguration: '', // set in env
+        authorizationUrl: '', // set in env
+        tokenUrl: '', // set in env
+        userInfoUrl: '', // set in env
+        logoutUrl: '', // set in env
+        redirectUri: '', // set in env (local callback url: [HOST]/auth/oidc/callback )
+        pkce: true, // additional protection against auth code interception
+        state: true, // csrf protection
+        nonce: true, // ID token replay attack protection
+        // ensure tokens are valid
+        validateAccessToken: true,
+        validateIdToken: true,
+        // do not expose tokens in user session
+        exposeAccessToken: false,
+        exposeIdToken: false,
+        // make sure to include offline_access to get back refresh token
+        scope: ['openid', 'profile', 'offline_access'],
+        // limit to fields which are relevant for the application
+        filterUserInfo: ['sub', 'name'],
+      },
+    },
+    session: {
+      automaticRefresh: true,
+      expirationCheck: true,
+      expirationThreshold: 60, // seconds
+      cookie: {
+        // https://docs.duendesoftware.com/bff/fundamentals/session/handlers/#choosing-between-samesitelax-and-samesitestrict
+        // can't do strict since IdP will be hosted on other site
+        sameSite: 'lax',
+      },
+    },
+    middleware: {
+      globalMiddlewareEnabled: true, // protect everything except /auth by default
     },
   },
 });

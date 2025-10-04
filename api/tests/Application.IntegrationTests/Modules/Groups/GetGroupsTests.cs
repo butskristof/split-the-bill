@@ -38,7 +38,8 @@ internal sealed class GetGroupsTests : ApplicationTestBase
             .Groups.ShouldHaveSingleItem()
             .ShouldSatisfyAllConditions(
                 m => m.Id.ShouldBe(groupId),
-                m => m.Name.ShouldBe(groupName)
+                m => m.Name.ShouldBe(groupName),
+                m => m.MemberCount.ShouldBe(1)
             );
     }
 
@@ -61,8 +62,12 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         var response = result.Value;
         response.ShouldNotBeNull();
         response.Groups.Count.ShouldBe(2);
-        response.Groups.ShouldContain(m => m.Id == groupId1 && m.Name == groupName1);
-        response.Groups.ShouldContain(m => m.Id == groupId2 && m.Name == groupName2);
+        response.Groups.ShouldContain(m =>
+            m.Id == groupId1 && m.Name == groupName1 && m.MemberCount == 1
+        );
+        response.Groups.ShouldContain(m =>
+            m.Id == groupId2 && m.Name == groupName2 && m.MemberCount == 1
+        );
     }
 
     [Test]
@@ -82,7 +87,10 @@ internal sealed class GetGroupsTests : ApplicationTestBase
 
         response
             .Groups.ShouldHaveSingleItem()
-            .ShouldSatisfyAllConditions(g => g.Id.ShouldBe(group2Id));
+            .ShouldSatisfyAllConditions(
+                g => g.Id.ShouldBe(group2Id),
+                g => g.MemberCount.ShouldBe(1)
+            );
     }
 
     [Test]
@@ -95,5 +103,33 @@ internal sealed class GetGroupsTests : ApplicationTestBase
         var result = await Application.SendAsync(new GetGroups.Request());
         result.IsError.ShouldBeFalse();
         result.Value.Groups.ShouldBeEmpty();
+    }
+
+    [Test]
+    public async Task GroupWithMultipleMembers_ReturnsCorrectMemberCount()
+    {
+        var groupId = Guid.NewGuid();
+        const string groupName = "group name";
+
+        await Application.AddAsync(
+            new GroupBuilder()
+                .WithId(groupId)
+                .WithName(groupName)
+                .WithMembers([TestMembers.Default.Id, TestMembers.Alice.Id, TestMembers.Bob.Id])
+                .Build()
+        );
+
+        var result = await Application.SendAsync(new GetGroups.Request());
+
+        result.IsError.ShouldBeFalse();
+        var response = result.Value;
+        response.ShouldNotBeNull();
+        response
+            .Groups.ShouldHaveSingleItem()
+            .ShouldSatisfyAllConditions(
+                m => m.Id.ShouldBe(groupId),
+                m => m.Name.ShouldBe(groupName),
+                m => m.MemberCount.ShouldBe(3)
+            );
     }
 }

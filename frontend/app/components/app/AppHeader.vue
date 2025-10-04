@@ -1,13 +1,15 @@
 <template>
   <div class="app-header">
     <header>
-      <div class="app-title">Split the bill</div>
-      <div class="actions">actions</div>
+      <AppTitle />
+      <div class="actions" />
     </header>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppTitle from '~/components/app/AppTitle.vue';
+</script>
 
 <style scoped lang="scss">
 @use '~/styles/utilities';
@@ -34,5 +36,9 @@ header {
   height: 100%;
   @include utilities.flex-row-justify-between-align-center;
   gap: calc(var(--default-spacing) * 2);
+
+  @include utilities.media-max-lg {
+    margin-inline: var(--default-spacing);
+  }
 }
 </style>

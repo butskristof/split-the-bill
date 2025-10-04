@@ -1,3 +1,5 @@
+@use './_utilities.scss';
+
 :root {
   --default-spacing: 1rem;
   --default-radius: 0.25rem;
@@ -21,5 +23,10 @@
 }
 
 html, body {
-  font-family: sans-serif;
+  font-family: Nunito, ui-sans-serif, system-ui, sans-serif;
+
+  background-color: var(--p-surface-50);
+  @include utilities.dark-mode {
+    background-color: var(--p-surface-950);
+  }
 }

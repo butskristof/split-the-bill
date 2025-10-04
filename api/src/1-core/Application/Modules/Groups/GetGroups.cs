@@ -12,7 +12,7 @@ public static class GetGroups
 
     public sealed record Response(List<Response.GroupDto> Groups)
     {
-        public sealed record GroupDto(Guid Id, string Name);
+        public sealed record GroupDto(Guid Id, string Name, int MemberCount);
     }
 
     internal sealed class Handler : IQueryHandler<Request, ErrorOr<Response>>
@@ -39,7 +39,7 @@ public static class GetGroups
 
             var groups = await _dbContext
                 .CurrentUserGroups(false)
-                .Select(g => new Response.GroupDto(g.Id, g.Name))
+                .Select(g => new Response.GroupDto(g.Id, g.Name, g.Members.Count))
                 .ToListAsync(cancellationToken);
             _logger.LogDebug("Fetched mapped Group entities from database");
 
