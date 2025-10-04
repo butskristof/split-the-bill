@@ -1,121 +1,36 @@
 <template>
   <div class="page-groups">
-    <div>content starts here</div>
-    <Button
-      label="Toggle content"
-      @click="showAllContent = !showAllContent"
-    />
-    <div
-      v-if="showAllContent"
-      class="all-content"
-    >
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
-      <div>content</div>
+    <div class="page-header">
+      <h1>Your groups</h1>
+      <div class="actions">
+        <Button
+          label="Create new group"
+          icon="pi pi-plus"
+        />
+      </div>
     </div>
+    <GroupsList />
   </div>
 </template>
 
 <script setup lang="ts">
-const showAllContent = ref(false);
+import GroupsList from '~/components/groups/overview/GroupsList.vue';
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+@use '~/styles/_utilities.scss';
+
+.page-groups {
+  @include utilities.flex-column;
+}
+
+.page-header {
+  @include utilities.flex-row-justify-between-align-center;
+  flex-wrap: wrap;
+
+  .actions {
+    //flex-wrap: nowrap;
+    margin-left: auto;
+  }
+}
+</style>
