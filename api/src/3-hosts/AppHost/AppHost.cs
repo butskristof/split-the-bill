@@ -8,7 +8,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var postgres = builder
     .AddPostgres(Resources.Postgres)
     .WithPgAdmin()
-    .WithLifetime(ContainerLifetime.Persistent)
+    .WithLifetime(ContainerLifetime.Session)
     .WithDataVolume();
 var appDb = postgres.AddDatabase(Resources.AppDb);
 
@@ -24,7 +24,7 @@ var databaseMigrations = builder
 var redis = builder
     .AddRedis(Resources.Redis)
     .WithRedisCommander()
-    .WithLifetime(ContainerLifetime.Persistent)
+    .WithLifetime(ContainerLifetime.Session)
     .WithDataVolume();
 
 #endregion
