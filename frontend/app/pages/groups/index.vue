@@ -1,0 +1,121 @@
+<template>
+  <div class="page-groups">
+    <div>content starts here</div>
+    <Button
+      label="Toggle content"
+      @click="showAllContent = !showAllContent"
+    />
+    <div
+      v-if="showAllContent"
+      class="all-content"
+    >
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+      <div>content</div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+const showAllContent = ref(false);
+</script>
+
+<style scoped lang="scss"></style>

@@ -61,8 +61,8 @@
   max-width: var(--app-container);
 
   // no CSS vars in media queries...
-  // app container is 80rem, same as $breakpoint-xl
-  @include media-min-width(variables.$breakpoint-xl) {
+  // app container is 64rem, same as $breakpoint-lg
+  @include media-min-width(variables.$breakpoint-lg) {
     margin-inline: auto;
     width: 100%;
   }
@@ -140,3 +140,9 @@
   }
 }
 
+// THEMING
+@mixin dark-mode {
+  html.dark-mode & {
+    @content;
+  }
+}
