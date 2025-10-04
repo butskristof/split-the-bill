@@ -1,4 +1,4 @@
-import Aura from '@primeuix/themes/aura';
+import Lara from '@primeuix/themes/lara';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   primevue: {
     options: {
       theme: {
-        preset: Aura,
+        preset: Lara,
         options: {
           // as set by nuxt color mode module
           darkModeSelector: '.dark-mode',
