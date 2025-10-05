@@ -163,7 +163,7 @@
             variant="simple"
             icon="pi pi-check"
           >
-            New group created successfully!
+            New expense created successfully!
           </Message>
           <Message
             v-if="generalError"
@@ -198,13 +198,16 @@ import AppDialog from '~/components/common/AppDialog.vue';
 import type { components } from '#open-fetch-schemas/backend-api';
 import { date, dateBefore, maxLength, minLength, minValue, required } from '@regle/rules';
 import { createRule } from '@regle/core';
+import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
+
+type Member = {
+  id: string;
+  name: string;
+};
 
 const props = defineProps<{
   groupId: string;
-  members: {
-    id: string;
-    name: string;
-  }[];
+  members: Member[];
 }>();
 const emit = defineEmits<{
   close: [created: boolean];
@@ -212,16 +215,18 @@ const emit = defineEmits<{
 const tryClose = () => {
   // should either not be touched by user or confirmed they want to close and lose changes
   if (
+    isCreated.value ||
     !r$.$anyDirty ||
     confirm('There are unsaved changes. Are you sure you want to close this dialog?')
   ) {
-    emit('close', false);
+    emit('close', isCreated.value);
   }
 };
 
 //#region form
-// const { $backendApi } = useNuxtApp();
+const { $backendApi } = useNuxtApp();
 type CreateExpenseRequest = components['schemas']['CreateExpense.Request'];
+type ValidationProblemDetails = components['schemas']['HttpValidationProblemDetails'];
 
 const externalErrors = ref<Record<string, string[]>>({});
 const generalError = ref<string>();
@@ -282,8 +287,40 @@ const onFormSubmit = async () => {
   isSubmitting.value = true;
 
   try {
-    const requestBody: CreateExpenseRequest = {};
-    console.log(requestBody);
+    const requestBody: CreateExpenseRequest = {
+      description: data.description,
+      amount: data.amount,
+      groupId: props.groupId,
+      timestamp: data.timestamp.toISOString(),
+      paidByMemberId: data.paidBy!['id'],
+      participants: data.participants.map((p) => ({ memberId: p.id })),
+      splitType: 0,
+    };
+    await $backendApi('/Groups/{groupId}/expenses', {
+      method: 'POST',
+      path: {
+        groupId: props.groupId,
+      },
+      body: requestBody,
+    });
+
+    isCreated.value = true;
+  } catch (error) {
+    console.error(error);
+
+    const errorData = (error as { data?: ValidationProblemDetails })?.data;
+
+    if (errorData?.status === 400 && errorData.errors) {
+      externalErrors.value = mapProblemDetailsErrorsToExternalErrors(errorData.errors);
+    }
+
+    if (errorData?.title) {
+      // Handle other API errors (500, 404, etc.) with title
+      generalError.value = errorData.title;
+    } else {
+      // Fallback for unknown errors
+      generalError.value = 'Something went wrong. Please try again.';
+    }
   } finally {
     isSubmitting.value = false;
   }

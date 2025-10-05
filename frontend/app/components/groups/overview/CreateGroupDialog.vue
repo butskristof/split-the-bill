@@ -70,6 +70,7 @@
 import AppDialog from '~/components/common/AppDialog.vue';
 import { maxLength, required } from '@regle/rules';
 import type { components } from '#open-fetch-schemas/backend-api';
+import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 
 const emit = defineEmits<{
   close: [created: boolean];
@@ -130,14 +131,7 @@ const onFormSubmit = async () => {
     const errorData = (error as { data?: ValidationProblemDetails })?.data;
 
     if (errorData?.status === 400 && errorData.errors) {
-      // Handle validation errors - map to form fields
-      const mappedErrors: Record<string, string[]> = {};
-      for (const [key, messages] of Object.entries(errorData.errors)) {
-        // Convert PascalCase (Name) to camelCase (name)
-        const fieldName = key.charAt(0).toLowerCase() + key.slice(1);
-        mappedErrors[fieldName] = messages;
-      }
-      externalErrors.value = mappedErrors;
+      externalErrors.value = mapProblemDetailsErrorsToExternalErrors(errorData.errors);
     }
 
     if (errorData?.title) {
