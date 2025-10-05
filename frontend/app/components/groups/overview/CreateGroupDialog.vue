@@ -1,37 +1,36 @@
 <template>
   <Dialog
-    v-model:visible="visible"
+    :visible="true"
     modal
     header="Create new group"
     :style="{ width: '95%', maxWidth: '750px' }"
+    :draggable="false"
+    @update:visible="onUpdateVisible"
   >
-    <Form
-      v-slot="$form"
-      class="form"
-      :initial-values="initialValues"
-      :resolver="resolver"
-      @submit="onSubmit"
-    >
+    <form @submit.prevent="onFormSubmit">
       <div class="form-field">
         <label for="name">Group name</label>
         <InputText
           id="name"
-          name="name"
+          v-model.trim="r$.$value.name"
           type="text"
+          :invalid="r$.name.$error"
+          autofocus
         />
         <Message
-          v-if="$form.name?.invalid"
-          size="small"
+          v-for="error in r$.name.$errors"
+          :key="error"
           severity="error"
+          size="small"
           variant="simple"
-          >{{ $form.name.error?.message }}</Message
+          >{{ error }}</Message
         >
       </div>
       <div class="actions">
         <Button
           label="Cancel"
           severity="secondary"
-          @click="visible = false"
+          @click="onCancel"
         />
         <Button
           type="submit"
@@ -39,44 +38,53 @@
           icon="pi pi-save"
         />
       </div>
-    </Form>
+    </form>
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import { stringIsNullOrWhitespace } from '#shared/utils';
+import { maxLength, required } from '@regle/rules';
 
-// pass through visible model so parent can control it like a bare Dialog
-const visible = defineModel<boolean>('visible', { required: true });
 const emit = defineEmits<{
-  created: [];
+  close: [created: boolean];
 }>();
-
-// TODO warn when exiting when form is dirty
-
-const initialValues = ref({
-  name: '',
-});
-const resolver = ({ values }) => {
-  const errors = {};
-  if (stringIsNullOrWhitespace(values.name)) {
-    errors.name = [{ message: 'Name is required' }];
-  }
-
-  return { values, errors };
+const onUpdateVisible = (newValue: boolean) => {
+  // visible false -> close dialog
+  if (!newValue) emit('close', false);
+};
+const onCancel = () => {
+  // TODO check form dirty and ask confirmation
+  emit('close', false);
 };
 
-const onSubmit = ({ valid }: { valid: boolean }) => {
-  if (valid) {
-    emit('created');
+//#region form
+
+const { r$ } = useRegle(
+  { name: '' },
+  {
+    name: { required, maxLength: maxLength(512) },
+  },
+);
+
+const onFormSubmit = async () => {
+  const { valid, data } = await r$.$validate();
+  if (!valid) return;
+
+  try {
+    console.log(data);
+    // submit to api & map errors
+    emit('close', true);
+  } catch (error) {
+    console.error(error);
   }
 };
+//#endregion
 </script>
 
 <style scoped lang="scss">
 @use '~/styles/_utilities.scss';
 
-.form {
+form {
   @include utilities.flex-column;
 
   .form-field {

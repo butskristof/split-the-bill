@@ -64,6 +64,7 @@ export default defineNuxtConfig({
     '@primevue/nuxt-module',
     'nuxt-oidc-auth',
     'nuxt-open-fetch',
+    '@regle/nuxt',
   ],
   security: {},
   components: {

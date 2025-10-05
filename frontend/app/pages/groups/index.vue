@@ -6,15 +6,15 @@
         <Button
           label="Create new group"
           icon="pi pi-plus"
-          @click="showCreateGroupDialog = true"
-        />
-        <CreateGroupDialog
-          v-model:visible="showCreateGroupDialog"
-          @created="onCreated"
+          @click="openCreateGroupDialog"
         />
       </div>
     </div>
     <GroupsList :groups="groups" />
+    <CreateGroupDialog
+      v-if="showCreateGroupDialog"
+      @close="closeCreateGroupDialog"
+    />
   </div>
 </template>
 
@@ -25,12 +25,16 @@ import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vu
 const { data, refresh } = useLazyBackendApi('/Groups');
 const groups = computed(() => data.value?.groups ?? []);
 
-const showCreateGroupDialog = ref(false);
+//#region create group dialog
 
-const onCreated = () => {
+const showCreateGroupDialog = ref(false);
+const openCreateGroupDialog = () => (showCreateGroupDialog.value = true);
+const closeCreateGroupDialog = (created: boolean) => {
   showCreateGroupDialog.value = false;
-  refresh();
+  if (created) refresh();
 };
+
+//#endregion
 </script>
 
 <style scoped lang="scss">
