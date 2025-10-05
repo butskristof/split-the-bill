@@ -22,7 +22,7 @@
 import GroupsList from '~/components/groups/overview/GroupsList.vue';
 import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vue';
 
-const { data, refresh } = useLazyBackendApi('/Groups');
+const { data, refresh } = await useLazyBackendApi('/Groups');
 const groups = computed(() => data.value?.groups ?? []);
 
 //#region create group dialog

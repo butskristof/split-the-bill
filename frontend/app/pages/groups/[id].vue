@@ -1,14 +1,14 @@
 <template>
   <div class="page-group-detail">
-    <div class="page-header">
-      <h1>{{ groupId }}</h1>
-    </div>
+    <GroupDetail :group-id="groupId" />
   </div>
 </template>
 
 <script setup lang="ts">
+import GroupDetail from '~/components/groups/detail/GroupDetail.vue';
+
 const route = useRoute();
-const groupId = route.params.id;
+const groupId = computed(() => route.params.id as string);
 </script>
 
 <style scoped lang="scss"></style>

@@ -1,25 +1,25 @@
 <template>
   <AppDialog
-    header="Create new group"
+    header="Add new expense"
     @close="tryClose"
   >
     <form @submit.prevent="onFormSubmit">
       <div class="form-field">
-        <label for="name">Group name</label>
+        <label for="description">Description</label>
         <InputText
-          id="name"
-          v-model.trim="r$.$value.name"
+          id="description"
+          v-model.trim="r$.$value.description"
           type="text"
-          :invalid="r$.name.$error"
+          :invalid="r$.description.$error"
           :disabled="formDisabled"
           autofocus
         />
         <div
-          v-if="r$.name.$error"
+          v-if="r$.description.$error"
           class="errors"
         >
           <Message
-            v-for="error in r$.name.$errors"
+            v-for="error in r$.description.$errors"
             :key="error"
             severity="error"
             size="small"
@@ -28,6 +28,67 @@
           >
         </div>
       </div>
+
+      <div class="amount-timestamp">
+        <div class="form-field">
+          <label for="amount">Amount</label>
+          <InputNumber
+            id="amount"
+            v-model="r$.$value.amount"
+            mode="currency"
+            currency="EUR"
+            :min="0.01"
+            :min-fraction-digits="2"
+            :max-fraction-digits="2"
+            :invalid="r$.amount.$error"
+            :disabled="formDisabled"
+          />
+          <div
+            v-if="r$.amount.$error"
+            class="errors"
+          >
+            <Message
+              v-for="error in r$.amount.$errors"
+              :key="error"
+              severity="error"
+              size="small"
+              variant="simple"
+              >{{ error }}</Message
+            >
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="timestamp">Date and time</label>
+          <DatePicker
+            id="timestamp"
+            v-model="r$.$value.timestamp"
+            date-format="dd/mm/yy"
+            show-time
+            hour-format="24"
+            :max-date="maxTimestamp"
+            show-button-bar
+            :invalid="r$.timestamp.$error"
+            :disabled="formDisabled"
+            fluid
+            update-model-type="date"
+          />
+          <div
+            v-if="r$.timestamp.$error"
+            class="errors"
+          >
+            <Message
+              v-for="error in r$.timestamp.$errors"
+              :key="error"
+              severity="error"
+              size="small"
+              variant="simple"
+              >{{ error }}</Message
+            >
+          </div>
+        </div>
+      </div>
+
       <div class="form-footer">
         <div class="message">
           <Message
@@ -68,8 +129,8 @@
 
 <script setup lang="ts">
 import AppDialog from '~/components/common/AppDialog.vue';
-import { maxLength, required } from '@regle/rules';
 import type { components } from '#open-fetch-schemas/backend-api';
+import { date, dateBefore, maxLength, minValue, required } from '@regle/rules';
 
 const emit = defineEmits<{
   close: [created: boolean];
@@ -85,10 +146,8 @@ const tryClose = () => {
 };
 
 //#region form
-
-const { $backendApi } = useNuxtApp();
-type CreateGroupRequest = components['schemas']['CreateGroup.Request'];
-type ValidationProblemDetails = components['schemas']['HttpValidationProblemDetails'];
+// const { $backendApi } = useNuxtApp();
+type CreateExpenseRequest = components['schemas']['CreateExpense.Request'];
 
 const externalErrors = ref<Record<string, string[]>>({});
 const generalError = ref<string>();
@@ -96,10 +155,18 @@ const isCreated = ref(false);
 const isSubmitting = ref(false);
 const formDisabled = computed(() => isSubmitting.value || isCreated.value);
 
+const maxTimestamp = new Date();
+
 const { r$ } = useRegle(
-  { name: '' },
   {
-    name: { required, maxLength: maxLength(512) },
+    description: '',
+    amount: undefined,
+    timestamp: maxTimestamp,
+  },
+  {
+    description: { required, maxLength: maxLength(512) },
+    amount: { required, minValue: minValue(0.01) },
+    timestamp: { required, date, dateBefore: dateBefore(maxTimestamp) },
   },
   { externalErrors },
 );
@@ -113,51 +180,13 @@ const onFormSubmit = async () => {
   isSubmitting.value = true;
 
   try {
-    const requestBody: CreateGroupRequest = {
-      name: data.name,
-    };
-    // submit to api & map errors
-    const response = await $backendApi('/Groups', {
-      method: 'POST',
-      body: requestBody,
-    });
-
-    isCreated.value = true;
-    await navigateTo({ name: 'groups-id', params: { id: response.id } });
-  } catch (error) {
-    console.error(error);
-
-    const errorData = (error as { data?: ValidationProblemDetails })?.data;
-
-    if (errorData?.status === 400 && errorData.errors) {
-      // Handle validation errors - map to form fields
-      const mappedErrors: Record<string, string[]> = {};
-      for (const [key, messages] of Object.entries(errorData.errors)) {
-        // Convert PascalCase (Name) to camelCase (name)
-        const fieldName = key.charAt(0).toLowerCase() + key.slice(1);
-        mappedErrors[fieldName] = messages;
-      }
-      externalErrors.value = mappedErrors;
-    }
-
-    if (errorData?.title) {
-      // Handle other API errors (500, 404, etc.) with title
-      generalError.value = errorData.title;
-    } else {
-      // Fallback for unknown errors
-      generalError.value = 'Something went wrong. Please try again.';
-    }
+    const requestBody: CreateExpenseRequest = {};
+    console.log(requestBody);
   } finally {
     isSubmitting.value = false;
   }
 };
-
 //#endregion
-
-// TODO in dialogs later
-// - accessibility (aria-busy, aria-describedby, ...)
-// - keep modal open to show succes (and maybe toast?), then navigate away after some time
-// - extract common form logic
 </script>
 
 <style scoped lang="scss">
@@ -169,6 +198,16 @@ form {
   .form-field {
     @include utilities.flex-column(false);
     gap: calc(var(--default-spacing) / 2);
+  }
+
+  .amount-timestamp {
+    @include utilities.flex-row;
+    flex-wrap: wrap;
+
+    .form-field {
+      flex: 1 1 0;
+      min-width: calc(var(--default-spacing) * 12);
+    }
   }
 
   .form-footer {
