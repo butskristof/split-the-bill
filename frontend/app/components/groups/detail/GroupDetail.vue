@@ -14,6 +14,8 @@
       />
       <CreateExpenseDialog
         v-if="showCreateExpenseDialog"
+        :group-id="group.id!"
+        :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
         @close="closeCreateExpenseDialog"
       />
     </div>

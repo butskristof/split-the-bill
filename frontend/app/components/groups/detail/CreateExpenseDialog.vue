@@ -89,6 +89,72 @@
         </div>
       </div>
 
+      <div class="form-field">
+        <label for="paidBy">Paid by</label>
+        <Select
+          id="paidBy"
+          v-model="r$.$value.paidBy"
+          :options="props.members"
+          option-label="name"
+          :invalid="r$.paidBy.$error"
+          :disabled="formDisabled"
+          show-clear
+        />
+        <div
+          v-if="r$.paidBy.$error"
+          class="errors"
+        >
+          <Message
+            v-for="error in r$.paidBy.$errors"
+            :key="error"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ error }}</Message
+          >
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="participants">Participants</label>
+        <ListBox
+          id="participants"
+          v-model="r$.$value.participants"
+          :options="props.members"
+          option-label="name"
+          multiple
+          :invalid="r$.participants.$error"
+          :disabled="formDisabled"
+          fluid
+        />
+        <div
+          v-if="r$.participants.$error"
+          class="errors"
+        >
+          <Message
+            v-for="error in r$.participants.$errors.$self"
+            :key="error"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ error }}</Message
+          >
+          <template
+            v-for="(item, index) in r$.participants.$each"
+            :key="index"
+          >
+            <Message
+              v-for="error in item.id.$errors"
+              :key="`${index}-${error}`"
+              severity="error"
+              size="small"
+              variant="simple"
+              >{{ error }}</Message
+            >
+          </template>
+        </div>
+      </div>
+
       <div class="form-footer">
         <div class="message">
           <Message
@@ -130,8 +196,16 @@
 <script setup lang="ts">
 import AppDialog from '~/components/common/AppDialog.vue';
 import type { components } from '#open-fetch-schemas/backend-api';
-import { date, dateBefore, maxLength, minValue, required } from '@regle/rules';
+import { date, dateBefore, maxLength, minLength, minValue, required } from '@regle/rules';
+import { createRule } from '@regle/core';
 
+const props = defineProps<{
+  groupId: string;
+  members: {
+    id: string;
+    name: string;
+  }[];
+}>();
 const emit = defineEmits<{
   close: [created: boolean];
 }>();
@@ -157,16 +231,44 @@ const formDisabled = computed(() => isSubmitting.value || isCreated.value);
 
 const maxTimestamp = new Date();
 
+const isMember = createRule({
+  validator(value: unknown, members: { id: string }[]) {
+    if (!value) return false;
+
+    let id: string;
+    if (typeof value === 'string') {
+      id = value;
+    } else if (typeof value === 'object' && 'id' in value) {
+      id = (value as { id: string }).id;
+    } else {
+      return false;
+    }
+
+    return members.some((m) => m.id === id);
+  },
+  message: 'Invalid member selected',
+});
+
 const { r$ } = useRegle(
   {
     description: '',
     amount: undefined,
     timestamp: maxTimestamp,
+    paidBy: undefined,
+    participants: [...props.members],
   },
   {
     description: { required, maxLength: maxLength(512) },
     amount: { required, minValue: minValue(0.01) },
     timestamp: { required, date, dateBefore: dateBefore(maxTimestamp) },
+    paidBy: { required, isMember: isMember(props.members) },
+    participants: {
+      required,
+      minLength: minLength(1),
+      $each: {
+        id: { isMember: isMember(props.members) },
+      },
+    },
   },
   { externalErrors },
 );
