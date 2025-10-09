@@ -152,13 +152,20 @@
           >
             New expense created successfully!
           </Message>
+          <Message
+            v-if="apiErrorTitle"
+            severity="error"
+            variant="simple"
+          >
+            {{ apiErrorTitle }}
+          </Message>
         </div>
         <div class="actions">
           <Button
             label="Cancel"
             severity="secondary"
             :disabled="formDisabled"
-            @click="() => tryClose(false)"
+            @click="tryClose"
           />
           <Button
             type="submit"
@@ -187,8 +194,12 @@ import {
   oneOf,
   required,
   string,
+  withMessage,
 } from '@regle/rules';
 import type { CreateExpenseRequest } from '#shared/types/api';
+import { useMutation } from '@tanstack/vue-query';
+import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
+import type { FetchError } from 'ofetch';
 
 type Member = {
   id: string;
@@ -202,17 +213,37 @@ const props = defineProps<{
 const emit = defineEmits<{
   close: [created: boolean];
 }>();
-const tryClose = (created: boolean = false) => {
-  emit('close', created);
+const tryClose = () => {
+  // should either not be touched by user or confirmed they want to close and lose changes
+  if (
+    isCreated.value ||
+    !r$.$anyDirty ||
+    confirm('There are unsaved changes. Are you sure you want to close this dialog?')
+  ) {
+    emit('close', isCreated.value);
+  }
 };
 
 //#region form
 
-// TODO replace these w/ declarative (computed) values from r$ and/or TanStack Query
-const isSubmitting: boolean = false;
-const isCreated: boolean = false;
-// don't forget to switch back to .value when moving to computeds
-const formDisabled = computed<boolean>(() => isSubmitting || isCreated);
+const { $backendApi } = useNuxtApp();
+const {
+  isPending: isSubmitting,
+  isSuccess: isCreated,
+  error: mutationError,
+  mutate,
+} = useMutation({
+  mutationFn: (newExpense: CreateExpenseRequest) =>
+    $backendApi('/Groups/{groupId}/expenses', {
+      method: 'POST',
+      path: {
+        groupId: newExpense.groupId,
+      },
+      body: newExpense,
+    }),
+});
+
+const formDisabled = computed<boolean>(() => isSubmitting.value || isCreated.value);
 // map to a single string[]
 const paidByErrors = computed<string[]>(() =>
   // for now we only care about the messages, not the property they appeared on (only validation on
@@ -252,6 +283,22 @@ const participantsErrors = computed<string[]>(() => {
     ),
   ];
 });
+const apiErrorTitle = computed<string | null>(() => {
+  if (!mutationError.value) return null;
+  const problemDetails = (mutationError.value as FetchError)?.data as ProblemDetails;
+  return problemDetails?.title ?? 'Something went wrong, please try again later.';
+});
+const externalErrors = computed<Record<string, string[]>>(() => {
+  if (!mutationError.value) return {};
+  const problemDetails = (mutationError.value as FetchError)?.data as ValidationProblemDetails;
+  if (!problemDetails || !problemDetails.errors) return {};
+  return {
+    ...mapProblemDetailsErrorsToExternalErrors(problemDetails.errors),
+    // property name in api request is different from the one we're using in form state so we have
+    // to map it back manually
+    paidBy: problemDetails.errors['PaidByMemberId'],
+  };
+});
 
 // no expenses in the future allowed
 const maxTimestamp = new Date();
@@ -270,7 +317,7 @@ const formState = ref<FormState>({
   amount: null,
   timestamp: maxTimestamp,
   paidBy: null,
-  participants: [],
+  participants: [...props.members],
 });
 
 // Computed array of valid member IDs for validation
@@ -323,7 +370,7 @@ const formSchema = computed(() =>
   }),
 );
 
-const { r$ } = useRegle(formState, formSchema);
+const { r$ } = useRegle(formState, formSchema, { externalErrors });
 
 const onFormSubmit = async () => {
   const { valid, data } = await r$.$validate();
@@ -338,7 +385,7 @@ const onFormSubmit = async () => {
     splitType: ExpenseSplitType.Evenly,
     participants: data.participants.map((p) => ({ memberId: p.id })),
   };
-  console.log(request);
+  mutate(request);
 };
 
 //#endregion

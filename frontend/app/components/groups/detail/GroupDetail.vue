@@ -13,11 +13,7 @@
         @click="openCreateExpenseDialog"
       />
       <CreateExpenseDialog5
-        :group-id="group.id!"
-        :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
-      />
-      <CreateExpenseDialog
-        v-if="showCreateExpenseDialog && false"
+        v-if="showCreateExpenseDialog"
         :group-id="group.id!"
         :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
         @close="closeCreateExpenseDialog"

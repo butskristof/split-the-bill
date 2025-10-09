@@ -19,11 +19,18 @@
 </template>
 
 <script setup lang="ts">
+import { useQuery } from '@tanstack/vue-query';
 import GroupsList from '~/components/groups/overview/GroupsList.vue';
 import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vue';
 
-const { data, refresh } = await useLazyBackendApi('/Groups');
+const { $backendApi } = useNuxtApp();
+const { data, suspense } = useQuery({
+  queryKey: ['groups'],
+  queryFn: () => $backendApi('/Groups'),
+});
 const groups = computed(() => data.value?.groups ?? []);
+
+await suspense();
 
 //#region create group dialog
 
