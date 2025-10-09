@@ -12,8 +12,12 @@
         icon="pi pi-plus"
         @click="openCreateExpenseDialog"
       />
+      <CreateExpenseDialog5
+        :group-id="group.id!"
+        :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
+      />
       <CreateExpenseDialog
-        v-if="showCreateExpenseDialog"
+        v-if="showCreateExpenseDialog && false"
         :group-id="group.id!"
         :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
         @close="closeCreateExpenseDialog"
@@ -26,6 +30,7 @@
 <script setup lang="ts">
 import PreformattedText from '~/components/common/PreformattedText.vue';
 import CreateExpenseDialog from '~/components/groups/detail/CreateExpenseDialog.vue';
+import CreateExpenseDialog5 from '~/components/groups/detail/CreateExpenseDialog5.vue';
 
 const props = defineProps<{
   groupId: string;
