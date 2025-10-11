@@ -18,6 +18,17 @@
         :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
         @close="closeCreateExpenseDialog"
       />
+      <Button
+        label="Add payment"
+        icon="pi pi-plus"
+        @click="openCreatePaymentDialog"
+      />
+      <CreatePaymentDialog
+        v-if="showCreatePaymentDialog"
+        :group-id="group.id!"
+        :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
+        @close="closeCreatePaymentDialog"
+      />
     </div>
     <PreformattedText :value="group" />
     <div class="delete-group">
@@ -40,8 +51,9 @@
 <script setup lang="ts">
 import PreformattedText from '~/components/common/PreformattedText.vue';
 import CreateExpenseDialog from '~/components/groups/detail/CreateExpenseDialog.vue';
+import CreatePaymentDialog from '~/components/groups/detail/CreatePaymentDialog.vue';
 import type { Group } from '#shared/types/api';
-import DeleteGroupDialog from '~/components/groups/DeleteGroupDialog.vue';
+import DeleteGroupDialog from '~/components/groups/detail/DeleteGroupDialog.vue';
 
 defineProps<{
   group: Group;
@@ -51,6 +63,12 @@ defineProps<{
 const showCreateExpenseDialog = ref(false);
 const openCreateExpenseDialog = () => (showCreateExpenseDialog.value = true);
 const closeCreateExpenseDialog = () => (showCreateExpenseDialog.value = false);
+//#endregion
+
+//#region create payment dialog
+const showCreatePaymentDialog = ref(false);
+const openCreatePaymentDialog = () => (showCreatePaymentDialog.value = true);
+const closeCreatePaymentDialog = () => (showCreatePaymentDialog.value = false);
 //#endregion
 
 //#region delete group dialog
@@ -65,6 +83,10 @@ const closeDeleteGroupDialog = () => (showDeleteGroupDialog.value = false);
 
 .group-detail {
   @include utilities.flex-column;
+
+  .actions {
+    @include utilities.flex-row;
+  }
 
   .delete-group {
     margin-left: auto;

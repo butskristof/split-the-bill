@@ -25,5 +25,12 @@ export type CreateExpenseRequest = {
     exactShare?: number;
   }[];
 };
+export type CreatePaymentRequest = {
+  groupId: string;
+  sendingMemberId: string;
+  receivingMemberId: string;
+  amount: number;
+  timestamp: string;
+};
 
 export type Group = components['schemas']['GroupDto'];
