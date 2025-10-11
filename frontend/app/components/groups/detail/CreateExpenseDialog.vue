@@ -33,8 +33,8 @@
         <div class="form-field">
           <label for="amount">Amount</label>
           <InputNumber
-            id="amount"
             v-model="r$.$value.amount"
+            input-id="amount"
             mode="currency"
             currency="EUR"
             :min="0.01"
@@ -61,8 +61,8 @@
         <div class="form-field">
           <label for="timestamp">Date and time</label>
           <DatePicker
-            id="timestamp"
             v-model="r$.$value.timestamp"
+            input-id="timestamp"
             date-format="dd/mm/yy"
             show-time
             hour-format="24"
@@ -92,9 +92,9 @@
       <div class="form-field">
         <label for="paidBy">Paid by</label>
         <Select
-          id="paidBy"
           v-model="r$.$value.paidBy"
-          :options="props.members"
+          input-id="paidBy"
+          :options="[...props.members, { id: 'hey', name: 'Test' }]"
           option-label="name"
           :invalid="r$.paidBy.$error"
           :disabled="formDisabled"
@@ -105,7 +105,7 @@
           class="errors"
         >
           <Message
-            v-for="error in r$.paidBy.$errors"
+            v-for="error of paidByErrors"
             :key="error"
             severity="error"
             size="small"
@@ -117,10 +117,10 @@
 
       <div class="form-field">
         <label for="participants">Participants</label>
-        <ListBox
+        <Listbox
           id="participants"
           v-model="r$.$value.participants"
-          :options="props.members"
+          :options="[...props.members, { id: 'hey', name: 'Test' }]"
           option-label="name"
           multiple
           :invalid="r$.participants.$error"
@@ -132,31 +132,18 @@
           class="errors"
         >
           <Message
-            v-for="error in r$.participants.$errors.$self"
+            v-for="error in participantsErrors"
             :key="error"
             severity="error"
             size="small"
             variant="simple"
-            >{{ error }}</Message
-          >
-          <template
-            v-for="(item, index) in r$.participants.$each"
-            :key="index"
-          >
-            <Message
-              v-for="error in item.id.$errors"
-              :key="`${index}-${error}`"
-              severity="error"
-              size="small"
-              variant="simple"
-              >{{ error }}</Message
-            >
-          </template>
+            >{{ error }}
+          </Message>
         </div>
       </div>
 
       <div class="form-footer">
-        <div class="message">
+        <div class="messages">
           <Message
             v-if="isCreated"
             severity="success"
@@ -166,11 +153,11 @@
             New expense created successfully!
           </Message>
           <Message
-            v-if="generalError"
+            v-if="apiErrorTitle"
             severity="error"
             variant="simple"
           >
-            {{ generalError }}
+            {{ apiErrorTitle }}
           </Message>
         </div>
         <div class="actions">
@@ -195,10 +182,24 @@
 
 <script setup lang="ts">
 import AppDialog from '~/components/common/AppDialog.vue';
-import type { components } from '#open-fetch-schemas/backend-api';
-import { date, dateBefore, maxLength, minLength, minValue, required } from '@regle/rules';
-import { createRule } from '@regle/core';
+import { ExpenseSplitType } from '#shared/types/expense-split-type';
+import { inferRules } from '@regle/core';
+import {
+  date,
+  dateBefore,
+  decimal,
+  maxLength,
+  minLength,
+  minValue,
+  oneOf,
+  required,
+  string,
+  withMessage,
+} from '@regle/rules';
+import type { CreateExpenseRequest } from '#shared/types/api';
+import { useMutation } from '@tanstack/vue-query';
 import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
+import type { FetchError } from 'ofetch';
 
 type Member = {
   id: string;
@@ -224,107 +225,170 @@ const tryClose = () => {
 };
 
 //#region form
+
 const { $backendApi } = useNuxtApp();
-type CreateExpenseRequest = components['schemas']['CreateExpense.Request'];
-type ValidationProblemDetails = components['schemas']['HttpValidationProblemDetails'];
-
-const externalErrors = ref<Record<string, string[]>>({});
-const generalError = ref<string>();
-const isCreated = ref(false);
-const isSubmitting = ref(false);
-const formDisabled = computed(() => isSubmitting.value || isCreated.value);
-
-const maxTimestamp = new Date();
-
-const isMember = createRule({
-  validator(value: unknown, members: { id: string }[]) {
-    if (!value) return false;
-
-    let id: string;
-    if (typeof value === 'string') {
-      id = value;
-    } else if (typeof value === 'object' && 'id' in value) {
-      id = (value as { id: string }).id;
-    } else {
-      return false;
-    }
-
-    return members.some((m) => m.id === id);
-  },
-  message: 'Invalid member selected',
+const {
+  isPending: isSubmitting,
+  isSuccess: isCreated,
+  error: mutationError,
+  mutate,
+} = useMutation({
+  mutationFn: (newExpense: CreateExpenseRequest) =>
+    $backendApi('/Groups/{groupId}/expenses', {
+      method: 'POST',
+      path: {
+        groupId: newExpense.groupId,
+      },
+      body: newExpense,
+    }),
 });
 
-const { r$ } = useRegle(
+const formDisabled = computed<boolean>(() => isSubmitting.value || isCreated.value);
+// map to a single string[]
+const paidByErrors = computed<string[]>(() =>
+  // for now we only care about the messages, not the property they appeared on (only validation on
+  // id for now)
+  Object.entries(r$.paidBy.$errors).flatMap(([, v]) => v),
+);
+const participantsErrors = computed<string[]>(() => {
+  // regle returns different formats for collection and individual item errors, we'll map to a
+  // flat string[] for now,
+  // example returns of r$.participants.$errors:
+  /*
   {
-    description: '',
-    amount: undefined,
-    timestamp: maxTimestamp,
-    paidBy: undefined,
-    participants: [...props.members],
-  },
+    "$self": [
+      "This field is required"
+    ],
+    "$each": []
+  }
+   */
+  /*
   {
-    description: { required, maxLength: maxLength(512) },
-    amount: { required, minValue: minValue(0.01) },
-    timestamp: { required, date, dateBefore: dateBefore(maxTimestamp) },
-    paidBy: { required, isMember: isMember(props.members) },
-    participants: {
+    "$self": [],
+    "$each": [
+      {
+        "id": [
+          "Invalid member selected"
+        ],
+        "name": []
+      }
+    ]
+  }
+   */
+
+  return [
+    ...r$.participants.$errors.$self,
+    ...r$.participants.$errors.$each.flatMap((itemErrors) =>
+      Object.entries(itemErrors).flatMap(([, v]) => v as string[]),
+    ),
+  ];
+});
+const apiErrorTitle = computed<string | null>(() => {
+  if (!mutationError.value) return null;
+  const problemDetails = (mutationError.value as FetchError)?.data as ProblemDetails;
+  return problemDetails?.title ?? 'Something went wrong, please try again later.';
+});
+const externalErrors = computed<Record<string, string[]>>(() => {
+  if (!mutationError.value) return {};
+  const problemDetails = (mutationError.value as FetchError)?.data as ValidationProblemDetails;
+  if (!problemDetails?.errors) return {};
+  return {
+    ...mapProblemDetailsErrorsToExternalErrors(problemDetails.errors),
+    // property name in api request is different from the one we're using in form state so we have
+    // to map it back manually
+    paidBy: problemDetails.errors['PaidByMemberId'],
+  };
+});
+
+// no expenses in the future allowed
+const maxTimestamp = new Date();
+
+// defines actual form state, allows for invalid (empty) values so fields can be
+// initialised empty or cleared
+type FormState = {
+  description: string;
+  amount: number | null;
+  timestamp: Date | null;
+  paidBy: Member | null;
+  participants: Member[];
+};
+
+const formState = ref<FormState>({
+  description: '',
+  amount: null,
+  timestamp: maxTimestamp,
+  paidBy: null,
+  participants: [...props.members],
+});
+
+// Computed array of valid member IDs for validation
+const validMemberIds = computed(() => props.members.map((m) => m.id));
+
+const formSchema = computed(() =>
+  inferRules(formState, {
+    // Description: required, valid string (1-512 chars)
+    description: {
+      string,
       required,
       minLength: minLength(1),
-      $each: {
-        id: { isMember: isMember(props.members) },
+      maxLength: maxLength(512),
+    },
+
+    // Amount: required, positive decimal (greater than 0)
+    amount: {
+      decimal,
+      required,
+      minValue: minValue(0, { allowEqual: false }),
+    },
+
+    // Timestamp: required, valid date, not in the future
+    timestamp: {
+      date,
+      required,
+      dateBefore: dateBefore(maxTimestamp, { allowEqual: true }),
+    },
+
+    // PaidBy: nested object, validate that id exists and is valid
+    paidBy: {
+      id: {
+        string,
+        required,
+        oneOf: withMessage(oneOf(validMemberIds.value), 'Invalid member selected'),
       },
     },
-  },
-  { externalErrors },
+
+    // Participants: required, non-empty array with valid member IDs
+    participants: {
+      required,
+      $each: {
+        id: {
+          string,
+          required,
+          oneOf: withMessage(oneOf(validMemberIds.value), 'Invalid member selected'),
+        },
+      },
+    },
+  }),
 );
+
+const { r$ } = useRegle(formState, formSchema, { externalErrors });
 
 const onFormSubmit = async () => {
   const { valid, data } = await r$.$validate();
   if (!valid) return;
 
-  // Clear previous errors
-  generalError.value = undefined;
-  isSubmitting.value = true;
-
-  try {
-    const requestBody: CreateExpenseRequest = {
-      description: data.description,
-      amount: data.amount,
-      groupId: props.groupId,
-      timestamp: data.timestamp.toISOString(),
-      paidByMemberId: data.paidBy!['id'],
-      participants: data.participants.map((p) => ({ memberId: p.id })),
-      splitType: 0,
-    };
-    await $backendApi('/Groups/{groupId}/expenses', {
-      method: 'POST',
-      path: {
-        groupId: props.groupId,
-      },
-      body: requestBody,
-    });
-
-    isCreated.value = true;
-  } catch (error) {
-    console.error(error);
-
-    const errorData = (error as { data?: ValidationProblemDetails })?.data;
-
-    if (errorData?.status === 400 && errorData.errors) {
-      externalErrors.value = mapProblemDetailsErrorsToExternalErrors(errorData.errors);
-    }
-
-    if (errorData?.title) {
-      // Handle other API errors (500, 404, etc.) with title
-      generalError.value = errorData.title;
-    } else {
-      // Fallback for unknown errors
-      generalError.value = 'Something went wrong. Please try again.';
-    }
-  } finally {
-    isSubmitting.value = false;
-  }
+  const request: CreateExpenseRequest = {
+    groupId: props.groupId,
+    description: data.description,
+    amount: data.amount,
+    timestamp: data.timestamp.toISOString(),
+    paidByMemberId: data.paidBy.id,
+    splitType: ExpenseSplitType.Evenly,
+    participants: data.participants.map((p) => ({ memberId: p.id })),
+  };
+  mutate(request);
 };
+
 //#endregion
 </script>
 
