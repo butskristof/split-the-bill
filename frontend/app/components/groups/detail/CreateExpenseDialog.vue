@@ -374,7 +374,11 @@ const onFormSubmit = async () => {
     splitType: ExpenseSplitType.Evenly,
     participants: data.participants.map((p) => ({ memberId: p.id })),
   };
-  createExpenseMutation.mutate(request);
+  createExpenseMutation.mutate(request, {
+    onSuccess: () => {
+      setTimeout(tryClose, 1000);
+    },
+  });
 };
 
 //#endregion

@@ -6,7 +6,7 @@
 export const stringIsNullOrWhitespace = (value: string | null | undefined): boolean =>
   !value || !value.trim();
 
-export const pascalCastToCamelCase = (value: string): string =>
+export const pascalCaseToCamelCase = (value: string): string =>
   value.charAt(0).toLowerCase() + value.slice(1);
 
 export const mapProblemDetailsErrorsToExternalErrors = (
@@ -15,7 +15,7 @@ export const mapProblemDetailsErrorsToExternalErrors = (
   const mappedErrors: Record<string, string[]> = {};
   for (const [key, messages] of Object.entries(errors)) {
     // Convert PascalCase (Name) to camelCase (name)
-    const fieldName = pascalCastToCamelCase(key);
+    const fieldName = pascalCaseToCamelCase(key);
     mappedErrors[fieldName] = messages;
   }
   return mappedErrors;
