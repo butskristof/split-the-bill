@@ -20,6 +20,20 @@
       />
     </div>
     <PreformattedText :value="group" />
+    <div class="delete-group">
+      <Button
+        label="Delete group"
+        icon="pi pi-trash"
+        severity="danger"
+        variant="text"
+        @click="openDeleteGroupDialog"
+      />
+      <DeleteGroupDialog
+        v-if="showDeleteGroupDialog"
+        :group="{ id: group.id!, name: group.name! }"
+        @close="closeDeleteGroupDialog"
+      />
+    </div>
   </div>
 </template>
 
@@ -27,6 +41,7 @@
 import PreformattedText from '~/components/common/PreformattedText.vue';
 import CreateExpenseDialog from '~/components/groups/detail/CreateExpenseDialog.vue';
 import type { Group } from '#shared/types/api';
+import DeleteGroupDialog from '~/components/groups/DeleteGroupDialog.vue';
 
 defineProps<{
   group: Group;
@@ -37,6 +52,12 @@ const showCreateExpenseDialog = ref(false);
 const openCreateExpenseDialog = () => (showCreateExpenseDialog.value = true);
 const closeCreateExpenseDialog = () => (showCreateExpenseDialog.value = false);
 //#endregion
+
+//#region delete group dialog
+const showDeleteGroupDialog = ref(false);
+const openDeleteGroupDialog = () => (showDeleteGroupDialog.value = true);
+const closeDeleteGroupDialog = () => (showDeleteGroupDialog.value = false);
+//#endregion
 </script>
 
 <style scoped lang="scss">
@@ -44,5 +65,9 @@ const closeCreateExpenseDialog = () => (showCreateExpenseDialog.value = false);
 
 .group-detail {
   @include utilities.flex-column;
+
+  .delete-group {
+    margin-left: auto;
+  }
 }
 </style>

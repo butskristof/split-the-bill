@@ -134,8 +134,8 @@ const onFormSubmit = async () => {
   };
 
   createGroupMutation.mutate(requestBody, {
-    onSuccess: async (response) => {
-      await navigateTo({ name: 'groups-id', params: { id: response.id } });
+    onSuccess: (response) => {
+      setTimeout(() => navigateTo({ name: 'groups-id', params: { id: response.id } }), 1000);
     },
   });
 };
