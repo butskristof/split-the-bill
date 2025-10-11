@@ -5,7 +5,9 @@ This document outlines features, components, and functionality present in `front
 ## 1. Group Management Features
 
 ### Delete Group Functionality
+
 Complete feature missing from new version:
+
 - `DeleteGroup.vue` component - Delete button with modal trigger
 - `DeleteGroupModal.vue` component - Confirmation modal with error handling
 - Delete API integration
@@ -16,6 +18,7 @@ Complete feature missing from new version:
 ## 2. UI/UX Components
 
 ### Loading & Error States
+
 - **`LoadingIndicator.vue`** - Simple spinner component (`pi pi-spin pi-spinner`)
 - **`PageLoadingIndicator.vue`** - Full page loading with optional message/entity text
 - **`ApiError.vue`** - Comprehensive error display component with:
@@ -28,6 +31,7 @@ Complete feature missing from new version:
 **Location in v0:** `app/components/common/`
 
 ### Navigation
+
 - **`AppPageBackButton.vue`** - Styled back button with:
   - "Back to overview" label
   - Left arrow icon
@@ -37,6 +41,7 @@ Complete feature missing from new version:
 **Location in v0:** `app/components/common/`
 
 ### Layout Components
+
 - **`AppShell.vue`** - Main app layout wrapper with:
   - Min-height viewport fill
   - Flex column layout
@@ -56,6 +61,7 @@ Complete feature missing from new version:
 **Location in v0:** `app/components/app/` and `app/components/common/`
 
 ### Other Components
+
 - **`MemberAvatar.vue`** - Avatar component with:
   - Tooltip showing member name
   - First letter extraction
@@ -107,6 +113,7 @@ The v0 version has a sophisticated, component-based header structure:
 - **`AppHeaderMenuItems.vue`** - Navigation menu items component
 
 **Features in v0 header:**
+
 - Responsive hamburger menu for mobile devices
 - User authentication display with dropdown
 - Avatar with user initial
@@ -128,12 +135,14 @@ The v0 version has a sophisticated, component-based header structure:
 ## 6. Dependencies & Libraries
 
 ### Missing from New Version
+
 - **`@nuxtjs/color-mode`** - Dark mode support and color scheme management
 - **`@nuxt/icon`** - Icon component with multiple icon sets
 - **`@vueuse/nuxt`** - VueUse utilities (breakpoints, click outside, etc.)
 - **`@primevue/forms`** - PrimeVue forms integration with resolvers
 
 ### Added in New Version (Not in v0)
+
 - **`@regle/core`, `@regle/nuxt`, `@regle/rules`, `@regle/schemas`** - Form validation library
 - **`@tanstack/vue-query`** - Data fetching and state management
 - **`nuxt-security`** - Security headers and protections module
@@ -151,7 +160,9 @@ The v0 version has a sophisticated, component-based header structure:
 ## 8. Type Definitions & Enums
 
 ### app/types.d.ts
+
 Centralized type definitions including:
+
 - `Query<T>` - Type for async data queries from useLazyBackendApi
 - `ProblemDetails` - Error response type
 - `ValidationProblemDetails` - Validation error type
@@ -164,17 +175,20 @@ Centralized type definitions including:
 **Location in v0:** `app/types.d.ts`
 
 ### app/enums.ts
+
 - `ExpenseSplitType` enum (v0 uses traditional enum, new version uses const object pattern)
 
 **Location in v0:** `app/enums.ts`
 
 ### Type Organization Differences
+
 - **v0:** Uses `shared/common/types.d.ts` (just ProblemDetails)
 - **New:** Uses `shared/types/api.ts` with more extensive type definitions
 
 ## 9. Page Structure Differences
 
 ### Group Detail Route
+
 - **v0:** Nested routing pattern
   - `groups/[id].vue` - Layout page with loading/error handling and PageLoadingIndicator
   - `groups/[id]/index.vue` - Content page with GroupDetail component and AppPageBackButton
@@ -185,12 +199,14 @@ Centralized type definitions including:
   - No nested routing
 
 ### Auth Info Page
+
 - **v0:** `/user/auth-info.vue`
 - **New:** `/auth/info.vue`
 
 ## 10. Styling & Theme
 
 ### Color Mode
+
 - **v0:** Has `@nuxtjs/color-mode` module with:
   - `ColorModeButtonHeadless.vue` component for toggling
   - Manual dark mode implementation throughout components
@@ -198,10 +214,12 @@ Centralized type definitions including:
 - **New:** No color mode toggle functionality (removed)
 
 ### Style File Organization
+
 - **v0:** `app/assets/styles/utilities.scss`
 - **New:** `app/styles/_utilities.scss`
 
 ### Theme Customization
+
 - **v0:** Uses default Lara theme from PrimeVue
 - **New:** Extensive PrimeVue theme customization with:
   - Emerald primary color palette
@@ -212,14 +230,18 @@ Centralized type definitions including:
 ## 11. Data Fetching Pattern
 
 ### v0 Pattern
+
 Uses direct `useLazyBackendApi` calls with manual error/loading handling:
+
 ```typescript
 const query: Query<GetGroupsResponse> = await useLazyBackendApi('/Groups', { key: 'groups' });
 const isLoading = computed(() => query.status.value === 'pending');
 ```
 
 ### New Pattern
+
 Uses TanStack Query with dedicated composables:
+
 - `useGetGroupsQuery.ts` - Query for groups list
 - `useGetGroupQuery.ts` - Query for single group
 - `useCreateGroupMutation.ts` - Mutation for creating groups
@@ -230,18 +252,21 @@ Uses TanStack Query with dedicated composables:
 **Location in new:** `app/composables/backend-api/`
 
 **Benefits of new pattern:**
+
 - Better caching and invalidation
 - Automatic refetching
 - Optimistic updates
 - Better TypeScript inference
 
 **Lost in migration:**
+
 - Direct useLazyBackendApi calls are more verbose
 - Need to create composables for each endpoint
 
 ## 12. Configuration Differences
 
 ### nuxt.config.ts
+
 - **Module order:** Different between versions
 - **Security module:** New version has `nuxt-security` in modules array, v0 has empty config
 - **OpenFetch config:** Both have it but in different order in file
@@ -273,11 +298,13 @@ Uses TanStack Query with dedicated composables:
 ## Overall Assessment
 
 The new version represents a modernization effort focusing on:
+
 - TanStack Query for data management (better caching, invalidation)
 - Regle for form validation (replacing Valibot with PrimeVue Forms)
 - Simplified architecture with fewer files
 
 However, significant UI/UX features are missing:
+
 - **Critical:** Error handling components (ApiError)
 - **Critical:** Loading states (LoadingIndicator, PageLoadingIndicator, Skeletons)
 - **Critical:** Delete group functionality
@@ -291,6 +318,7 @@ However, significant UI/UX features are missing:
 ## Next Steps
 
 When bringing features from v0 to the new version, consider:
+
 1. **Start with critical UI components:** ApiError, LoadingIndicator, PageLoadingIndicator
 2. **Add delete functionality:** Adapt to new TanStack Query pattern
 3. **Restore user menu:** AppHeaderUserInfo and related components

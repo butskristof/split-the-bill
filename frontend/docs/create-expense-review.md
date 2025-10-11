@@ -9,6 +9,7 @@
 The `CreateExpenseDialog.vue` component is functionally complete but has several areas requiring improvement to meet production-ready standards. The analysis identified **23 distinct issues** across 7 categories, ranging from critical TypeScript type safety problems to accessibility gaps and significant code duplication opportunities.
 
 **Key Findings:**
+
 - 🔴 **Critical**: Type safety issues with non-null assertions and unsafe type narrowing
 - 🟠 **High**: Substantial code duplication with `CreateGroupDialog.vue` (~80% similar logic)
 - 🟡 **Medium**: Missing accessibility attributes (ARIA) for screen reader users
@@ -21,11 +22,13 @@ The `CreateExpenseDialog.vue` component is functionally complete but has several
 ### 1.1 Non-null Assertion and Bracket Notation (Line 295)
 
 **Issue:**
+
 ```typescript
 paidByMemberId: data.paidBy!['id'],  // ❌ BAD
 ```
 
 **Problems:**
+
 - Uses non-null assertion (`!`) which bypasses TypeScript's safety guarantees
 - Uses bracket notation `['id']` instead of dot notation
 - The assertion is actually **unnecessary** because Regle's `$validate()` provides type-safe output
@@ -34,6 +37,7 @@ paidByMemberId: data.paidBy!['id'],  // ❌ BAD
 According to TypeScript best practices research, "Type assertions limit the ability of the TypeScript compiler to do type checking, which can lead to bugs in our system which TypeScript was meant to prevent." The non-null assertion could mask runtime errors if the validation logic changes.
 
 **Solution:**
+
 ```typescript
 // ✅ GOOD - Regle guarantees data.paidBy exists after successful validation
 paidByMemberId: data.paidBy.id,
@@ -57,6 +61,7 @@ const mapFormToRequest = (data: ValidatedFormData): CreateExpenseRequest => ({
 ### 1.2 Local Member Type Definition (Lines 203-206)
 
 **Issue:**
+
 ```typescript
 type Member = {
   id: string;
@@ -65,22 +70,21 @@ type Member = {
 ```
 
 **Problems:**
+
 - Duplicates type that likely exists in API schema
 - Not co-located with other shared types
 - Could drift from actual API contract
 
 **Solution:**
+
 ```typescript
 // Create frontend/shared/types/member.ts
 import type { components } from '#open-fetch-schemas/backend-api';
 
-export type Member = components['schemas']['GroupMember'];  // Use generated type
+export type Member = components['schemas']['GroupMember']; // Use generated type
 
 // Or if you need a specific subset:
-export type MemberSummary = Pick<
-  components['schemas']['GroupMember'],
-  'id' | 'name'
->;
+export type MemberSummary = Pick<components['schemas']['GroupMember'], 'id' | 'name'>;
 ```
 
 ---
@@ -88,6 +92,7 @@ export type MemberSummary = Pick<
 ### 1.3 Unsafe Type Guards in Custom Validator (Lines 239-255)
 
 **Issue:**
+
 ```typescript
 const isMember = createRule({
   validator(value: unknown, members: { id: string }[]) {
@@ -97,7 +102,7 @@ const isMember = createRule({
     if (typeof value === 'string') {
       id = value;
     } else if (typeof value === 'object' && 'id' in value) {
-      id = (value as { id: string }).id;  // ❌ Type assertion
+      id = (value as { id: string }).id; // ❌ Type assertion
     } else {
       return false;
     }
@@ -109,12 +114,14 @@ const isMember = createRule({
 ```
 
 **Problems:**
+
 - Uses type assertion `as { id: string }`
 - Doesn't properly narrow the type
 - `'id' in value` check doesn't guarantee `id` is a string
 - Mixes string IDs with object handling (unclear why both are needed)
 
 **Solution using proper type guards:**
+
 ```typescript
 // frontend/shared/validators/member.ts
 import { createRule } from '@regle/core';
@@ -156,6 +163,7 @@ This is a **high-priority** issue. Comparing `CreateExpenseDialog.vue` and `Crea
 
 **Duplicated Code:**
 Both components have identical state management:
+
 ```typescript
 const externalErrors = ref<Record<string, string[]>>({});
 const generalError = ref<string>();
@@ -196,10 +204,10 @@ export interface UseFormDialogReturn<TForm> {
 }
 
 export function useFormDialog<TForm extends Record<string, any>>(
-  options: UseFormDialogOptions<TForm> = {}
+  options: UseFormDialogOptions<TForm> = {},
 ): UseFormDialogReturn<TForm> {
   const externalErrors = ref<RegleExternalErrorTree<TForm>>(
-    options.initialExternalErrors ?? {}
+    options.initialExternalErrors ?? {},
   ) as Ref<RegleExternalErrorTree<TForm>>;
 
   const generalError = ref<string>();
@@ -258,10 +266,10 @@ export interface UseFormSubmitOptions<TForm> {
 }
 
 export function useFormSubmit<TForm extends Record<string, any>>(
-  options: UseFormSubmitOptions<TForm>
+  options: UseFormSubmitOptions<TForm>,
 ) {
   const handleSubmit = async <TResponse>(
-    submitFn: () => Promise<TResponse>
+    submitFn: () => Promise<TResponse>,
   ): Promise<{ success: boolean; data?: TResponse }> => {
     // Clear previous errors
     options.generalError.value = undefined;
@@ -283,7 +291,7 @@ export function useFormSubmit<TForm extends Record<string, any>>(
 
       if (errorData?.status === 400 && errorData.errors) {
         options.externalErrors.value = mapProblemDetailsErrorsToExternalErrors(
-          errorData.errors
+          errorData.errors,
         ) as RegleExternalErrorTree<TForm>;
       }
 
@@ -304,6 +312,7 @@ export function useFormSubmit<TForm extends Record<string, any>>(
 ```
 
 **Usage in Component:**
+
 ```typescript
 const formDialogState = useFormDialog<typeof form>();
 const { handleSubmit } = useFormSubmit(formDialogState);
@@ -350,7 +359,7 @@ export interface UseFormDialogCloseOptions {
 
 export function useFormDialogClose(
   emit: (event: 'close', created: boolean) => void,
-  options: UseFormDialogCloseOptions
+  options: UseFormDialogCloseOptions,
 ) {
   const defaultConfirmMessage =
     'There are unsaved changes. Are you sure you want to close this dialog?';
@@ -359,9 +368,7 @@ export function useFormDialogClose(
     const shouldClose =
       options.isCreated.value ||
       !options.isDirty.value ||
-      (options.confirmFn ?? confirm)(
-        options.confirmMessage ?? defaultConfirmMessage
-      );
+      (options.confirmFn ?? confirm)(options.confirmMessage ?? defaultConfirmMessage);
 
     if (shouldClose) {
       emit('close', options.isCreated.value);
@@ -373,6 +380,7 @@ export function useFormDialogClose(
 ```
 
 **Usage:**
+
 ```typescript
 const { tryClose } = useFormDialogClose(emit, {
   isDirty: computed(() => r$.$anyDirty),
@@ -448,7 +456,7 @@ withDefaults(
     loadingLabel: 'Saving...',
     submitIcon: 'pi pi-save',
     ariaLive: 'polite',
-  }
+  },
 );
 
 defineEmits<{
@@ -483,12 +491,9 @@ According to WCAG 2.1 AA standards and PrimeVue accessibility best practices, se
 Error messages are displayed but not programmatically associated with their inputs.
 
 **Current (Lines 17-29):**
+
 ```vue
-<InputText
-  id="description"
-  v-model.trim="r$.$value.description"
-  :invalid="r$.description.$error"
-/>
+<InputText id="description" v-model.trim="r$.$value.description" :invalid="r$.description.$error" />
 <div v-if="r$.description.$error" class="errors">
   <Message
     v-for="error in r$.description.$errors"
@@ -501,22 +506,16 @@ Error messages are displayed but not programmatically associated with their inpu
 ```
 
 **Solution:**
+
 ```vue
 <InputText
   id="description"
   v-model.trim="r$.$value.description"
   :invalid="r$.description.$error"
   :aria-invalid="r$.description.$error"
-  :aria-describedby="
-    r$.description.$error ? 'description-errors' : undefined
-  "
+  :aria-describedby="r$.description.$error ? 'description-errors' : undefined"
 />
-<div
-  v-if="r$.description.$error"
-  id="description-errors"
-  class="errors"
-  role="alert"
->
+<div v-if="r$.description.$error" id="description-errors" class="errors" role="alert">
   <Message
     v-for="(error, index) in r$.description.$errors"
     :key="error"
@@ -540,11 +539,9 @@ Error messages are displayed but not programmatically associated with their inpu
 Screen readers aren't informed when the form is submitting.
 
 **Solution:**
+
 ```vue
-<form
-  @submit.prevent="onFormSubmit"
-  :aria-busy="isSubmitting"
->
+<form @submit.prevent="onFormSubmit" :aria-busy="isSubmitting">
   <!-- form content -->
 </form>
 ```
@@ -557,32 +554,21 @@ Screen readers aren't informed when the form is submitting.
 Success message (line 161-167) isn't announced to screen readers.
 
 **Current:**
+
 ```vue
-<Message
-  v-if="isCreated"
-  severity="success"
->
+<Message v-if="isCreated" severity="success">
   New expense created successfully!
 </Message>
 ```
 
 **Solution:**
+
 ```vue
-<Message
-  v-if="isCreated"
-  severity="success"
-  aria-live="polite"
-  role="status"
->
+<Message v-if="isCreated" severity="success" aria-live="polite" role="status">
   New expense created successfully!
 </Message>
 
-<Message
-  v-if="generalError"
-  severity="error"
-  aria-live="assertive"
-  role="alert"
->
+<Message v-if="generalError" severity="error" aria-live="assertive" role="alert">
   {{ generalError }}
 </Message>
 ```
@@ -655,6 +641,7 @@ export { isValidDate, isFutureDate, isPastDate } from './date';
 Magic numbers like `maxLength(512)` (line 266) are scattered.
 
 **Solution:**
+
 ```typescript
 // frontend/shared/constants/validation.ts
 export const VALIDATION_LIMITS = {
@@ -667,15 +654,12 @@ export const VALIDATION_LIMITS = {
 // Usage:
 import { VALIDATION_LIMITS } from '#shared/constants/validation';
 
-const { r$ } = useRegle(
-  form,
-  {
-    description: {
-      required,
-      maxLength: maxLength(VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH),
-    },
-  }
-);
+const { r$ } = useRegle(form, {
+  description: {
+    required,
+    maxLength: maxLength(VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH),
+  },
+});
 ```
 
 ---
@@ -686,15 +670,13 @@ const { r$ } = useRegle(
 Default error messages from Regle rules.
 
 **Better:**
+
 ```typescript
 // frontend/shared/validators/messages.ts
 import { withMessage } from '@regle/rules';
 import type { Rule } from '@regle/core';
 
-export function withTranslatedMessage<T extends Rule>(
-  rule: T,
-  messageKey: string
-) {
+export function withTranslatedMessage<T extends Rule>(rule: T, messageKey: string) {
   return withMessage(rule, (ctx) => {
     const { t } = useI18n();
     return t(messageKey, ctx.$params);
@@ -705,10 +687,7 @@ export function withTranslatedMessage<T extends Rule>(
 const { r$ } = useRegle(form, {
   description: {
     required: withTranslatedMessage(required, 'validation.required'),
-    maxLength: withTranslatedMessage(
-      maxLength(512),
-      'validation.maxLength'
-    ),
+    maxLength: withTranslatedMessage(maxLength(512), 'validation.maxLength'),
   },
 });
 ```
@@ -720,6 +699,7 @@ const { r$ } = useRegle(form, {
 ### 5.1 Extract Types
 
 **Create:**
+
 ```typescript
 // frontend/app/components/groups/detail/CreateExpenseDialog.types.ts
 import type { components } from '#open-fetch-schemas/backend-api';
@@ -751,6 +731,7 @@ export interface CreateExpenseDialogEmits {
 Line 297 uses magic number `splitType: 0`.
 
 **Solution:**
+
 ```typescript
 // frontend/shared/types/expense.ts
 export enum SplitType {
@@ -774,11 +755,13 @@ const requestBody: CreateExpenseRequest = {
 ### 6.1 Type-Safe Error Extraction
 
 **Issue (Line 311):**
+
 ```typescript
 const errorData = (error as { data?: ValidationProblemDetails })?.data;
 ```
 
 **Solution:**
+
 ```typescript
 // frontend/shared/utils/errors.ts
 import type { components } from '#open-fetch-schemas/backend-api';
@@ -829,6 +812,7 @@ catch (error) {
 ### 7.1 Computed Max Timestamp
 
 **Issue (Line 237):**
+
 ```typescript
 const maxTimestamp = new Date();
 ```
@@ -836,6 +820,7 @@ const maxTimestamp = new Date();
 Hardcoded at component creation time.
 
 **Better:**
+
 ```typescript
 const maxTimestamp = computed(() => new Date());
 
@@ -849,6 +834,7 @@ export const getCurrentDateTime = () => new Date();
 ### 7.2 Keyboard Shortcuts
 
 **Add ESC to close:**
+
 ```typescript
 // In composable or component:
 onMounted(() => {
@@ -871,12 +857,14 @@ onMounted(() => {
 ## 8. Recommended Refactoring Roadmap
 
 ### Phase 1: Critical Fixes (1-2 days)
+
 1. ✅ Fix TypeScript type safety issues (lines 295, 240-255)
 2. ✅ Extract Member type to shared location
 3. ✅ Add SplitType enum
 4. ✅ Fix error extraction type safety
 
 ### Phase 2: Code Reusability (2-3 days)
+
 1. ✅ Create `useFormDialog` composable
 2. ✅ Create `useFormSubmit` composable
 3. ✅ Create `useFormDialogClose` composable
@@ -884,6 +872,7 @@ onMounted(() => {
 5. ✅ Refactor both dialog components to use new composables
 
 ### Phase 3: Accessibility (1-2 days)
+
 1. ✅ Add aria-describedby to all form fields
 2. ✅ Add aria-busy to forms
 3. ✅ Add aria-live to messages
@@ -891,6 +880,7 @@ onMounted(() => {
 5. ✅ Test with screen reader
 
 ### Phase 4: Polish (1 day)
+
 1. ✅ Extract validation constants
 2. ✅ Add i18n for error messages
 3. ✅ Add keyboard shortcuts
@@ -900,16 +890,16 @@ onMounted(() => {
 
 ## Summary Statistics
 
-| Category | Issues Found | Priority |
-|----------|--------------|----------|
-| TypeScript Safety | 3 | 🔴 Critical |
-| Code Duplication | 4 | 🟠 High |
-| Accessibility | 4 | 🟡 Medium-High |
-| Validation | 3 | 🟡 Medium |
-| Organization | 2 | 🟢 Low-Medium |
-| Error Handling | 1 | 🟡 Medium |
-| Other | 6 | 🟢 Low |
-| **Total** | **23** | |
+| Category          | Issues Found | Priority       |
+| ----------------- | ------------ | -------------- |
+| TypeScript Safety | 3            | 🔴 Critical    |
+| Code Duplication  | 4            | 🟠 High        |
+| Accessibility     | 4            | 🟡 Medium-High |
+| Validation        | 3            | 🟡 Medium      |
+| Organization      | 2            | 🟢 Low-Medium  |
+| Error Handling    | 1            | 🟡 Medium      |
+| Other             | 6            | 🟢 Low         |
+| **Total**         | **23**       |                |
 
 **Estimated Effort:** 6-8 days for complete refactoring across both dialog components.
 
