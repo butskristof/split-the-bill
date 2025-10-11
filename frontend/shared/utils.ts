@@ -6,33 +6,17 @@
 export const stringIsNullOrWhitespace = (value: string | null | undefined): boolean =>
   !value || !value.trim();
 
-export const getUpperCaseFirstLetter = (
-  value:
-    | string
-    | null
-    | undefined
-    | Ref<string | null | undefined>
-    | ComputedRef<string | null | undefined>,
-): string => {
-  const str = unref(value);
-  return str?.charAt(0).toUpperCase() ?? '';
-};
+export const pascalCaseToCamelCase = (value: string): string =>
+  value.charAt(0).toLowerCase() + value.slice(1);
 
-export const formatTimestamp = (timestamp: string | number): string => {
-  const date = new Date(timestamp);
-  return date.toLocaleString('nl-BE', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-};
-
-export const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('nl-BE', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(value);
+export const mapProblemDetailsErrorsToExternalErrors = (
+  errors: Record<string, string[]>,
+): Record<string, string[]> => {
+  const mappedErrors: Record<string, string[]> = {};
+  for (const [key, messages] of Object.entries(errors)) {
+    // Convert PascalCase (Name) to camelCase (name)
+    const fieldName = pascalCaseToCamelCase(key);
+    mappedErrors[fieldName] = messages;
+  }
+  return mappedErrors;
 };

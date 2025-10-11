@@ -1,47 +1,58 @@
 <template>
-  <AppCard
-    tag="main"
-    class="groups-overview"
-  >
-    <div class="header">
-      <h1>Groups</h1>
+  <div class="page-groups">
+    <div class="page-header">
+      <h1>Your groups</h1>
       <div class="actions">
-        <LoadingIndicator v-if="isLoading" />
-        <CreateGroup @created="onCreated" />
+        <Button
+          label="Create new group"
+          icon="pi pi-plus"
+          @click="openCreateGroupDialog"
+        />
       </div>
     </div>
-    <GroupsList :query="query" />
-  </AppCard>
+    <GroupsList
+      v-if="groups"
+      :groups="groups"
+    />
+    <CreateGroupDialog
+      v-if="showCreateGroupDialog"
+      @close="closeCreateGroupDialog"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
-import GroupsList from '~/components/groups/overview/list/GroupsList.vue';
-import LoadingIndicator from '~/components/common/LoadingIndicator.vue';
-import AppCard from '~/components/common/AppCard.vue';
-import CreateGroup from '~/components/groups/edit/CreateGroup.vue';
-import type { Query } from '~/types';
-import type { GetGroupsResponse } from '~/components/groups/overview/types';
+import GroupsList from '~/components/groups/overview/GroupsList.vue';
+import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vue';
+import { useGetGroupsQuery } from '~/composables/backend-api/useGetGroupsQuery';
 
-const query: Query<GetGroupsResponse> = await useLazyBackendApi('/Groups', { key: 'groups' });
-const isLoading = computed<boolean>(() => query.status.value === 'pending');
+// TODO loading state
+const { data: groups, suspense } = useGetGroupsQuery();
+await suspense();
 
-const onCreated = (): void => {
-  query.refresh();
-};
+//#region create group dialog
+
+const showCreateGroupDialog = ref(false);
+const openCreateGroupDialog = () => (showCreateGroupDialog.value = true);
+const closeCreateGroupDialog = () => (showCreateGroupDialog.value = false);
+
+//#endregion
 </script>
 
 <style scoped lang="scss">
-@use '~/assets/styles/utilities';
+@use '~/styles/_utilities.scss';
 
-.groups-overview {
+.page-groups {
   @include utilities.flex-column;
+}
 
-  .header {
-    @include utilities.flex-row-justify-between-align-center;
+.page-header {
+  @include utilities.flex-row-justify-between-align-center;
+  flex-wrap: wrap;
 
-    .actions {
-      @include utilities.flex-row-align-center;
-    }
+  .actions {
+    //flex-wrap: nowrap;
+    margin-left: auto;
   }
 }
 </style>

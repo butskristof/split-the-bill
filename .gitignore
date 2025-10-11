@@ -941,6 +941,6 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # CUSTOM - SPLIT THE BILL
+*.local.json
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,vim,visualstudiocode,rider,webstorm+all,visualstudio,node,vue,vuejs,nuxtjs,dotnetcore,aspnetcore
-

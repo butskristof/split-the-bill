@@ -1,0 +1,418 @@
+<template>
+  <AppDialog
+    header="Add new expense"
+    @close="tryClose"
+  >
+    <form @submit.prevent="onFormSubmit">
+      <div class="form-field">
+        <label for="description">Description</label>
+        <InputText
+          id="description"
+          v-model.trim="r$.$value.description"
+          type="text"
+          :invalid="r$.description.$error"
+          :disabled="formDisabled"
+          autofocus
+        />
+        <div
+          v-if="r$.description.$error"
+          class="errors"
+        >
+          <Message
+            v-for="error in r$.description.$errors"
+            :key="error"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ error }}</Message
+          >
+        </div>
+      </div>
+
+      <div class="amount-timestamp">
+        <div class="form-field">
+          <label for="amount">Amount</label>
+          <InputNumber
+            v-model="r$.$value.amount"
+            input-id="amount"
+            mode="currency"
+            currency="EUR"
+            :min="0.01"
+            :min-fraction-digits="2"
+            :max-fraction-digits="2"
+            :invalid="r$.amount.$error"
+            :disabled="formDisabled"
+          />
+          <div
+            v-if="r$.amount.$error"
+            class="errors"
+          >
+            <Message
+              v-for="error in r$.amount.$errors"
+              :key="error"
+              severity="error"
+              size="small"
+              variant="simple"
+              >{{ error }}</Message
+            >
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="timestamp">Date and time</label>
+          <DatePicker
+            v-model="r$.$value.timestamp"
+            input-id="timestamp"
+            date-format="dd/mm/yy"
+            show-time
+            hour-format="24"
+            :max-date="maxTimestamp"
+            show-button-bar
+            :invalid="r$.timestamp.$error"
+            :disabled="formDisabled"
+            fluid
+            update-model-type="date"
+          />
+          <div
+            v-if="r$.timestamp.$error"
+            class="errors"
+          >
+            <Message
+              v-for="error in r$.timestamp.$errors"
+              :key="error"
+              severity="error"
+              size="small"
+              variant="simple"
+              >{{ error }}</Message
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="paidBy">Paid by</label>
+        <Select
+          v-model="r$.$value.paidBy"
+          input-id="paidBy"
+          :options="props.members"
+          option-label="name"
+          :invalid="r$.paidBy.$error"
+          :disabled="formDisabled"
+          show-clear
+        />
+        <div
+          v-if="r$.paidBy.$error"
+          class="errors"
+        >
+          <Message
+            v-for="error of paidByErrors"
+            :key="error"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ error }}</Message
+          >
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="participants">Participants</label>
+        <Listbox
+          id="participants"
+          v-model="r$.$value.participants"
+          :options="props.members"
+          option-label="name"
+          multiple
+          :invalid="r$.participants.$error"
+          :disabled="formDisabled"
+          fluid
+        />
+        <div
+          v-if="r$.participants.$error"
+          class="errors"
+        >
+          <Message
+            v-for="error in participantsErrors"
+            :key="error"
+            severity="error"
+            size="small"
+            variant="simple"
+            >{{ error }}
+          </Message>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <div class="messages">
+          <Message
+            v-if="isCreated"
+            severity="success"
+            variant="simple"
+            icon="pi pi-check"
+          >
+            New expense created successfully!
+          </Message>
+          <Message
+            v-if="apiErrorTitle"
+            severity="error"
+            variant="simple"
+          >
+            {{ apiErrorTitle }}
+          </Message>
+        </div>
+        <div class="actions">
+          <Button
+            label="Cancel"
+            severity="secondary"
+            :disabled="formDisabled"
+            @click="tryClose"
+          />
+          <Button
+            type="submit"
+            icon="pi pi-save"
+            :loading="isSubmitting"
+            :disabled="formDisabled"
+            :label="isSubmitting ? 'Saving...' : 'Save'"
+          />
+        </div>
+      </div>
+    </form>
+  </AppDialog>
+</template>
+
+<script setup lang="ts">
+import AppDialog from '~/components/common/AppDialog.vue';
+import { ExpenseSplitType } from '#shared/types/expense-split-type';
+import { inferRules } from '@regle/core';
+import {
+  date,
+  dateBefore,
+  decimal,
+  maxLength,
+  minLength,
+  minValue,
+  oneOf,
+  required,
+  string,
+  withMessage,
+} from '@regle/rules';
+import type { CreateExpenseRequest } from '#shared/types/api';
+import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
+import type { FetchError } from 'ofetch';
+import { useCreateExpenseMutation } from '~/composables/backend-api/useCreateExpenseMutation';
+
+type Member = {
+  id: string;
+  name: string;
+};
+
+const props = defineProps<{
+  groupId: string;
+  members: Member[];
+}>();
+const emit = defineEmits<{
+  close: [];
+}>();
+const tryClose = () => {
+  // should either not be touched by user or confirmed they want to close and lose changes
+  if (
+    isCreated.value ||
+    !r$.$anyDirty ||
+    confirm('There are unsaved changes. Are you sure you want to close this dialog?')
+  ) {
+    emit('close');
+  }
+};
+
+//#region form
+
+const createExpenseMutation = useCreateExpenseMutation();
+const isSubmitting = computed(() => createExpenseMutation.isPending.value);
+const isCreated = computed(() => createExpenseMutation.isSuccess.value);
+
+const formDisabled = computed<boolean>(() => isSubmitting.value || isCreated.value);
+// map to a single string[]
+const paidByErrors = computed<string[]>(() =>
+  // for now we only care about the messages, not the property they appeared on (only validation on
+  // id for now)
+  Object.entries(r$.paidBy.$errors).flatMap(([, v]) => v),
+);
+const participantsErrors = computed<string[]>(() => {
+  // regle returns different formats for collection and individual item errors, we'll map to a
+  // flat string[] for now,
+  // example returns of r$.participants.$errors:
+  /*
+  {
+    "$self": [
+      "This field is required"
+    ],
+    "$each": []
+  }
+   */
+  /*
+  {
+    "$self": [],
+    "$each": [
+      {
+        "id": [
+          "Invalid member selected"
+        ],
+        "name": []
+      }
+    ]
+  }
+   */
+
+  return [
+    ...r$.participants.$errors.$self,
+    ...r$.participants.$errors.$each.flatMap((itemErrors) =>
+      Object.entries(itemErrors).flatMap(([, v]) => v as string[]),
+    ),
+  ];
+});
+const apiErrorTitle = computed<string | null>(() => {
+  if (!createExpenseMutation.error.value) return null;
+  const problemDetails = (createExpenseMutation.error.value as FetchError)?.data as ProblemDetails;
+  return problemDetails?.title ?? 'Something went wrong, please try again later.';
+});
+const externalErrors = computed<Record<string, string[]>>(() => {
+  if (!createExpenseMutation.error.value) return {};
+  const problemDetails = (createExpenseMutation.error.value as FetchError)
+    ?.data as ValidationProblemDetails;
+  if (!problemDetails?.errors) return {};
+  return {
+    ...mapProblemDetailsErrorsToExternalErrors(problemDetails.errors),
+    // property name in api request is different from the one we're using in form state so we have
+    // to map it back manually
+    paidBy: problemDetails.errors['PaidByMemberId'],
+  };
+});
+
+// no expenses in the future allowed
+const maxTimestamp = new Date();
+
+// defines actual form state, allows for invalid (empty) values so fields can be
+// initialised empty or cleared
+type FormState = {
+  description: string;
+  amount: number | null;
+  timestamp: Date | null;
+  paidBy: Member | null;
+  participants: Member[];
+};
+
+const formState = ref<FormState>({
+  description: '',
+  amount: null,
+  timestamp: maxTimestamp,
+  paidBy: null,
+  participants: [...props.members],
+});
+
+// Computed array of valid member IDs for validation
+const validMemberIds = computed(() => props.members.map((m) => m.id));
+
+const formSchema = computed(() =>
+  inferRules(formState, {
+    // Description: required, valid string (1-512 chars)
+    description: {
+      string,
+      required,
+      minLength: minLength(1),
+      maxLength: maxLength(512),
+    },
+
+    // Amount: required, positive decimal (greater than 0)
+    amount: {
+      decimal,
+      required,
+      minValue: minValue(0, { allowEqual: false }),
+    },
+
+    // Timestamp: required, valid date, not in the future
+    timestamp: {
+      date,
+      required,
+      dateBefore: dateBefore(maxTimestamp, { allowEqual: true }),
+    },
+
+    // PaidBy: nested object, validate that id exists and is valid
+    paidBy: {
+      id: {
+        string,
+        required,
+        oneOf: withMessage(oneOf(validMemberIds.value), 'Invalid member selected'),
+      },
+    },
+
+    // Participants: required, non-empty array with valid member IDs
+    participants: {
+      required,
+      $each: {
+        id: {
+          string,
+          required,
+          oneOf: withMessage(oneOf(validMemberIds.value), 'Invalid member selected'),
+        },
+      },
+    },
+  }),
+);
+
+const { r$ } = useRegle(formState, formSchema, { externalErrors });
+
+const onFormSubmit = async () => {
+  const { valid, data } = await r$.$validate();
+  if (!valid) return;
+
+  const request: CreateExpenseRequest = {
+    groupId: props.groupId,
+    description: data.description,
+    amount: data.amount,
+    timestamp: data.timestamp.toISOString(),
+    paidByMemberId: data.paidBy.id,
+    splitType: ExpenseSplitType.Evenly,
+    participants: data.participants.map((p) => ({ memberId: p.id })),
+  };
+  createExpenseMutation.mutate(request, {
+    onSuccess: () => {
+      setTimeout(tryClose, 1000);
+    },
+  });
+};
+
+//#endregion
+</script>
+
+<style scoped lang="scss">
+@use '~/styles/_utilities.scss';
+
+form {
+  @include utilities.flex-column;
+
+  .form-field {
+    @include utilities.flex-column(false);
+    gap: calc(var(--default-spacing) / 2);
+  }
+
+  .amount-timestamp {
+    @include utilities.flex-row;
+    flex-wrap: wrap;
+
+    .form-field {
+      flex: 1 1 0;
+      min-width: calc(var(--default-spacing) * 12);
+    }
+  }
+
+  .form-footer {
+    @include utilities.flex-row-justify-between;
+    flex-wrap: wrap;
+
+    .actions {
+      @include utilities.flex-row-justify-end;
+      margin-left: auto;
+    }
+  }
+}
+</style>

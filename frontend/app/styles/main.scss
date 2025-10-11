@@ -1,0 +1,33 @@
+@use './_utilities.scss';
+
+:root {
+  --default-spacing: 1rem;
+  --default-radius: 0.25rem;
+
+  //--app-container: 80rem; // 1280px
+  --app-container: 64rem; // 1024px
+  --app-header-height: calc(var(--default-spacing) * 4);
+  --app-footer-height: calc(var(--default-spacing) * 2);
+
+  --text-base: 1rem;
+  --text-sm: 0.875rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+
+  --font-weight-default: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+}
+
+html,
+body {
+  font-family: Nunito, ui-sans-serif, system-ui, sans-serif;
+
+  background-color: var(--p-surface-50);
+  @include utilities.dark-mode {
+    background-color: var(--p-surface-950);
+  }
+}

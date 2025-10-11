@@ -1,28 +1,81 @@
-import Aura from '@primeuix/themes/aura';
+import Lara from '@primeuix/themes/lara';
+import { definePreset } from '@primeuix/themes';
+
+const theme = definePreset(Lara, {
+  semantic: {
+    primary: {
+      50: '{emerald.50}',
+      100: '{emerald.100}',
+      200: '{emerald.200}',
+      300: '{emerald.300}',
+      400: '{emerald.400}',
+      500: '{emerald.500}',
+      600: '{emerald.600}',
+      700: '{emerald.700}',
+      800: '{emerald.800}',
+      900: '{emerald.900}',
+      950: '{emerald.950}',
+    },
+    colorScheme: {
+      light: {
+        surface: {
+          0: '#ffffff',
+          50: '{neutral.50}',
+          100: '{neutral.100}',
+          200: '{neutral.200}',
+          300: '{neutral.300}',
+          400: '{neutral.400}',
+          500: '{neutral.500}',
+          600: '{neutral.600}',
+          700: '{neutral.700}',
+          800: '{neutral.800}',
+          900: '{neutral.900}',
+          950: '{neutral.950}',
+        },
+      },
+      dark: {
+        surface: {
+          0: '#ffffff',
+          50: '#ececec',
+          100: '#dedfdf',
+          200: '#c4c4c6',
+          300: '#adaeb0',
+          400: '#97979b',
+          500: '#7f8084',
+          600: '#6a6b70',
+          700: '#55565b',
+          800: '#3f4046',
+          900: '#2c2c34',
+          950: '#16161d',
+        },
+      },
+    },
+  },
+});
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-08-30',
+  compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
-    '@nuxtjs/color-mode',
+    'nuxt-security',
     '@primevue/nuxt-module',
-    '@nuxt/icon',
-    '@vueuse/nuxt',
     'nuxt-oidc-auth',
     'nuxt-open-fetch',
+    '@regle/nuxt',
   ],
-  css: ['~/assets/styles/reset.css', 'primeicons/primeicons.css', '~/assets/styles/main.scss'],
+  security: {},
   components: {
     // disable auto-import of components
     dirs: [],
   },
+  css: ['~/styles/reset.css', 'primeicons/primeicons.css', '~/styles/main.scss'],
   primevue: {
     options: {
       theme: {
-        preset: Aura,
+        preset: theme,
         options: {
           // as set by nuxt color mode module
           darkModeSelector: '.dark-mode',
@@ -37,8 +90,33 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    // route to the groups overview by default
-    '/': { redirect: '/groups' },
+    '/': {
+      redirect: '/groups',
+    },
+  },
+  openFetch: {
+    clients: {
+      backendApi: {
+        baseURL: '/api/backend',
+        schema: 'openapi/backend-api/spec.json',
+      },
+    },
+  },
+  runtimeConfig: {
+    backendBaseUrl: '', // set in env
+    redis: {
+      host: '',
+      port: 0,
+      password: '',
+    },
+  },
+  nitro: {
+    storage: {
+      oidc: {
+        driver: 'redis',
+        base: 'oidcstorage',
+      },
+    },
   },
   oidc: {
     defaultProvider: 'oidc',
@@ -85,31 +163,6 @@ export default defineNuxtConfig({
     },
     middleware: {
       globalMiddlewareEnabled: true, // protect everything except /auth by default
-    },
-  },
-  nitro: {
-    storage: {
-      oidc: {
-        driver: 'redis',
-        base: 'oidcstorage',
-      },
-    },
-  },
-  runtimeConfig: {
-    backendBaseUrl: '', // set in env
-    redis: {
-      host: '',
-      port: 0,
-      password: '',
-    },
-  },
-  security: {},
-  openFetch: {
-    clients: {
-      backendApi: {
-        baseURL: '/api/backend',
-        schema: 'openapi/backend-api/spec.json',
-      },
     },
   },
 });

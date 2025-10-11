@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <style scoped lang="scss">
-@use '~/assets/styles/utilities.scss';
+@use '~/styles/utilities.scss';
 
 pre {
   overflow-x: auto;

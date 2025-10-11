@@ -7,9 +7,13 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder
     .AddPostgres(Resources.Postgres)
-    .WithPgAdmin()
+    .WithHostPort(62550)
     .WithLifetime(ContainerLifetime.Session)
-    .WithDataVolume();
+    .WithDataVolume()
+    .WithPgAdmin(resourceBuilder =>
+    {
+        resourceBuilder.WithHostPort(62551);
+    });
 var appDb = postgres.AddDatabase(Resources.AppDb);
 
 var databaseMigrations = builder
@@ -23,9 +27,13 @@ var databaseMigrations = builder
 
 var redis = builder
     .AddRedis(Resources.Redis)
-    .WithRedisCommander()
+    .WithHostPort(62560)
     .WithLifetime(ContainerLifetime.Session)
-    .WithDataVolume();
+    .WithDataVolume()
+    .WithRedisCommander(resourceBuilder =>
+    {
+        resourceBuilder.WithHostPort(62561);
+    });
 
 #endregion
 
@@ -44,7 +52,7 @@ var api = builder
 
 var frontend = builder
     .AddNpmApp(Resources.Frontend, "../../../../frontend", "dev")
-    .WithHttpEndpoint(env: "PORT")
+    .WithHttpEndpoint(env: "PORT", port: 5221)
     .WithExternalHttpEndpoints()
     .WithReference(api)
     .WaitFor(api)

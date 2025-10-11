@@ -6,15 +6,13 @@
   },
   "servers": [
     {
-      "url": "http://localhost:5222/"
+      "url": "https://localhost:5223/"
     }
   ],
   "paths": {
     "/Members": {
       "get": {
-        "tags": [
-          "Members"
-        ],
+        "tags": ["Members"],
         "operationId": "GetMembers",
         "responses": {
           "200": {
@@ -32,9 +30,7 @@
     },
     "/Groups": {
       "get": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "GetGroups",
         "responses": {
           "200": {
@@ -50,9 +46,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "CreateGroup",
         "requestBody": {
           "content": {
@@ -90,9 +84,7 @@
     },
     "/Groups/{id}": {
       "get": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "GetGroup",
         "parameters": [
           {
@@ -139,9 +131,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "UpdateGroup",
         "parameters": [
           {
@@ -191,9 +181,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "DeleteGroup",
         "parameters": [
           {
@@ -235,9 +223,7 @@
     },
     "/Groups/{groupId}/expenses": {
       "post": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "CreateExpense",
         "parameters": [
           {
@@ -289,9 +275,7 @@
     },
     "/Groups/{groupId}/expenses/{expenseId}": {
       "put": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "UpdateExpense",
         "parameters": [
           {
@@ -350,9 +334,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "DeleteExpense",
         "parameters": [
           {
@@ -403,9 +385,7 @@
     },
     "/Groups/{groupId}/payments": {
       "post": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "CreatePayment",
         "parameters": [
           {
@@ -457,9 +437,7 @@
     },
     "/Groups/{groupId}/payments/{paymentId}": {
       "put": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "UpdatePayment",
         "parameters": [
           {
@@ -518,9 +496,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "operationId": "DeletePayment",
         "parameters": [
           {
@@ -644,9 +620,7 @@
       },
       "CreateGroup.Response": {
         "title": "CreateGroup.Response",
-        "required": [
-          "id"
-        ],
+        "required": ["id"],
         "type": "object",
         "properties": {
           "id": {
@@ -691,9 +665,7 @@
       },
       "GetGroups.Response": {
         "title": "GetGroups.Response",
-        "required": [
-          "groups"
-        ],
+        "required": ["groups"],
         "type": "object",
         "properties": {
           "groups": {
@@ -706,10 +678,7 @@
       },
       "GetGroups.Response.GroupDto": {
         "title": "GetGroups.Response.GroupDto",
-        "required": [
-          "id",
-          "name"
-        ],
+        "required": ["id", "name", "memberCount"],
         "type": "object",
         "properties": {
           "id": {
@@ -718,14 +687,16 @@
           },
           "name": {
             "type": "string"
+          },
+          "memberCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
       "GetMembers.Response": {
         "title": "GetMembers.Response",
-        "required": [
-          "members"
-        ],
+        "required": ["members"],
         "type": "object",
         "properties": {
           "members": {
@@ -738,10 +709,7 @@
       },
       "GetMembers.Response.MemberDto": {
         "title": "GetMembers.Response.MemberDto",
-        "required": [
-          "id",
-          "name"
-        ],
+        "required": ["id", "name"],
         "type": "object",
         "properties": {
           "id": {
