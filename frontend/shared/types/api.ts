@@ -7,8 +7,11 @@ import type { ExpenseSplitType } from './expense-split-type';
 export type ValidationProblemDetails = components['schemas']['HttpValidationProblemDetails'];
 export type ProblemDetails = components['schemas']['ProblemDetails'];
 
-// adaption of components['schemas']['CreateExpense.Request'] which removed nullables where we know
+// adaption of components['schemas']['XXX.Request'] which removed nullables where we know
 // them to be required (technically allowed in DTO but will be rejected by server-side validation)
+export type CreateGroupRequest = {
+  name: string;
+};
 export type CreateExpenseRequest = {
   groupId: string;
   description: string;
@@ -22,3 +25,5 @@ export type CreateExpenseRequest = {
     exactShare?: number;
   }[];
 };
+
+export type Group = components['schemas']['GroupDto'];

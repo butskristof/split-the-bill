@@ -39,11 +39,11 @@
             New group created successfully!
           </Message>
           <Message
-            v-if="generalError"
+            v-if="apiErrorTitle"
             severity="error"
             variant="simple"
           >
-            {{ generalError }}
+            {{ apiErrorTitle }}
           </Message>
         </div>
         <div class="actions">
@@ -68,90 +68,79 @@
 
 <script setup lang="ts">
 import AppDialog from '~/components/common/AppDialog.vue';
-import { maxLength, required } from '@regle/rules';
-import type { components } from '#open-fetch-schemas/backend-api';
+import { maxLength, required, string, minLength } from '@regle/rules';
+import { inferRules } from '@regle/core';
 import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
+import { useCreateGroupMutation } from '~/composables/backend-api/useCreateGroupMutation';
+import type { FetchError } from 'ofetch';
+import type { CreateGroupRequest } from '#shared/types/api';
 
 const emit = defineEmits<{
-  close: [created: boolean];
+  close: [];
 }>();
 const tryClose = () => {
   // should either not be touched by user or confirmed they want to close and lose changes
   if (
+    isCreated.value ||
     !r$.$anyDirty ||
     confirm('There are unsaved changes. Are you sure you want to close this dialog?')
   ) {
-    emit('close', false);
+    emit('close');
   }
 };
 
 //#region form
 
-const { $backendApi } = useNuxtApp();
-type CreateGroupRequest = components['schemas']['CreateGroup.Request'];
-type ValidationProblemDetails = components['schemas']['HttpValidationProblemDetails'];
+const createGroupMutation = useCreateGroupMutation();
+const isSubmitting = computed(() => createGroupMutation.isPending.value);
+const isCreated = computed(() => createGroupMutation.isSuccess.value);
 
-const externalErrors = ref<Record<string, string[]>>({});
-const generalError = ref<string>();
-const isCreated = ref(false);
-const isSubmitting = ref(false);
-const formDisabled = computed(() => isSubmitting.value || isCreated.value);
+const formDisabled = computed<boolean>(() => isSubmitting.value || isCreated.value);
+const apiErrorTitle = computed<string | null>(() => {
+  if (!createGroupMutation.error.value) return null;
+  const problemDetails = (createGroupMutation.error.value as FetchError)?.data as ProblemDetails;
+  return problemDetails?.title ?? 'Something went wrong, please try again later.';
+});
+const externalErrors = computed<Record<string, string[]>>(() => {
+  if (!createGroupMutation.error.value) return {};
+  const problemDetails = (createGroupMutation.error.value as FetchError)
+    ?.data as ValidationProblemDetails;
+  if (!problemDetails?.errors) return {};
+  return mapProblemDetailsErrorsToExternalErrors(problemDetails.errors);
+});
 
-const { r$ } = useRegle(
-  { name: '' },
-  {
-    name: { required, maxLength: maxLength(512) },
-  },
-  { externalErrors },
+type FormState = {
+  name: string;
+};
+const formState = ref<FormState>({ name: '' });
+const formSchema = computed(() =>
+  inferRules(formState, {
+    name: {
+      string,
+      required,
+      minLength: minLength(1),
+      maxLength: maxLength(512),
+    },
+  }),
 );
+const { r$ } = useRegle(formState, formSchema, { externalErrors });
 
 const onFormSubmit = async () => {
   const { valid, data } = await r$.$validate();
   if (!valid) return;
 
-  // Clear previous errors
-  generalError.value = undefined;
-  isSubmitting.value = true;
+  const requestBody: CreateGroupRequest = {
+    name: data.name,
+  };
 
-  try {
-    const requestBody: CreateGroupRequest = {
-      name: data.name,
-    };
-    // submit to api & map errors
-    const response = await $backendApi('/Groups', {
-      method: 'POST',
-      body: requestBody,
-    });
-
-    isCreated.value = true;
-    await navigateTo({ name: 'groups-id', params: { id: response.id } });
-  } catch (error) {
-    console.error(error);
-
-    const errorData = (error as { data?: ValidationProblemDetails })?.data;
-
-    if (errorData?.status === 400 && errorData.errors) {
-      externalErrors.value = mapProblemDetailsErrorsToExternalErrors(errorData.errors);
-    }
-
-    if (errorData?.title) {
-      // Handle other API errors (500, 404, etc.) with title
-      generalError.value = errorData.title;
-    } else {
-      // Fallback for unknown errors
-      generalError.value = 'Something went wrong. Please try again.';
-    }
-  } finally {
-    isSubmitting.value = false;
-  }
+  createGroupMutation.mutate(requestBody, {
+    onSuccess: async (response) => {
+      await navigateTo({ name: 'groups-id', params: { id: response.id } });
+    },
+  });
 };
 
 //#endregion
-
-// TODO in dialogs later
-// - accessibility (aria-busy, aria-describedby, ...)
-// - keep modal open to show succes (and maybe toast?), then navigate away after some time
-// - extract common form logic
 </script>
 
 <style scoped lang="scss">

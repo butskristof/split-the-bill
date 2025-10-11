@@ -1,14 +1,17 @@
 <template>
   <div class="page-group-detail">
-    <GroupDetail :group-id="groupId" />
+    <GroupDetail
+      v-if="group"
+      :group="group"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import GroupDetail from '~/components/groups/detail/GroupDetail.vue';
+import { useDetailPageGroup } from '~/composables/backend-api/useDetailPageGroup';
 
-const route = useRoute();
-const groupId = computed(() => route.params.id as string);
+const { data: group } = useDetailPageGroup();
 </script>
 
 <style scoped lang="scss"></style>

@@ -26,24 +26,16 @@
 <script setup lang="ts">
 import PreformattedText from '~/components/common/PreformattedText.vue';
 import CreateExpenseDialog from '~/components/groups/detail/CreateExpenseDialog.vue';
+import type { Group } from '#shared/types/api';
 
-const props = defineProps<{
-  groupId: string;
+defineProps<{
+  group: Group;
 }>();
-
-const { data: group, refresh } = await useLazyBackendApi('/Groups/{id}', {
-  path: {
-    id: props.groupId,
-  },
-});
 
 //#region create expense dialog
 const showCreateExpenseDialog = ref(false);
 const openCreateExpenseDialog = () => (showCreateExpenseDialog.value = true);
-const closeCreateExpenseDialog = (created: boolean) => {
-  showCreateExpenseDialog.value = false;
-  if (created) refresh();
-};
+const closeCreateExpenseDialog = () => (showCreateExpenseDialog.value = false);
 //#endregion
 </script>
 

@@ -10,7 +10,10 @@
         />
       </div>
     </div>
-    <GroupsList :groups="groups" />
+    <GroupsList
+      v-if="groups"
+      :groups="groups"
+    />
     <CreateGroupDialog
       v-if="showCreateGroupDialog"
       @close="closeCreateGroupDialog"
@@ -19,27 +22,19 @@
 </template>
 
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query';
 import GroupsList from '~/components/groups/overview/GroupsList.vue';
 import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vue';
+import { useGetGroupsQuery } from '~/composables/backend-api/useGetGroupsQuery';
 
-const { $backendApi } = useNuxtApp();
-const { data, suspense } = useQuery({
-  queryKey: ['groups'],
-  queryFn: () => $backendApi('/Groups'),
-});
-const groups = computed(() => data.value?.groups ?? []);
-
+// TODO loading state
+const { data: groups, suspense } = useGetGroupsQuery();
 await suspense();
 
 //#region create group dialog
 
 const showCreateGroupDialog = ref(false);
 const openCreateGroupDialog = () => (showCreateGroupDialog.value = true);
-const closeCreateGroupDialog = (created: boolean) => {
-  showCreateGroupDialog.value = false;
-  if (created) refresh();
-};
+const closeCreateGroupDialog = () => (showCreateGroupDialog.value = false);
 
 //#endregion
 </script>

@@ -94,7 +94,7 @@
         <Select
           v-model="r$.$value.paidBy"
           input-id="paidBy"
-          :options="[...props.members, { id: 'hey', name: 'Test' }]"
+          :options="props.members"
           option-label="name"
           :invalid="r$.paidBy.$error"
           :disabled="formDisabled"
@@ -120,7 +120,7 @@
         <Listbox
           id="participants"
           v-model="r$.$value.participants"
-          :options="[...props.members, { id: 'hey', name: 'Test' }]"
+          :options="props.members"
           option-label="name"
           multiple
           :invalid="r$.participants.$error"
@@ -197,9 +197,9 @@ import {
   withMessage,
 } from '@regle/rules';
 import type { CreateExpenseRequest } from '#shared/types/api';
-import { useMutation } from '@tanstack/vue-query';
 import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 import type { FetchError } from 'ofetch';
+import { useCreateExpenseMutation } from '~/composables/backend-api/useCreateExpenseMutation';
 
 type Member = {
   id: string;
@@ -211,7 +211,7 @@ const props = defineProps<{
   members: Member[];
 }>();
 const emit = defineEmits<{
-  close: [created: boolean];
+  close: [];
 }>();
 const tryClose = () => {
   // should either not be touched by user or confirmed they want to close and lose changes
@@ -220,28 +220,15 @@ const tryClose = () => {
     !r$.$anyDirty ||
     confirm('There are unsaved changes. Are you sure you want to close this dialog?')
   ) {
-    emit('close', isCreated.value);
+    emit('close');
   }
 };
 
 //#region form
 
-const { $backendApi } = useNuxtApp();
-const {
-  isPending: isSubmitting,
-  isSuccess: isCreated,
-  error: mutationError,
-  mutate,
-} = useMutation({
-  mutationFn: (newExpense: CreateExpenseRequest) =>
-    $backendApi('/Groups/{groupId}/expenses', {
-      method: 'POST',
-      path: {
-        groupId: newExpense.groupId,
-      },
-      body: newExpense,
-    }),
-});
+const createExpenseMutation = useCreateExpenseMutation();
+const isSubmitting = computed(() => createExpenseMutation.isPending.value);
+const isCreated = computed(() => createExpenseMutation.isSuccess.value);
 
 const formDisabled = computed<boolean>(() => isSubmitting.value || isCreated.value);
 // map to a single string[]
@@ -284,13 +271,14 @@ const participantsErrors = computed<string[]>(() => {
   ];
 });
 const apiErrorTitle = computed<string | null>(() => {
-  if (!mutationError.value) return null;
-  const problemDetails = (mutationError.value as FetchError)?.data as ProblemDetails;
+  if (!createExpenseMutation.error.value) return null;
+  const problemDetails = (createExpenseMutation.error.value as FetchError)?.data as ProblemDetails;
   return problemDetails?.title ?? 'Something went wrong, please try again later.';
 });
 const externalErrors = computed<Record<string, string[]>>(() => {
-  if (!mutationError.value) return {};
-  const problemDetails = (mutationError.value as FetchError)?.data as ValidationProblemDetails;
+  if (!createExpenseMutation.error.value) return {};
+  const problemDetails = (createExpenseMutation.error.value as FetchError)
+    ?.data as ValidationProblemDetails;
   if (!problemDetails?.errors) return {};
   return {
     ...mapProblemDetailsErrorsToExternalErrors(problemDetails.errors),
@@ -386,7 +374,7 @@ const onFormSubmit = async () => {
     splitType: ExpenseSplitType.Evenly,
     participants: data.participants.map((p) => ({ memberId: p.id })),
   };
-  mutate(request);
+  createExpenseMutation.mutate(request);
 };
 
 //#endregion
