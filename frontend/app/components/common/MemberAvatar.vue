@@ -10,11 +10,7 @@
 
 <script setup lang="ts">
 import type { AvatarProps } from 'primevue/avatar';
-
-type Member = {
-  id: string;
-  name: string;
-};
+import type { Member } from '#shared/types/member';
 
 export type MemberAvatarSize = 'small' | AvatarProps['size'];
 

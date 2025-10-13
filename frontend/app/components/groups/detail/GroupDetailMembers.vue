@@ -30,10 +30,9 @@
 import MemberAvatar from '~/components/common/MemberAvatar.vue';
 import type { Group } from '#shared/types/api';
 import { formatCurrency } from '#shared/utils';
+import type { Member as MinimalMember } from '#shared/types/member';
 
-type Member = {
-  id: string;
-  name: string;
+type Member = MinimalMember & {
   totalBalance: number;
 };
 const props = defineProps<{

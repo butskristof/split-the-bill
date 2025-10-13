@@ -1,0 +1,142 @@
+<template>
+  <div class="expense-detail">
+    <div
+      v-if="expense"
+      class="expense"
+    >
+      <div class="members-avatars">
+        <MemberAvatar :member="paidBy" />
+        <div class="pi pi-arrow-right" />
+        <MemberAvatarGroup :members="participants" />
+      </div>
+
+      <div class="description">
+        {{ expense.description }}
+      </div>
+
+      <p class="paid-by-text">
+        paid for by
+        <span>&nbsp;</span>
+        <strong>
+          <InlineGroupMember :member="paidBy" />
+        </strong>
+        <span>&nbsp;</span>
+        and shared with
+      </p>
+
+      <div class="participants">
+        <div class="participants-list">
+          <div
+            v-for="(participant, index) in participants"
+            :key="participant?.id ?? `id-${index}`"
+            class="participant"
+          >
+            <div class="member">
+              <InlineGroupMember :member="participant" />
+            </div>
+            <div class="amount">
+              <span v-if="amountPerParticipant">
+                owes {{ formatCurrency(amountPerParticipant) }}
+              </span>
+              <span v-else>N/A</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Divider />
+
+      <div class="details">
+        <div class="detail-row">
+          <span class="label">Total expense amount</span>
+          <span class="value">{{ formatCurrency(expense.amount) }}</span>
+        </div>
+
+        <div class="detail-row">
+          <span class="label">Date & time</span>
+          <span class="value">{{ formatDateTime(expense.timestamp) }}</span>
+        </div>
+      </div>
+    </div>
+    <Message
+      v-else
+      severity="warn"
+      >Expense not found</Message
+    >
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useDetailPageGroup } from '~/composables/backend-api/useDetailPageGroup';
+import MemberAvatar from '~/components/common/MemberAvatar.vue';
+import MemberAvatarGroup from '~/components/common/MemberAvatarGroup.vue';
+import { formatCurrency, formatDateTime } from '#shared/utils';
+import InlineGroupMember from '~/components/common/InlineGroupMember.vue';
+import type { Expense } from '#shared/types/api';
+import type { Member } from '#shared/types/member';
+
+const { expenses, members } = useDetailPageGroup();
+const route = useRoute();
+const expenseId = computed(() => route.params.expenseId as string);
+
+const expense = computed<Expense | null>(
+  () => (expenses.value?.find((p) => p.id === expenseId.value) as Expense) ?? null,
+);
+const amountPerParticipant = computed(() =>
+  expense.value?.amount ? expense.value.amount / expense.value.participants.length : null,
+);
+const paidBy = computed<Member | null>(() =>
+  expense.value?.paidByMemberId ? getMember(expense.value.paidByMemberId) : null,
+);
+const participants = computed(() =>
+  expense.value?.participants ? expense.value.participants.map((p) => getMember(p.memberId)) : [],
+);
+
+const getMember = (memberId: string): Member | null =>
+  (members.value?.find((m) => m.id === memberId) as Member) ?? null;
+</script>
+
+<style scoped lang="scss">
+@use '~/styles/_utilities.scss';
+
+.expense {
+  @include utilities.flex-column;
+
+  .members-avatars {
+    @include utilities.flex-row-align-center;
+    justify-content: center;
+    margin-bottom: calc(var(--default-spacing) / 2);
+  }
+}
+
+.description {
+  font-size: 130%;
+}
+
+.paid-by-text {
+  display: inline-flex;
+  align-items: center;
+}
+
+.participants {
+  @include utilities.flex-column;
+  .participants-list {
+    @include utilities.flex-column;
+    .participant {
+      @include utilities.flex-row-justify-between;
+    }
+  }
+}
+
+.details {
+  @include utilities.flex-column;
+
+  .detail-row {
+    @include utilities.flex-row-justify-between;
+
+    .label {
+      @include utilities.muted;
+    }
+  }
+}
+</style>
