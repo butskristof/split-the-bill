@@ -1,8 +1,9 @@
 name: PR review by Claude
 
 on:
-  pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
+  # pull_request:
+  #   types: [opened, synchronize, ready_for_review, reopened]
+  workflow_dispatch:
 
 jobs:
   review:
