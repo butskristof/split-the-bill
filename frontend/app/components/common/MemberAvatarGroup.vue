@@ -16,11 +16,7 @@
 
 <script setup lang="ts">
 import MemberAvatar, { type MemberAvatarSize } from '~/components/common/MemberAvatar.vue';
-
-type Member = {
-  id: string;
-  name: string;
-};
+import type { Member } from '#shared/types/member';
 
 const props = withDefaults(
   defineProps<{

@@ -11,7 +11,7 @@
 import { useDetailPageGroup } from '~/composables/backend-api/useDetailPageGroup';
 import GroupActivity from '~/components/groups/activities/GroupActivity.vue';
 
-const { data: group } = useDetailPageGroup();
+const { group } = useDetailPageGroup();
 </script>
 
 <style scoped lang="scss"></style>

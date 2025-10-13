@@ -175,11 +175,7 @@ import type { CreatePaymentRequest } from '#shared/types/api';
 import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 import type { FetchError } from 'ofetch';
 import { useCreatePaymentMutation } from '~/composables/backend-api/useCreatePaymentMutation';
-
-type Member = {
-  id: string;
-  name: string;
-};
+import type { Member } from '#shared/types/member';
 
 const props = defineProps<{
   groupId: string;

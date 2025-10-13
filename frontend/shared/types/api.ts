@@ -58,3 +58,7 @@ export type Payment = {
   amount: number;
   timestamp: string;
 };
+
+export type ExpenseActivity = Expense & { type: 'expense' };
+export type PaymentActivity = Payment & { type: 'payment' };
+export type Activity = ExpenseActivity | PaymentActivity;

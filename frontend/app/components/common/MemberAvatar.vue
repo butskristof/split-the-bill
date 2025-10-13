@@ -1,5 +1,6 @@
 <template>
   <Avatar
+    v-tippy="tooltip ? memberName : null"
     :label="label"
     :size="size"
     :class="{ small: size === 'small' }"
@@ -9,11 +10,7 @@
 
 <script setup lang="ts">
 import type { AvatarProps } from 'primevue/avatar';
-
-type Member = {
-  id: string;
-  name: string;
-};
+import type { Member } from '#shared/types/member';
 
 export type MemberAvatarSize = 'small' | AvatarProps['size'];
 
@@ -22,19 +19,22 @@ const props = withDefaults(
     member?: Member | null;
     size?: MemberAvatarSize;
     overflowCount?: number;
+    tooltip?: boolean;
   }>(),
   {
     member: null,
     size: 'large',
     overflowCount: undefined,
+    tooltip: true,
   },
 );
 
+const memberName = computed<string | null>(() => props.member?.name ?? null);
 const label = computed(() => {
   if (props.overflowCount !== undefined) {
     return `+${props.overflowCount}`;
   }
-  return props.member?.name.charAt(0).toUpperCase() ?? '?';
+  return memberName.value?.charAt(0).toUpperCase() ?? '?';
 });
 </script>
 

@@ -7,7 +7,10 @@
         :key="member.id"
         class="member"
       >
-        <MemberAvatar :member="member" />
+        <MemberAvatar
+          :member="member"
+          :tooltip="false"
+        />
         <div class="name">{{ member.name }}</div>
         <div
           class="balance"
@@ -27,10 +30,9 @@
 import MemberAvatar from '~/components/common/MemberAvatar.vue';
 import type { Group } from '#shared/types/api';
 import { formatCurrency } from '#shared/utils';
+import type { Member as MinimalMember } from '#shared/types/member';
 
-type Member = {
-  id: string;
-  name: string;
+type Member = MinimalMember & {
   totalBalance: number;
 };
 const props = defineProps<{
@@ -49,10 +51,11 @@ const members = computed(() => (props.group.members as Member[]) ?? []);
 .members {
   @include utilities.flex-row;
   gap: calc(var(--default-spacing) * 2);
-  flex-wrap: wrap;
+  overflow-x: auto;
 }
 
 .member {
+  padding-inline: calc(var(--default-spacing) / 2);
   @include utilities.flex-column(false);
   gap: calc(var(--default-spacing) / 2);
   align-items: center;

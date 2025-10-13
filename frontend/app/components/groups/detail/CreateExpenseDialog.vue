@@ -200,11 +200,7 @@ import type { CreateExpenseRequest } from '#shared/types/api';
 import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 import type { FetchError } from 'ofetch';
 import { useCreateExpenseMutation } from '~/composables/backend-api/useCreateExpenseMutation';
-
-type Member = {
-  id: string;
-  name: string;
-};
+import type { Member } from '#shared/types/member';
 
 const props = defineProps<{
   groupId: string;

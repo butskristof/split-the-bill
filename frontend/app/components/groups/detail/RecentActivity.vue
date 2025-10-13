@@ -9,12 +9,10 @@
         <ExpenseActivityListItem
           v-if="activity.type === 'expense'"
           :expense="activity"
-          :members="props.group.members?.map((m) => ({ id: m.id!, name: m.name! })) ?? []"
         />
         <PaymentActivityListItem
           v-else-if="activity.type === 'payment'"
           :payment="activity"
-          :members="props.group.members?.map((m) => ({ id: m.id!, name: m.name! })) ?? []"
         />
       </template>
     </div>
@@ -35,32 +33,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Group, Expense, Payment } from '#shared/types/api';
+import type { Group } from '#shared/types/api';
 import PaymentActivityListItem from '~/components/groups/activities/PaymentActivityListItem.vue';
 import ExpenseActivityListItem from '~/components/groups/activities/ExpenseActivityListItem.vue';
-
-type ExpenseActivity = Expense & { type: 'expense' };
-type PaymentActivity = Payment & { type: 'payment' };
-type Activity = ExpenseActivity | PaymentActivity;
+import { getActivities } from '~/composables/backend-api/useDetailPageGroup';
 
 const props = defineProps<{
   group: Group;
 }>();
-
-const recentActivity = computed<Activity[]>(() => {
-  const activity: Activity[] = [];
-
-  // Cast from loose OpenAPI types to strict DTOs at the boundary
-  const expenses = (props.group.expenses ?? []) as Expense[];
-  const payments = (props.group.payments ?? []) as Payment[];
-
-  activity.push(...expenses.map((e): ExpenseActivity => ({ ...e, type: 'expense' })));
-  activity.push(...payments.map((p): PaymentActivity => ({ ...p, type: 'payment' })));
-
-  activity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-  return activity.slice(0, 3);
-});
+const activities = computed(() => getActivities(props.group));
+const recentActivity = computed(() => activities.value.slice(0, 3));
 </script>
 
 <style scoped lang="scss">
