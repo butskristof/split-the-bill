@@ -30,7 +30,8 @@
         @close="closeCreatePaymentDialog"
       />
     </div>
-    <PreformattedText :value="group" />
+    <RecentActivity :group="group" />
+    <GroupDetailMembers :group="group" />
     <div class="delete-group">
       <Button
         label="Delete group"
@@ -49,11 +50,12 @@
 </template>
 
 <script setup lang="ts">
-import PreformattedText from '~/components/common/PreformattedText.vue';
 import CreateExpenseDialog from '~/components/groups/detail/CreateExpenseDialog.vue';
 import CreatePaymentDialog from '~/components/groups/detail/CreatePaymentDialog.vue';
 import type { Group } from '#shared/types/api';
 import DeleteGroupDialog from '~/components/groups/detail/DeleteGroupDialog.vue';
+import RecentActivity from '~/components/groups/detail/RecentActivity.vue';
+import GroupDetailMembers from '~/components/groups/detail/GroupDetailMembers.vue';
 
 defineProps<{
   group: Group;
@@ -89,6 +91,7 @@ const closeDeleteGroupDialog = () => (showDeleteGroupDialog.value = false);
   }
 
   .delete-group {
+    margin-top: calc(var(--default-spacing));
     margin-left: auto;
   }
 }
