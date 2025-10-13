@@ -20,7 +20,9 @@
           <strong>
             <InlineGroupMember :member="sender" />
           </strong>
+          <span>&nbsp;</span>
           paid back
+          <span>&nbsp;</span>
           <strong>
             <InlineGroupMember :member="receiver" />
           </strong>
@@ -84,6 +86,11 @@ const getMember = (memberId: string): Member | null =>
     @include utilities.flex-row-align-center;
     justify-content: center;
     margin-bottom: calc(var(--default-spacing) / 2);
+  }
+
+  .members-text {
+    display: inline-flex;
+    align-items: center;
   }
 
   .amount-timestamp {

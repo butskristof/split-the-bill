@@ -20,6 +20,7 @@
           <strong>
             <InlineGroupMember :member="paidBy" />
           </strong>
+          <span>&nbsp;</span>
           paid for
         </div>
         <div class="description">
@@ -86,6 +87,11 @@ const getMember = (memberId: string): Member | null =>
     @include utilities.flex-row-align-center;
     justify-content: center;
     margin-bottom: calc(var(--default-spacing) / 2);
+  }
+
+  .paid-by-text {
+    display: inline-flex;
+    align-items: center;
   }
 
   .description {

@@ -13,7 +13,9 @@
         <strong>
           <InlineGroupMember :member="sender" />
         </strong>
+        <span>&nbsp;</span>
         paid back
+        <span>&nbsp;</span>
         <strong>
           <InlineGroupMember :member="receiver" />
         </strong>
@@ -79,7 +81,9 @@ const getMember = (memberId: string): Member | null =>
   }
 
   .members-text {
-    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
