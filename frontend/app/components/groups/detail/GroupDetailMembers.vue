@@ -7,7 +7,10 @@
         :key="member.id"
         class="member"
       >
-        <MemberAvatar :member="member" />
+        <MemberAvatar
+          :member="member"
+          :tooltip="false"
+        />
         <div class="name">{{ member.name }}</div>
         <div
           class="balance"
@@ -49,10 +52,11 @@ const members = computed(() => (props.group.members as Member[]) ?? []);
 .members {
   @include utilities.flex-row;
   gap: calc(var(--default-spacing) * 2);
-  flex-wrap: wrap;
+  overflow-x: auto;
 }
 
 .member {
+  padding-inline: calc(var(--default-spacing) / 2);
   @include utilities.flex-column(false);
   gap: calc(var(--default-spacing) / 2);
   align-items: center;

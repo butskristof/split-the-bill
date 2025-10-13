@@ -3,6 +3,7 @@
     <div class="app-name" />
     <div class="links">
       <a
+        v-tippy="'GitHub'"
         href="https://github.com/butskristof/split-the-bill"
         target="_blank"
         rel="noopener"
