@@ -176,6 +176,7 @@ import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 import type { FetchError } from 'ofetch';
 import { useCreatePaymentMutation } from '~/composables/backend-api/useCreatePaymentMutation';
 import type { Member } from '#shared/types/member';
+import { DIALOG_SUCCESS_CLOSE_DELAY } from '#shared/constants';
 
 const props = defineProps<{
   groupId: string;
@@ -315,7 +316,7 @@ const onFormSubmit = async () => {
   };
   createPaymentMutation.mutate(request, {
     onSuccess: () => {
-      setTimeout(tryClose, 1000);
+      setTimeout(tryClose, DIALOG_SUCCESS_CLOSE_DELAY);
     },
   });
 };

@@ -32,6 +32,22 @@
           <span class="value">{{ formatDateTime(payment.timestamp) }}</span>
         </div>
       </div>
+
+      <div class="delete-payment">
+        <Button
+          label="Delete payment"
+          icon="pi pi-trash"
+          severity="danger"
+          variant="text"
+          @click="openDeletePaymentDialog"
+        />
+        <DeletePaymentDialog
+          v-if="showDeletePaymentDialog"
+          :group-id="groupId"
+          :payment="payment"
+          @close="closeDeletePaymentDialog"
+        />
+      </div>
     </div>
 
     <Message
@@ -46,11 +62,12 @@
 import { useDetailPageGroup } from '~/composables/backend-api/useDetailPageGroup';
 import MemberAvatar from '~/components/common/MemberAvatar.vue';
 import InlineGroupMember from '~/components/common/InlineGroupMember.vue';
+import DeletePaymentDialog from '~/components/groups/detail/DeletePaymentDialog.vue';
 import { formatCurrency, formatDateTime } from '#shared/utils';
 import type { Payment } from '#shared/types/api';
 import type { Member } from '#shared/types/member';
 
-const { payments, members } = useDetailPageGroup();
+const { groupId, payments, members } = useDetailPageGroup();
 const route = useRoute();
 const paymentId = computed(() => route.params.paymentId as string);
 
@@ -66,6 +83,12 @@ const receiver = computed<Member | null>(() =>
 
 const getMember = (memberId: string): Member | null =>
   (members.value?.find((m) => m.id === memberId) as Member) ?? null;
+
+//#region delete payment dialog
+const showDeletePaymentDialog = ref(false);
+const openDeletePaymentDialog = () => (showDeletePaymentDialog.value = true);
+const closeDeletePaymentDialog = () => (showDeletePaymentDialog.value = false);
+//#endregion
 </script>
 
 <style scoped lang="scss">
@@ -84,6 +107,11 @@ const getMember = (memberId: string): Member | null =>
     display: inline-flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .delete-payment {
+    margin-top: calc(var(--default-spacing));
+    margin-left: auto;
   }
 }
 

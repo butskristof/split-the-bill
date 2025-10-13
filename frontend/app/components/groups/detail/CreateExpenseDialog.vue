@@ -201,6 +201,7 @@ import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 import type { FetchError } from 'ofetch';
 import { useCreateExpenseMutation } from '~/composables/backend-api/useCreateExpenseMutation';
 import type { Member } from '#shared/types/member';
+import { DIALOG_SUCCESS_CLOSE_DELAY } from '#shared/constants';
 
 const props = defineProps<{
   groupId: string;
@@ -372,7 +373,7 @@ const onFormSubmit = async () => {
   };
   createExpenseMutation.mutate(request, {
     onSuccess: () => {
-      setTimeout(tryClose, 1000);
+      setTimeout(tryClose, DIALOG_SUCCESS_CLOSE_DELAY);
     },
   });
 };

@@ -74,6 +74,7 @@ import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 import { useCreateGroupMutation } from '~/composables/backend-api/useCreateGroupMutation';
 import type { FetchError } from 'ofetch';
 import type { CreateGroupRequest } from '#shared/types/api';
+import { DIALOG_SUCCESS_CLOSE_DELAY } from '#shared/constants';
 
 const emit = defineEmits<{
   close: [];
@@ -135,7 +136,10 @@ const onFormSubmit = async () => {
 
   createGroupMutation.mutate(requestBody, {
     onSuccess: (response) => {
-      setTimeout(() => navigateTo({ name: 'groups-id', params: { id: response.id } }), 1000);
+      setTimeout(
+        () => navigateTo({ name: 'groups-id', params: { id: response.id } }),
+        DIALOG_SUCCESS_CLOSE_DELAY,
+      );
     },
   });
 };

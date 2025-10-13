@@ -1,23 +1,23 @@
 <template>
   <AppDialog
-    header="Delete group"
+    header="Delete expense"
     @close="tryClose"
   >
     <div class="content">
       <p>
-        Are you sure you want to delete the group <strong>{{ props.group.name }}</strong
+        Are you sure you want to delete the expense <strong>{{ props.expense.description }}</strong
         >? This action cannot be undone.
       </p>
 
       <div class="footer">
         <div class="messages">
           <Message
-            v-if="deleteGroupMutation.isSuccess.value"
+            v-if="deleteExpenseMutation.isSuccess.value"
             severity="success"
             variant="simple"
             icon="pi pi-check"
           >
-            Group deleted successfully!
+            Expense deleted successfully!
           </Message>
           <Message
             v-if="apiErrorTitle"
@@ -31,15 +31,19 @@
           <Button
             label="Cancel"
             severity="secondary"
-            :disabled="deleteGroupMutation.isPending.value || deleteGroupMutation.isSuccess.value"
+            :disabled="
+              deleteExpenseMutation.isPending.value || deleteExpenseMutation.isSuccess.value
+            "
             @click="tryClose"
           />
           <Button
             icon="pi pi-trash"
             severity="danger"
-            :loading="deleteGroupMutation.isPending.value"
-            :disabled="deleteGroupMutation.isPending.value || deleteGroupMutation.isSuccess.value"
-            :label="deleteGroupMutation.isPending.value ? 'Deleting...' : 'Delete'"
+            :loading="deleteExpenseMutation.isPending.value"
+            :disabled="
+              deleteExpenseMutation.isPending.value || deleteExpenseMutation.isSuccess.value
+            "
+            :label="deleteExpenseMutation.isPending.value ? 'Deleting...' : 'Delete'"
             @click="onDelete"
           />
         </div>
@@ -50,38 +54,42 @@
 
 <script setup lang="ts">
 import AppDialog from '~/components/common/AppDialog.vue';
-import { useDeleteGroupMutation } from '~/composables/backend-api/useDeleteGroupMutation';
+import { useDeleteExpenseMutation } from '~/composables/backend-api/useDeleteExpenseMutation';
 import type { FetchError } from 'ofetch';
-import type { Group, ProblemDetails } from '#shared/types/api';
+import type { Expense, ProblemDetails } from '#shared/types/api';
 import { DIALOG_SUCCESS_CLOSE_DELAY } from '#shared/constants';
 
 const props = defineProps<{
-  group: Group;
+  groupId: string;
+  expense: Expense;
 }>();
 const emit = defineEmits<{
   close: [];
 }>();
 const tryClose = () => {
-  if (deleteGroupMutation.isPending.value) return;
+  if (deleteExpenseMutation.isPending.value) return;
   emit('close');
 };
 
-const deleteGroupMutation = useDeleteGroupMutation();
+const deleteExpenseMutation = useDeleteExpenseMutation();
 const apiErrorTitle = computed<string | null>(() => {
-  if (!deleteGroupMutation.error.value) return null;
-  const problemDetails = (deleteGroupMutation.error.value as FetchError)?.data as ProblemDetails;
+  if (!deleteExpenseMutation.error.value) return null;
+  const problemDetails = (deleteExpenseMutation.error.value as FetchError)?.data as ProblemDetails;
   return problemDetails?.title ?? 'Something went wrong, please try again later.';
 });
 
 const onDelete = async () => {
-  deleteGroupMutation.mutate(props.group.id!, {
-    onSuccess: () => {
-      // Show success message briefly before navigating
-      setTimeout(() => {
-        navigateTo({ name: 'groups' });
-      }, DIALOG_SUCCESS_CLOSE_DELAY);
+  deleteExpenseMutation.mutate(
+    { groupId: props.groupId, expenseId: props.expense.id },
+    {
+      onSuccess: () => {
+        // Show success message briefly before navigating
+        setTimeout(() => {
+          navigateTo({ name: 'groups-id', params: { id: props.groupId } });
+        }, DIALOG_SUCCESS_CLOSE_DELAY);
+      },
     },
-  });
+  );
 };
 </script>
 

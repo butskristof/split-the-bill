@@ -1,0 +1,1 @@
+export const DIALOG_SUCCESS_CLOSE_DELAY = 1000;
