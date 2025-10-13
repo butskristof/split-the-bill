@@ -1,23 +1,26 @@
 <template>
   <Card class="payment">
     <template #content>
-      <div class="card-content">
-        <div class="members">
-          <div class="sender">
-            <MemberAvatar :member="sender" />
-          </div>
-          <div class="pi pi-arrow-right" />
-          <div class="receiver">
-            <MemberAvatar :member="receiver" />
-          </div>
-        </div>
+      <div class="members-avatars">
+        <MemberAvatar :member="sender" />
+        <div class="pi pi-arrow-right" />
+        <MemberAvatar :member="receiver" />
+      </div>
+      <div class="members-text">
+        <strong>
+          <InlineGroupMember :member="sender" />
+        </strong>
+        paid back
+        <strong>
+          <InlineGroupMember :member="receiver" />
+        </strong>
       </div>
       <div class="amount-timestamp">
         <div class="amount">
-          <strong> {{ payment.amount.toFixed(2) }}</strong> euro
+          <strong>{{ formatCurrency(payment.amount) }}</strong>
         </div>
         <div class="timestamp">
-          {{ new Date(payment.timestamp).toLocaleString() }}
+          {{ formatDateTime(payment.timestamp) }}
         </div>
       </div>
     </template>
@@ -27,6 +30,8 @@
 <script setup lang="ts">
 import type { Payment } from '#shared/types/api';
 import MemberAvatar from '~/components/common/MemberAvatar.vue';
+import { formatCurrency, formatDateTime } from '#shared/utils';
+import InlineGroupMember from '~/components/common/InlineGroupMember.vue';
 
 type Member = {
   id: string;
@@ -38,8 +43,8 @@ const props = defineProps<{
   members: Member[];
 }>();
 
-const sender = computed(() => getMember(props.payment.sendingMemberId));
-const receiver = computed(() => getMember(props.payment.receivingMemberId));
+const sender = computed<Member | null>(() => getMember(props.payment.sendingMemberId));
+const receiver = computed<Member | null>(() => getMember(props.payment.receivingMemberId));
 
 const getMember = (memberId: string): Member | null =>
   props.members?.find((m) => m.id === memberId) ?? null;
@@ -48,28 +53,27 @@ const getMember = (memberId: string): Member | null =>
 <style scoped lang="scss">
 @use '~/styles/_utilities.scss';
 
-.card-content {
+:deep(.p-card-content) {
   @include utilities.flex-column(false);
-}
 
-.members {
-  @include utilities.flex-row-align-center;
-  justify-content: center;
-  margin-bottom: calc(var(--default-spacing) / 2);
-}
-
-.amount-timestamp {
-  @include utilities.flex-row-justify-between(false);
-  align-items: flex-end;
-  flex-wrap: wrap;
-
-  .amount {
-    font-size: 110%;
+  .members-avatars {
+    @include utilities.flex-row-align-center;
+    justify-content: center;
+    margin-bottom: calc(var(--default-spacing) / 2);
   }
 
-  .timestamp {
-    font-size: 0.75rem;
-    color: var(--p-surface-500);
+  .amount-timestamp {
+    @include utilities.flex-row-justify-between(false);
+    align-items: flex-end; // put timestamp on same baseline as amount
+
+    .amount {
+      font-size: 110%;
+    }
+
+    .timestamp {
+      font-size: 0.75rem;
+      @include utilities.muted;
+    }
   }
 }
 </style>

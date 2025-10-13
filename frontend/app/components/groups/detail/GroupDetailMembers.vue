@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import MemberAvatar from '~/components/common/MemberAvatar.vue';
+import type { Group } from '#shared/types/api';
 
 const props = defineProps<{
   group: Group;

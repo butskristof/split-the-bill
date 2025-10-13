@@ -1,26 +1,26 @@
 <template>
   <Card class="expense">
     <template #content>
-      <div class="card-content">
-        <div class="members">
-          <div class="paid-by">
-            <MemberAvatar :member="paidBy" />
-          </div>
-          <div class="pi pi-arrow-right" />
-          <div class="participants">
-            <MemberAvatarGroup :members="participants" />
-          </div>
+      <div class="members-avatars">
+        <MemberAvatar :member="paidBy" />
+        <div class="pi pi-arrow-right" />
+        <MemberAvatarGroup :members="participants" />
+      </div>
+      <div class="paid-by-text">
+        <strong>
+          <InlineGroupMember :member="paidBy" />
+        </strong>
+        paid for
+      </div>
+      <div class="description">
+        {{ expense.description }}
+      </div>
+      <div class="amount-timestamp">
+        <div class="amount">
+          <strong>{{ formatCurrency(expense.amount) }}</strong>
         </div>
-        <div class="description">
-          <span>{{ expense.description }}</span>
-        </div>
-        <div class="amount-timestamp">
-          <div class="amount">
-            <strong> {{ expense.amount.toFixed(2) }}</strong> euro
-          </div>
-          <div class="timestamp">
-            {{ new Date(expense.timestamp).toLocaleString() }}
-          </div>
+        <div class="timestamp">
+          {{ formatDateTime(expense.timestamp) }}
         </div>
       </div>
     </template>
@@ -31,6 +31,8 @@
 import type { Expense } from '#shared/types/api';
 import MemberAvatar from '~/components/common/MemberAvatar.vue';
 import MemberAvatarGroup from '~/components/common/MemberAvatarGroup.vue';
+import { formatCurrency, formatDateTime } from '#shared/utils';
+import InlineGroupMember from '~/components/common/InlineGroupMember.vue';
 
 type Member = {
   id: string;
@@ -42,8 +44,8 @@ const props = defineProps<{
   members: Member[];
 }>();
 const paidBy = computed<Member | null>(() => getMember(props.expense.paidByMemberId));
-const participants = computed<Member[]>(() =>
-  props.expense.participants.map((p) => getMember(p.memberId)).filter((p) => p != null),
+const participants = computed<(Member | null)[]>(() =>
+  props.expense.participants.map((p) => getMember(p.memberId)),
 );
 
 const getMember = (memberId: string): Member | null =>
@@ -53,32 +55,31 @@ const getMember = (memberId: string): Member | null =>
 <style scoped lang="scss">
 @use '~/styles/_utilities.scss';
 
-.card-content {
+:deep(.p-card-content) {
   @include utilities.flex-column(false);
-}
 
-.description {
-  font-size: 130%;
-}
-
-.members {
-  @include utilities.flex-row-align-center;
-  justify-content: center;
-  margin-bottom: calc(var(--default-spacing) / 2);
-}
-
-.amount-timestamp {
-  @include utilities.flex-row-justify-between(false);
-  align-items: flex-end;
-  flex-wrap: wrap;
-
-  .amount {
-    font-size: 110%;
+  .members-avatars {
+    @include utilities.flex-row-align-center;
+    justify-content: center;
+    margin-bottom: calc(var(--default-spacing) / 2);
   }
 
-  .timestamp {
-    font-size: 0.75rem;
-    color: var(--p-surface-500);
+  .description {
+    font-size: 130%;
+  }
+
+  .amount-timestamp {
+    @include utilities.flex-row-justify-between(false);
+    align-items: flex-end; // put timestamp on same baseline as amount
+
+    .amount {
+      font-size: 110%;
+    }
+
+    .timestamp {
+      font-size: 0.75rem;
+      @include utilities.muted;
+    }
   }
 }
 </style>
