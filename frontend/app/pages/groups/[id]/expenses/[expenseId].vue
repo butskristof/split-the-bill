@@ -57,6 +57,22 @@
           <span class="value">{{ formatDateTime(expense.timestamp) }}</span>
         </div>
       </div>
+
+      <div class="delete-expense">
+        <Button
+          label="Delete expense"
+          icon="pi pi-trash"
+          severity="danger"
+          variant="text"
+          @click="openDeleteExpenseDialog"
+        />
+        <DeleteExpenseDialog
+          v-if="showDeleteExpenseDialog"
+          :group-id="groupId"
+          :expense="expense"
+          @close="closeDeleteExpenseDialog"
+        />
+      </div>
     </div>
     <Message
       v-else
@@ -72,10 +88,11 @@ import MemberAvatar from '~/components/common/MemberAvatar.vue';
 import MemberAvatarGroup from '~/components/common/MemberAvatarGroup.vue';
 import { formatCurrency, formatDateTime } from '#shared/utils';
 import InlineGroupMember from '~/components/common/InlineGroupMember.vue';
+import DeleteExpenseDialog from '~/components/groups/detail/DeleteExpenseDialog.vue';
 import type { Expense } from '#shared/types/api';
 import type { Member } from '#shared/types/member';
 
-const { expenses, members } = useDetailPageGroup();
+const { groupId, expenses, members } = useDetailPageGroup();
 const route = useRoute();
 const expenseId = computed(() => route.params.expenseId as string);
 
@@ -94,6 +111,12 @@ const participants = computed(() =>
 
 const getMember = (memberId: string): Member | null =>
   (members.value?.find((m) => m.id === memberId) as Member) ?? null;
+
+//#region delete expense dialog
+const showDeleteExpenseDialog = ref(false);
+const openDeleteExpenseDialog = () => (showDeleteExpenseDialog.value = true);
+const closeDeleteExpenseDialog = () => (showDeleteExpenseDialog.value = false);
+//#endregion
 </script>
 
 <style scoped lang="scss">
@@ -106,6 +129,11 @@ const getMember = (memberId: string): Member | null =>
     @include utilities.flex-row-align-center;
     justify-content: center;
     margin-bottom: calc(var(--default-spacing) / 2);
+  }
+
+  .delete-expense {
+    margin-top: calc(var(--default-spacing));
+    margin-left: auto;
   }
 }
 
