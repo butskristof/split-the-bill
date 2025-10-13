@@ -1,9 +1,9 @@
 <template>
-  <div class="recent-activity">
-    <h2>Recent activity</h2>
+  <div class="group-activity">
+    <h2>Activity</h2>
     <div class="activities">
       <template
-        v-for="activity in recentActivity"
+        v-for="activity in activities"
         :key="activity.id"
       >
         <ExpenseActivityListItem
@@ -18,26 +18,13 @@
         />
       </template>
     </div>
-    <div class="all-activity">
-      <NuxtLink
-        class="link"
-        :to="{ name: 'groups-id-activity', params: { id: props.group.id } }"
-      >
-        <Button
-          label="Show all activity"
-          icon="pi pi-arrow-right"
-          variant="text"
-          icon-pos="right"
-        />
-      </NuxtLink>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Group, Expense, Payment } from '#shared/types/api';
-import PaymentActivityListItem from '~/components/groups/activities/PaymentActivityListItem.vue';
+import type { Expense, Group, Payment } from '#shared/types/api';
 import ExpenseActivityListItem from '~/components/groups/activities/ExpenseActivityListItem.vue';
+import PaymentActivityListItem from '~/components/groups/activities/PaymentActivityListItem.vue';
 
 type ExpenseActivity = Expense & { type: 'expense' };
 type PaymentActivity = Payment & { type: 'payment' };
@@ -47,7 +34,7 @@ const props = defineProps<{
   group: Group;
 }>();
 
-const recentActivity = computed<Activity[]>(() => {
+const activities = computed<Activity[]>(() => {
   const activity: Activity[] = [];
 
   // Cast from loose OpenAPI types to strict DTOs at the boundary
@@ -59,22 +46,18 @@ const recentActivity = computed<Activity[]>(() => {
 
   activity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-  return activity.slice(0, 3);
+  return activity;
 });
 </script>
 
 <style scoped lang="scss">
 @use '~/styles/_utilities.scss';
 
-.recent-activity {
+.group-activity {
   @include utilities.flex-column;
 }
 
 .activities {
   @include utilities.flex-column;
-}
-
-.all-activity {
-  @include utilities.flex-row-justify-end;
 }
 </style>
