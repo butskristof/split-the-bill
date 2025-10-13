@@ -56,6 +56,14 @@
   font-weight: var(--font-weight-bold);
 }
 
+@mixin muted {
+  color: var(--p-surface-600);
+
+  @include dark-mode {
+    color: var(--p-surface-400);
+  }
+}
+
 @mixin reset-link($color-inherit: true) {
   text-decoration: none;
   @if $color-inherit {

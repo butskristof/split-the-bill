@@ -34,3 +34,27 @@ export type CreatePaymentRequest = {
 };
 
 export type Group = components['schemas']['GroupDto'];
+
+// Stricter DTOs that reflect actual API guarantees (non-nullable fields)
+// These match the OpenAPI schema but remove optionals we know are always present
+export type Expense = {
+  id: string;
+  description: string;
+  paidByMemberId: string;
+  timestamp: string;
+  amount: number;
+  splitType: number;
+  participants: {
+    memberId: string;
+    percentualShare?: number;
+    exactShare?: number;
+  }[];
+};
+
+export type Payment = {
+  id: string;
+  sendingMemberId: string;
+  receivingMemberId: string;
+  amount: number;
+  timestamp: string;
+};
