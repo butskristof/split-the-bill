@@ -9,7 +9,15 @@
       >
         <MemberAvatar :member="member" />
         <div class="name">{{ member.name }}</div>
-        <div class="balance">{{ member.totalBalance }}</div>
+        <div
+          class="balance"
+          :class="{ positive: member.totalBalance >= 0, negative: member.totalBalance < 0 }"
+        >
+          <span>{{ member.totalBalance < 0 ? 'owes' : 'is owed' }}</span> <br />
+          <span class="balance-amount">
+            {{ formatCurrency(Math.abs(member.totalBalance)) }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -18,11 +26,17 @@
 <script setup lang="ts">
 import MemberAvatar from '~/components/common/MemberAvatar.vue';
 import type { Group } from '#shared/types/api';
+import { formatCurrency } from '#shared/utils';
 
+type Member = {
+  id: string;
+  name: string;
+  totalBalance: number;
+};
 const props = defineProps<{
   group: Group;
 }>();
-const members = computed(() => props.group.members ?? []);
+const members = computed(() => (props.group.members as Member[]) ?? []);
 </script>
 
 <style scoped lang="scss">
@@ -40,6 +54,23 @@ const members = computed(() => props.group.members ?? []);
 
 .member {
   @include utilities.flex-column(false);
+  gap: calc(var(--default-spacing) / 2);
   align-items: center;
+}
+
+.balance {
+  text-align: center;
+
+  .balance-amount {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  &.positive {
+    color: var(--p-green-600);
+  }
+
+  &.negative {
+    color: var(--p-red-600);
+  }
 }
 </style>
