@@ -1,6 +1,6 @@
 <template>
   <AppDialog
-    header="Add new payment"
+    :header="isCreate ? 'Add new payment' : 'Edit payment'"
     @close="tryClose"
   >
     <form @submit.prevent="onFormSubmit">
@@ -122,12 +122,12 @@
       <div class="form-footer">
         <div class="messages">
           <Message
-            v-if="isCreated"
+            v-if="isSuccess"
             severity="success"
             variant="simple"
             icon="pi pi-check"
           >
-            New payment created successfully!
+            {{ isCreate ? 'New payment created successfully' : 'Successfully saved changes' }}
           </Message>
           <Message
             v-if="apiErrorTitle"
@@ -171,24 +171,27 @@ import {
   string,
   withMessage,
 } from '@regle/rules';
-import type { CreatePaymentRequest } from '#shared/types/api';
+import type { CreatePaymentRequest, Payment } from '#shared/types/api';
 import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 import type { FetchError } from 'ofetch';
 import { useCreatePaymentMutation } from '~/composables/backend-api/useCreatePaymentMutation';
+import { useUpdatePaymentMutation } from '~/composables/backend-api/useUpdatePaymentMutation';
 import type { Member } from '#shared/types/member';
 import { DIALOG_SUCCESS_CLOSE_DELAY } from '#shared/constants';
 
 const props = defineProps<{
   groupId: string;
   members: Member[];
+  payment?: Payment | undefined;
 }>();
+const isCreate = computed(() => !props.payment);
 const emit = defineEmits<{
   close: [];
 }>();
 const tryClose = () => {
   // should either not be touched by user or confirmed they want to close and lose changes
   if (
-    isCreated.value ||
+    isSuccess.value ||
     !r$.$anyDirty ||
     confirm('There are unsaved changes. Are you sure you want to close this dialog?')
   ) {
@@ -198,11 +201,19 @@ const tryClose = () => {
 
 //#region form
 
-const createPaymentMutation = useCreatePaymentMutation();
-const isSubmitting = computed(() => createPaymentMutation.isPending.value);
-const isCreated = computed(() => createPaymentMutation.isSuccess.value);
+const createMutation = useCreatePaymentMutation();
+const updateMutation = useUpdatePaymentMutation();
 
-const formDisabled = computed<boolean>(() => isSubmitting.value || isCreated.value);
+const isSubmitting = computed(
+  () => (isCreate.value ? createMutation : updateMutation).isPending.value,
+);
+const isSuccess = computed(
+  () => (isCreate.value ? createMutation : updateMutation).isSuccess.value,
+);
+
+const formDisabled = computed<boolean>(() => isSubmitting.value || isSuccess.value);
+const apiError = computed(() => (isCreate.value ? createMutation : updateMutation).error.value);
+
 // map to a single string[]
 const senderErrors = computed<string[]>(() =>
   // for now we only care about the messages, not the property they appeared on (only validation on
@@ -213,14 +224,13 @@ const receiverErrors = computed<string[]>(() =>
   Object.entries(r$.receiver.$errors).flatMap(([, v]) => v),
 );
 const apiErrorTitle = computed<string | null>(() => {
-  if (!createPaymentMutation.error.value) return null;
-  const problemDetails = (createPaymentMutation.error.value as FetchError)?.data as ProblemDetails;
+  if (!apiError.value) return null;
+  const problemDetails = (apiError.value as FetchError)?.data as ProblemDetails;
   return problemDetails?.title ?? 'Something went wrong, please try again later.';
 });
 const externalErrors = computed<Record<string, string[]>>(() => {
-  if (!createPaymentMutation.error.value) return {};
-  const problemDetails = (createPaymentMutation.error.value as FetchError)
-    ?.data as ValidationProblemDetails;
+  if (!apiError.value) return {};
+  const problemDetails = (apiError.value as FetchError)?.data as ValidationProblemDetails;
   if (!problemDetails?.errors) return {};
   return {
     ...mapProblemDetailsErrorsToExternalErrors(problemDetails.errors),
@@ -234,6 +244,11 @@ const externalErrors = computed<Record<string, string[]>>(() => {
 // no payments in the future allowed
 const maxTimestamp = new Date();
 
+// Helper function to find member by ID
+const findMemberById = (id: string): Member | null => {
+  return props.members.find((m) => m.id === id) ?? null;
+};
+
 // defines actual form state, allows for invalid (empty) values so fields can be
 // initialised empty or cleared
 type FormState = {
@@ -244,10 +259,10 @@ type FormState = {
 };
 
 const formState = ref<FormState>({
-  amount: null,
-  timestamp: maxTimestamp,
-  sender: null,
-  receiver: null,
+  amount: props.payment?.amount ?? null,
+  timestamp: props.payment ? new Date(props.payment.timestamp) : maxTimestamp,
+  sender: props.payment ? findMemberById(props.payment.sendingMemberId) : null,
+  receiver: props.payment ? findMemberById(props.payment.receivingMemberId) : null,
 });
 
 // Computed array of valid member IDs for validation
@@ -314,11 +329,22 @@ const onFormSubmit = async () => {
     amount: data.amount,
     timestamp: data.timestamp.toISOString(),
   };
-  createPaymentMutation.mutate(request, {
-    onSuccess: () => {
-      setTimeout(tryClose, DIALOG_SUCCESS_CLOSE_DELAY);
-    },
-  });
+  if (isCreate.value) {
+    createMutation.mutate(request, {
+      onSuccess: () => {
+        setTimeout(tryClose, DIALOG_SUCCESS_CLOSE_DELAY);
+      },
+    });
+  } else {
+    updateMutation.mutate(
+      { ...request, id: props.payment!.id },
+      {
+        onSuccess: () => {
+          setTimeout(tryClose, DIALOG_SUCCESS_CLOSE_DELAY);
+        },
+      },
+    );
+  }
 };
 
 //#endregion

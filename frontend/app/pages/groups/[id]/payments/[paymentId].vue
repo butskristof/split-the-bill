@@ -38,20 +38,37 @@
         </div>
       </div>
 
-      <div class="delete-payment">
-        <Button
-          label="Delete payment"
-          icon="pi pi-trash"
-          severity="danger"
-          variant="text"
-          @click="openDeletePaymentDialog"
-        />
-        <DeletePaymentDialog
-          v-if="showDeletePaymentDialog"
-          :group-id="groupId"
-          :payment="payment"
-          @close="closeDeletePaymentDialog"
-        />
+      <div class="edit-delete-payment">
+        <div class="edit">
+          <Button
+            label="Edit payment details"
+            icon="pi pi-pen-to-square"
+            variant="text"
+            @click="openEditPaymentDialog"
+          />
+          <EditPaymentDialog
+            v-if="showEditPaymentDialog"
+            :group-id="groupId"
+            :members="members!.map((m) => ({ id: m.id!, name: m.name! }))"
+            :payment="payment"
+            @close="closeEditPaymentDialog"
+          />
+        </div>
+        <div class="delete">
+          <Button
+            label="Delete payment"
+            icon="pi pi-trash"
+            severity="danger"
+            variant="text"
+            @click="openDeletePaymentDialog"
+          />
+          <DeletePaymentDialog
+            v-if="showDeletePaymentDialog"
+            :group-id="groupId"
+            :payment="payment"
+            @close="closeDeletePaymentDialog"
+          />
+        </div>
       </div>
     </div>
 
@@ -72,6 +89,7 @@ import { formatCurrency, formatDateTime } from '#shared/utils';
 import type { Payment } from '#shared/types/api';
 import type { Member } from '#shared/types/member';
 import AppBackButton from '~/components/app/AppBackButton.vue';
+import EditPaymentDialog from '~/components/groups/detail/EditPaymentDialog.vue';
 
 const { groupId, payments, members } = useDetailPageGroup();
 const route = useRoute();
@@ -89,6 +107,12 @@ const receiver = computed<Member | null>(() =>
 
 const getMember = (memberId: string): Member | null =>
   (members.value?.find((m) => m.id === memberId) as Member) ?? null;
+
+//#region edit payment dialog
+const showEditPaymentDialog = ref(false);
+const openEditPaymentDialog = () => (showEditPaymentDialog.value = true);
+const closeEditPaymentDialog = () => (showEditPaymentDialog.value = false);
+//#endregion
 
 //#region delete payment dialog
 const showDeletePaymentDialog = ref(false);
@@ -115,9 +139,10 @@ const closeDeletePaymentDialog = () => (showDeletePaymentDialog.value = false);
     justify-content: center;
   }
 
-  .delete-payment {
+  .edit-delete-payment {
     margin-top: calc(var(--default-spacing));
-    margin-left: auto;
+    @include utilities.flex-row-justify-between-align-center;
+    flex-wrap: wrap;
   }
 }
 

@@ -26,6 +26,7 @@ export type CreateExpenseRequest = {
     exactShare?: number;
   }[];
 };
+export type UpdateExpenseRequest = CreateExpenseRequest & { id: string };
 export type CreatePaymentRequest = {
   groupId: string;
   sendingMemberId: string;
@@ -33,6 +34,7 @@ export type CreatePaymentRequest = {
   amount: number;
   timestamp: string;
 };
+export type UpdatePaymentRequest = CreatePaymentRequest & { id: string };
 
 export type Group = components['schemas']['GroupDto'];
 

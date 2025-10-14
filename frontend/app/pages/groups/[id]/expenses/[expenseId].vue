@@ -63,20 +63,37 @@
         </div>
       </div>
 
-      <div class="delete-expense">
-        <Button
-          label="Delete expense"
-          icon="pi pi-trash"
-          severity="danger"
-          variant="text"
-          @click="openDeleteExpenseDialog"
-        />
-        <DeleteExpenseDialog
-          v-if="showDeleteExpenseDialog"
-          :group-id="groupId"
-          :expense="expense"
-          @close="closeDeleteExpenseDialog"
-        />
+      <div class="edit-delete-expense">
+        <div class="edit">
+          <Button
+            label="Edit expense details"
+            icon="pi pi-pen-to-square"
+            variant="text"
+            @click="openEditExpenseDialog"
+          />
+          <EditExpenseDialog
+            v-if="showEditExpenseDialog"
+            :group-id="groupId"
+            :members="members!.map((m) => ({ id: m.id!, name: m.name! }))"
+            :expense="expense"
+            @close="closeEditExpenseDialog"
+          />
+        </div>
+        <div class="delete">
+          <Button
+            label="Delete expense"
+            icon="pi pi-trash"
+            severity="danger"
+            variant="text"
+            @click="openDeleteExpenseDialog"
+          />
+          <DeleteExpenseDialog
+            v-if="showDeleteExpenseDialog"
+            :group-id="groupId"
+            :expense="expense"
+            @close="closeDeleteExpenseDialog"
+          />
+        </div>
       </div>
     </div>
     <Message
@@ -97,6 +114,7 @@ import DeleteExpenseDialog from '~/components/groups/detail/DeleteExpenseDialog.
 import type { Expense } from '#shared/types/api';
 import type { Member } from '#shared/types/member';
 import AppBackButton from '~/components/app/AppBackButton.vue';
+import EditExpenseDialog from '~/components/groups/detail/EditExpenseDialog.vue';
 
 const { groupId, expenses, members } = useDetailPageGroup();
 const route = useRoute();
@@ -118,6 +136,12 @@ const participants = computed(() =>
 const getMember = (memberId: string): Member | null =>
   (members.value?.find((m) => m.id === memberId) as Member) ?? null;
 
+//#region edit expense dialog
+const showEditExpenseDialog = ref(false);
+const openEditExpenseDialog = () => (showEditExpenseDialog.value = true);
+const closeEditExpenseDialog = () => (showEditExpenseDialog.value = false);
+//#endregion
+
 //#region delete expense dialog
 const showDeleteExpenseDialog = ref(false);
 const openDeleteExpenseDialog = () => (showDeleteExpenseDialog.value = true);
@@ -137,9 +161,10 @@ const closeDeleteExpenseDialog = () => (showDeleteExpenseDialog.value = false);
     margin-bottom: calc(var(--default-spacing) / 2);
   }
 
-  .delete-expense {
+  .edit-delete-expense {
     margin-top: calc(var(--default-spacing));
-    margin-left: auto;
+    @include utilities.flex-row-justify-between-align-center;
+    flex-wrap: wrap;
   }
 }
 
