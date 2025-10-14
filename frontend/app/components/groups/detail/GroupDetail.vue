@@ -12,7 +12,7 @@
         icon="pi pi-plus"
         @click="openCreateExpenseDialog"
       />
-      <CreateExpenseDialog
+      <EditExpenseDialog
         v-if="showCreateExpenseDialog"
         :group-id="group.id!"
         :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
@@ -23,7 +23,7 @@
         icon="pi pi-plus"
         @click="openCreatePaymentDialog"
       />
-      <CreatePaymentDialog
+      <EditPaymentDialog
         v-if="showCreatePaymentDialog"
         :group-id="group.id!"
         :members="group.members!.map((m) => ({ id: m.id!, name: m.name! }))"
@@ -42,7 +42,7 @@
         />
         <EditGroupDialog
           v-if="showEditGroupDialog"
-          :group="{ id: group.id, name: group.name }"
+          :group="{ id: group.id!, name: group.name! }"
           @close="closeEditGroupDialog"
         />
       </div>
@@ -65,8 +65,8 @@
 </template>
 
 <script setup lang="ts">
-import CreateExpenseDialog from '~/components/groups/detail/CreateExpenseDialog.vue';
-import CreatePaymentDialog from '~/components/groups/detail/CreatePaymentDialog.vue';
+import EditExpenseDialog from '~/components/groups/detail/EditExpenseDialog.vue';
+import EditPaymentDialog from '~/components/groups/detail/EditPaymentDialog.vue';
 import type { Group } from '#shared/types/api';
 import DeleteGroupDialog from '~/components/groups/detail/DeleteGroupDialog.vue';
 import RecentActivity from '~/components/groups/detail/RecentActivity.vue';
