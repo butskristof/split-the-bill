@@ -3,7 +3,7 @@
     <MemberAvatar
       :member="member"
       :tooltip="false"
-      size="small"
+      :size="size"
     />
     <span>
       {{ memberName }}
@@ -13,17 +13,19 @@
 
 <script setup lang="ts">
 import { useDetailPageGroup } from '~/composables/backend-api/useDetailPageGroup';
-import MemberAvatar from '~/components/common/MemberAvatar.vue';
+import MemberAvatar, { type MemberAvatarSize } from '~/components/common/MemberAvatar.vue';
 import type { Member } from '#shared/types/member';
 
 const props = withDefaults(
   defineProps<{
     memberId?: string | null;
     member?: Member | null;
+    size?: MemberAvatarSize;
   }>(),
   {
     memberId: null,
     member: null,
+    size: 'small',
   },
 );
 

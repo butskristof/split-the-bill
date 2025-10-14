@@ -53,7 +53,7 @@
 
       <div class="details">
         <div class="detail-row">
-          <span class="label">Total expense amount</span>
+          <span class="label">Amount</span>
           <span class="value">{{ formatCurrency(expense.amount) }}</span>
         </div>
 
@@ -183,6 +183,7 @@ const closeDeleteExpenseDialog = () => (showDeleteExpenseDialog.value = false);
     @include utilities.flex-column;
     .participant {
       @include utilities.flex-row-justify-between;
+      flex-wrap: wrap;
     }
   }
 }
@@ -192,10 +193,7 @@ const closeDeleteExpenseDialog = () => (showDeleteExpenseDialog.value = false);
 
   .detail-row {
     @include utilities.flex-row-justify-between;
-
-    .label {
-      @include utilities.muted;
-    }
+    flex-wrap: wrap;
   }
 }
 </style>
