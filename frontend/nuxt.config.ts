@@ -65,6 +65,7 @@ export default defineNuxtConfig({
     'nuxt-oidc-auth',
     'nuxt-open-fetch',
     '@regle/nuxt',
+    '@nuxtjs/color-mode',
   ],
   security: {},
   components: {
