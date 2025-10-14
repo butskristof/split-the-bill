@@ -1,5 +1,10 @@
 <template>
   <div class="expense-detail">
+    <AppBackButton
+      :to="{ name: 'groups-id-activity', params: { id: groupId } }"
+      :prioritize-previous-route="true"
+    />
+
     <div
       v-if="expense"
       class="expense"
@@ -91,6 +96,7 @@ import InlineGroupMember from '~/components/common/InlineGroupMember.vue';
 import DeleteExpenseDialog from '~/components/groups/detail/DeleteExpenseDialog.vue';
 import type { Expense } from '#shared/types/api';
 import type { Member } from '#shared/types/member';
+import AppBackButton from '~/components/app/AppBackButton.vue';
 
 const { groupId, expenses, members } = useDetailPageGroup();
 const route = useRoute();

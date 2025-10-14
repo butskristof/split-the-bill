@@ -1,5 +1,10 @@
 <template>
   <div class="payment-detail">
+    <AppBackButton
+      :to="{ name: 'groups-id-activity', params: { id: groupId } }"
+      :prioritize-previous-route="true"
+    />
+
     <div
       v-if="payment"
       class="payment"
@@ -66,6 +71,7 @@ import DeletePaymentDialog from '~/components/groups/detail/DeletePaymentDialog.
 import { formatCurrency, formatDateTime } from '#shared/utils';
 import type { Payment } from '#shared/types/api';
 import type { Member } from '#shared/types/member';
+import AppBackButton from '~/components/app/AppBackButton.vue';
 
 const { groupId, payments, members } = useDetailPageGroup();
 const route = useRoute();
