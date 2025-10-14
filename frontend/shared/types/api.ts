@@ -12,6 +12,7 @@ export type ProblemDetails = components['schemas']['ProblemDetails'];
 export type CreateGroupRequest = {
   name: string;
 };
+export type UpdateGroupRequest = CreateGroupRequest & { id: string };
 export type CreateExpenseRequest = {
   groupId: string;
   description: string;

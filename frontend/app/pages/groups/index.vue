@@ -14,7 +14,7 @@
       v-if="groups"
       :groups="groups"
     />
-    <CreateGroupDialog
+    <EditGroupDialog
       v-if="showCreateGroupDialog"
       @close="closeCreateGroupDialog"
     />
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import GroupsList from '~/components/groups/overview/GroupsList.vue';
-import CreateGroupDialog from '~/components/groups/overview/CreateGroupDialog.vue';
+import EditGroupDialog from '~/components/groups/overview/EditGroupDialog.vue';
 import { useGetGroupsQuery } from '~/composables/backend-api/useGetGroupsQuery';
 
 // TODO loading state
