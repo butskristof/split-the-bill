@@ -16,10 +16,10 @@
           class="balance"
           :class="{ positive: member.totalBalance >= 0, negative: member.totalBalance < 0 }"
         >
-          <span>{{ member.totalBalance < 0 ? 'owes' : 'is owed' }}</span> <br />
-          <span class="balance-amount">
+          <div>{{ member.totalBalance < 0 ? 'owes' : 'is owed' }}</div>
+          <div class="balance-amount">
             {{ formatCurrency(Math.abs(member.totalBalance)) }}
-          </span>
+          </div>
         </div>
       </div>
     </div>
