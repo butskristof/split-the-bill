@@ -151,10 +151,7 @@ const closeDeletePaymentDialog = () => (showDeletePaymentDialog.value = false);
 
   .detail-row {
     @include utilities.flex-row-justify-between;
-
-    .label {
-      @include utilities.muted;
-    }
+    flex-wrap: wrap;
   }
 }
 </style>

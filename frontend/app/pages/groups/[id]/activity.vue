@@ -1,7 +1,7 @@
 <template>
   <div class="page-group-detail-activity">
     <AppBackButton
-      label="Back to group overview"
+      label="Back to group"
       :to="{ name: 'groups-id', params: { id: groupId } }"
     />
     <GroupActivity

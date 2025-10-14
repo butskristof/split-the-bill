@@ -12,16 +12,29 @@
           :tooltip="false"
         />
         <div class="name">{{ member.name }}</div>
-        <div
-          class="balance"
-          :class="{ positive: member.totalBalance >= 0, negative: member.totalBalance < 0 }"
-        >
+        <div class="balance">
           <div>{{ member.totalBalance < 0 ? 'owes' : 'is owed' }}</div>
-          <div class="balance-amount">
-            {{ formatCurrency(Math.abs(member.totalBalance)) }}
+          <div
+            class="balance-amount"
+            :class="{ positive: member.totalBalance >= 0, negative: member.totalBalance < 0 }"
+          >
+            <strong>{{ formatCurrency(Math.abs(member.totalBalance)) }}</strong>
           </div>
         </div>
       </div>
+    </div>
+    <div class="manage-members">
+      <NuxtLink
+        class="link"
+        :to="{ name: 'groups-id-members', params: { id: props.group.id } }"
+      >
+        <Button
+          label="Manage members"
+          icon="pi pi-arrow-right"
+          variant="text"
+          icon-pos="right"
+        />
+      </NuxtLink>
     </div>
   </div>
 </template>
@@ -49,6 +62,7 @@ const members = computed(() => (props.group.members as Member[]) ?? []);
 }
 
 .members {
+  padding-inline: var(--default-spacing);
   @include utilities.flex-row;
   gap: calc(var(--default-spacing) * 2);
   overflow-x: auto;
@@ -68,12 +82,16 @@ const members = computed(() => (props.group.members as Member[]) ?? []);
     font-weight: var(--font-weight-semibold);
   }
 
-  &.positive {
+  .positive {
     color: var(--p-green-600);
   }
 
-  &.negative {
+  .negative {
     color: var(--p-red-600);
   }
+}
+
+.manage-members {
+  @include utilities.flex-row-justify-end;
 }
 </style>
