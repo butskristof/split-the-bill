@@ -32,19 +32,34 @@
     </div>
     <RecentActivity :group="group" />
     <GroupDetailMembers :group="group" />
-    <div class="delete-group">
-      <Button
-        label="Delete group"
-        icon="pi pi-trash"
-        severity="danger"
-        variant="text"
-        @click="openDeleteGroupDialog"
-      />
-      <DeleteGroupDialog
-        v-if="showDeleteGroupDialog"
-        :group="{ id: group.id!, name: group.name! }"
-        @close="closeDeleteGroupDialog"
-      />
+    <div class="edit-delete-group">
+      <div class="edit">
+        <Button
+          label="Edit group details"
+          icon="pi pi-pen-to-square"
+          variant="text"
+          @click="openEditGroupDialog"
+        />
+        <EditGroupDialog
+          v-if="showEditGroupDialog"
+          :group="{ id: group.id, name: group.name }"
+          @close="closeEditGroupDialog"
+        />
+      </div>
+      <div class="delete">
+        <Button
+          label="Delete group"
+          icon="pi pi-trash"
+          severity="danger"
+          variant="text"
+          @click="openDeleteGroupDialog"
+        />
+        <DeleteGroupDialog
+          v-if="showDeleteGroupDialog"
+          :group="{ id: group.id!, name: group.name! }"
+          @close="closeDeleteGroupDialog"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -56,6 +71,7 @@ import type { Group } from '#shared/types/api';
 import DeleteGroupDialog from '~/components/groups/detail/DeleteGroupDialog.vue';
 import RecentActivity from '~/components/groups/detail/RecentActivity.vue';
 import GroupDetailMembers from '~/components/groups/detail/GroupDetailMembers.vue';
+import EditGroupDialog from '~/components/groups/overview/EditGroupDialog.vue';
 
 defineProps<{
   group: Group;
@@ -71,6 +87,12 @@ const closeCreateExpenseDialog = () => (showCreateExpenseDialog.value = false);
 const showCreatePaymentDialog = ref(false);
 const openCreatePaymentDialog = () => (showCreatePaymentDialog.value = true);
 const closeCreatePaymentDialog = () => (showCreatePaymentDialog.value = false);
+//#endregion
+
+//#region edit group dialog
+const showEditGroupDialog = ref(false);
+const openEditGroupDialog = () => (showEditGroupDialog.value = true);
+const closeEditGroupDialog = () => (showEditGroupDialog.value = false);
 //#endregion
 
 //#region delete group dialog
@@ -90,9 +112,10 @@ const closeDeleteGroupDialog = () => (showDeleteGroupDialog.value = false);
     @include utilities.flex-row;
   }
 
-  .delete-group {
+  .edit-delete-group {
     margin-top: calc(var(--default-spacing));
-    margin-left: auto;
+    @include utilities.flex-row-justify-between-align-center;
+    flex-wrap: wrap;
   }
 }
 </style>

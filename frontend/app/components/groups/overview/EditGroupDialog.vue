@@ -1,6 +1,6 @@
 <template>
   <AppDialog
-    header="Create new group"
+    :header="isEdit ? 'Edit group details' : 'Create new group'"
     @close="tryClose"
   >
     <form @submit.prevent="onFormSubmit">
@@ -31,12 +31,12 @@
       <div class="form-footer">
         <div class="message">
           <Message
-            v-if="isCreated"
+            v-if="isSuccess"
             severity="success"
             variant="simple"
             icon="pi pi-check"
           >
-            New group created successfully!
+            {{ isEdit ? 'Successfully saved changes' : 'New group created successfully' }}
           </Message>
           <Message
             v-if="apiErrorTitle"
@@ -71,18 +71,23 @@ import AppDialog from '~/components/common/AppDialog.vue';
 import { maxLength, required, string, minLength } from '@regle/rules';
 import { inferRules } from '@regle/core';
 import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
-import { useCreateGroupMutation } from '~/composables/backend-api/useCreateGroupMutation';
+import { useUpsertGroupMutation } from '~/composables/backend-api/useUpsertGroupMutation';
 import type { FetchError } from 'ofetch';
-import type { CreateGroupRequest } from '#shared/types/api';
+import type { CreateGroupRequest, UpdateGroupRequest } from '#shared/types/api';
 import { DIALOG_SUCCESS_CLOSE_DELAY } from '#shared/constants';
 
+type Group = { id: string; name: string };
+const props = defineProps<{
+  group?: Group | undefined;
+}>();
+const isEdit = computed(() => !!props.group);
 const emit = defineEmits<{
   close: [];
 }>();
 const tryClose = () => {
   // should either not be touched by user or confirmed they want to close and lose changes
   if (
-    isCreated.value ||
+    isSuccess.value ||
     !r$.$anyDirty ||
     confirm('There are unsaved changes. Are you sure you want to close this dialog?')
   ) {
@@ -92,20 +97,19 @@ const tryClose = () => {
 
 //#region form
 
-const createGroupMutation = useCreateGroupMutation();
-const isSubmitting = computed(() => createGroupMutation.isPending.value);
-const isCreated = computed(() => createGroupMutation.isSuccess.value);
+const mutation = useUpsertGroupMutation();
+const isSubmitting = computed(() => mutation.isPending.value);
+const isSuccess = computed(() => mutation.isSuccess.value);
 
-const formDisabled = computed<boolean>(() => isSubmitting.value || isCreated.value);
+const formDisabled = computed<boolean>(() => isSubmitting.value || isSuccess.value);
 const apiErrorTitle = computed<string | null>(() => {
-  if (!createGroupMutation.error.value) return null;
-  const problemDetails = (createGroupMutation.error.value as FetchError)?.data as ProblemDetails;
+  if (!mutation.error.value) return null;
+  const problemDetails = (mutation.error.value as FetchError)?.data as ProblemDetails;
   return problemDetails?.title ?? 'Something went wrong, please try again later.';
 });
 const externalErrors = computed<Record<string, string[]>>(() => {
-  if (!createGroupMutation.error.value) return {};
-  const problemDetails = (createGroupMutation.error.value as FetchError)
-    ?.data as ValidationProblemDetails;
+  if (!mutation.error.value) return {};
+  const problemDetails = (mutation.error.value as FetchError)?.data as ValidationProblemDetails;
   if (!problemDetails?.errors) return {};
   return mapProblemDetailsErrorsToExternalErrors(problemDetails.errors);
 });
@@ -113,7 +117,7 @@ const externalErrors = computed<Record<string, string[]>>(() => {
 type FormState = {
   name: string;
 };
-const formState = ref<FormState>({ name: '' });
+const formState = ref<FormState>({ name: isEdit.value ? props.group!.name : '' });
 const formSchema = computed(() =>
   inferRules(formState, {
     name: {
@@ -130,16 +134,22 @@ const onFormSubmit = async () => {
   const { valid, data } = await r$.$validate();
   if (!valid) return;
 
-  const requestBody: CreateGroupRequest = {
-    name: data.name,
-  };
+  const requestBody: CreateGroupRequest | UpdateGroupRequest = isEdit.value
+    ? { id: props.group!.id, name: data.name }
+    : { name: data.name };
 
-  createGroupMutation.mutate(requestBody, {
+  mutation.mutate(requestBody, {
     onSuccess: (response) => {
-      setTimeout(
-        () => navigateTo({ name: 'groups-id', params: { id: response.id } }),
-        DIALOG_SUCCESS_CLOSE_DELAY,
-      );
+      if (isEdit.value) {
+        // When editing, just close the dialog (stay on current page)
+        setTimeout(() => emit('close'), DIALOG_SUCCESS_CLOSE_DELAY);
+      } else if (response?.id) {
+        // When creating, navigate to the new group's detail page
+        setTimeout(
+          () => navigateTo({ name: 'groups-id', params: { id: response.id } }),
+          DIALOG_SUCCESS_CLOSE_DELAY,
+        );
+      }
     },
   });
 };
