@@ -2,6 +2,7 @@
   <span class="member">
     <MemberAvatar
       :member="member"
+      :tooltip="false"
       size="small"
     />
     <span>
