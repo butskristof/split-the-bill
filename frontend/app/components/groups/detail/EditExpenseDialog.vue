@@ -115,30 +115,38 @@
         </div>
       </div>
 
-      <div class="form-field">
-        <label for="participants">Participants</label>
-        <Listbox
-          id="participants"
-          v-model="r$.$value.participants"
-          :options="props.members"
-          option-label="name"
-          multiple
-          :invalid="r$.participants.$error"
-          :disabled="formDisabled"
-          fluid
-        />
+      <div class="participants">
+        <div class="participant-selection">
+          <div
+            v-for="member in props.members"
+            :key="member.id"
+            class="participant-row"
+          >
+            <div class="check">
+              <Checkbox />
+            </div>
+            <div class="member-name">
+              <InlineGroupMember :member="member" />
+            </div>
+            <div class="participant-amount">{{ formatCurrency(0) }}</div>
+            <div class="input">
+              <InputNumber
+                disabled
+                fluid
+                size="small"
+              />
+            </div>
+          </div>
+        </div>
         <div
-          v-if="r$.participants.$error"
-          class="errors"
+          v-if="r$.$value.amount"
+          class="amount-distribution"
         >
-          <Message
-            v-for="error in participantsErrors"
-            :key="error"
-            severity="error"
-            size="small"
-            variant="simple"
-            >{{ error }}
-          </Message>
+          <ProgressBar
+            :value="10"
+            :show-value="false"
+          />
+          <div>{{ formatCurrency(0) }} of {{ formatCurrency(r$.$value.amount) }} distributed</div>
         </div>
       </div>
 
@@ -197,12 +205,13 @@ import {
   withMessage,
 } from '@regle/rules';
 import type { CreateExpenseRequest, Expense } from '#shared/types/api';
-import { mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
+import { formatCurrency, mapProblemDetailsErrorsToExternalErrors } from '#shared/utils';
 import type { FetchError } from 'ofetch';
 import { useCreateExpenseMutation } from '~/composables/backend-api/useCreateExpenseMutation';
 import { useUpdateExpenseMutation } from '~/composables/backend-api/useUpdateExpenseMutation';
 import type { Member } from '#shared/types/member';
 import { DIALOG_SUCCESS_CLOSE_DELAY } from '#shared/constants';
+import InlineGroupMember from '~/components/common/InlineGroupMember.vue';
 
 const props = defineProps<{
   groupId: string;
@@ -427,6 +436,37 @@ form {
     .form-field {
       flex: 1 1 0;
       min-width: calc(var(--default-spacing) * 12);
+    }
+  }
+
+  .participants {
+    @include utilities.flex-column;
+    .participant-selection {
+      @include utilities.flex-column;
+
+      .participant-row {
+        @include utilities.flex-row-justify-between-align-center;
+        flex-wrap: nowrap;
+
+        .member-name {
+          flex-grow: 1;
+        }
+
+        .input {
+          flex-basis: calc(1rem * 4);
+          flex-grow: 0;
+        }
+      }
+    }
+
+    .amount-distribution {
+      @include utilities.flex-column;
+      align-items: center;
+
+      :deep(.p-progressbar) {
+        width: 100%;
+        --p-progressbar-height: 0.5rem;
+      }
     }
   }
 
