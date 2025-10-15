@@ -16,6 +16,12 @@
       >
         <slot name="subtitle" />
       </template>
+      <template
+        v-if="$slots.content"
+        #content
+      >
+        <slot name="content" />
+      </template>
       <slot />
       <template
         v-if="$slots.footer"
