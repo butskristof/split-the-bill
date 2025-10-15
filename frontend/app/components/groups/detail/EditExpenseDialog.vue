@@ -116,22 +116,48 @@
       </div>
 
       <div class="participants">
+        <div class="expense-split-type">
+          <SelectButton
+            v-model="r$.$value.splitType"
+            :options="Object.entries(ExpenseSplitType).map(([key, value]) => ({ key, value }))"
+            option-label="key"
+            option-value="value"
+            fluid
+          />
+        </div>
         <div class="participant-selection">
           <div
-            v-for="member in props.members"
-            :key="member.id"
+            v-for="participant in r$.$value.participants"
+            :key="participant.member.id"
             class="participant-row"
           >
             <div class="check">
-              <Checkbox />
+              <Checkbox
+                v-model="participant.isIncluded"
+                binary
+                :disabled="formDisabled"
+              />
             </div>
             <div class="member-name">
-              <InlineGroupMember :member="member" />
+              <InlineGroupMember :member="participant.member" />
             </div>
-            <div class="participant-amount">{{ formatCurrency(0) }}</div>
+            <div class="participant-amount">
+              {{
+                participantAmounts[participant.member.id]
+                  ? formatCurrency(participantAmounts[participant.member.id]!)
+                  : null
+              }}
+            </div>
             <div class="input">
               <InputNumber
-                disabled
+                v-if="r$.$value.splitType === ExpenseSplitType.Percentual"
+                v-model="participant.percentualShare"
+                fluid
+                size="small"
+              />
+              <InputNumber
+                v-if="r$.$value.splitType === ExpenseSplitType.ExactAmount"
+                v-model="participant.exactShare"
                 fluid
                 size="small"
               />
@@ -143,10 +169,13 @@
           class="amount-distribution"
         >
           <ProgressBar
-            :value="10"
+            :value="(participantAmountSum / r$.$value.amount) * 100"
             :show-value="false"
           />
-          <div>{{ formatCurrency(0) }} of {{ formatCurrency(r$.$value.amount) }} distributed</div>
+          <div>
+            {{ formatCurrency(participantAmountSum) }} of
+            {{ formatCurrency(r$.$value.amount) }} distributed
+          </div>
         </div>
       </div>
 
@@ -312,6 +341,49 @@ const findMemberById = (id: string): Member | null => {
   return props.members.find((m) => m.id === id) ?? null;
 };
 
+const participantAmounts = computed<Record<string, number | null>>(() => {
+  const splitType = formState.value.splitType;
+  if (splitType === ExpenseSplitType.Evenly) {
+    const amount = formState.value.amount;
+    const includedCount = formState.value.participants.filter((p) => p.isIncluded).length;
+    return formState.value.participants.reduce(
+      (result: Record<string, number | null>, participant) => {
+        result[participant.member.id] =
+          amount && includedCount > 0 && participant.isIncluded ? amount / includedCount : null;
+        return result;
+      },
+      {},
+    );
+  }
+  if (splitType === ExpenseSplitType.Percentual) {
+    const amount = formState.value.amount;
+    return formState.value.participants.reduce(
+      (result: Record<string, number | null>, participant) => {
+        result[participant.member.id] =
+          amount && participant.isIncluded && participant.percentualShare
+            ? amount * (participant.percentualShare / 100)
+            : null;
+        return result;
+      },
+      {},
+    );
+  }
+  if (splitType === ExpenseSplitType.ExactAmount) {
+    return formState.value.participants.reduce(
+      (result: Record<string, number | null>, participant) => {
+        result[participant.member.id] =
+          participant.isIncluded && participant.exactShare ? participant.exactShare : null;
+        return result;
+      },
+      {},
+    );
+  }
+  throw new Error('Unsupported split type');
+});
+const participantAmountSum = computed<number>(() =>
+  Object.values(participantAmounts.value).reduce((acc: number, v) => acc + (v ?? 0), 0),
+);
+
 // defines actual form state, allows for invalid (empty) values so fields can be
 // initialised empty or cleared
 type FormState = {
@@ -319,7 +391,13 @@ type FormState = {
   amount: number | null;
   timestamp: Date | null;
   paidBy: Member | null;
-  participants: Member[];
+  splitType: ExpenseSplitType;
+  participants: {
+    member: Member;
+    isIncluded: boolean;
+    percentualShare: number | null;
+    exactShare: number | null;
+  }[];
 };
 
 const formState = ref<FormState>({
@@ -327,9 +405,16 @@ const formState = ref<FormState>({
   amount: props.expense?.amount ?? null,
   timestamp: props.expense ? new Date(props.expense.timestamp) : maxTimestamp,
   paidBy: props.expense ? findMemberById(props.expense.paidByMemberId) : null,
-  participants: props.expense
-    ? props.expense.participants.map((p) => findMemberById(p.memberId)).filter((m) => m != null)
-    : [...props.members],
+  // participants: props.expense
+  //   ? props.expense.participants.map((p) => findMemberById(p.memberId)).filter((m) => m != null)
+  //   : [...props.members],
+  splitType: (props.expense?.splitType as ExpenseSplitType) ?? ExpenseSplitType.Evenly,
+  participants: props.members.map((m) => ({
+    member: m,
+    isIncluded: true,
+    percentualShare: null,
+    exactShare: null,
+  })),
 });
 
 // Computed array of valid member IDs for validation
@@ -369,16 +454,16 @@ const formSchema = computed(() =>
     },
 
     // Participants: required, non-empty array with valid member IDs
-    participants: {
-      required,
-      $each: {
-        id: {
-          string,
-          required,
-          oneOf: withMessage(oneOf(validMemberIds.value), 'Invalid member selected'),
-        },
-      },
-    },
+    // participants: {
+    //   required,
+    //   $each: {
+    //     id: {
+    //       string,
+    //       required,
+    //       oneOf: withMessage(oneOf(validMemberIds.value), 'Invalid member selected'),
+    //     },
+    //   },
+    // },
   }),
 );
 
