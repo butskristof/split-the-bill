@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink
+  <AppLinkCard
     :to="{
       name: 'groups-id-expenses-expenseId',
       params: {
@@ -7,39 +7,38 @@
         expenseId: expense.id,
       },
     }"
-    class="expense-card-link"
+    class="expense-card"
   >
-    <Card class="expense">
-      <template #content>
-        <div class="members-avatars">
-          <MemberAvatar :member="paidBy" />
-          <div class="pi pi-arrow-right" />
-          <MemberAvatarGroup :members="participants" />
+    <template #content>
+      <div class="members-avatars">
+        <MemberAvatar :member="paidBy" />
+        <div class="pi pi-arrow-right" />
+        <MemberAvatarGroup :members="participants" />
+      </div>
+      <div class="paid-by-text">
+        <strong>
+          <InlineGroupMember :member="paidBy" />
+        </strong>
+        <span>&nbsp;</span>
+        paid for
+      </div>
+      <div class="description">
+        {{ expense.description }}
+      </div>
+      <div class="amount-timestamp">
+        <div class="amount">
+          <strong>{{ formatCurrency(expense.amount) }}</strong>
         </div>
-        <div class="paid-by-text">
-          <strong>
-            <InlineGroupMember :member="paidBy" />
-          </strong>
-          <span>&nbsp;</span>
-          paid for
+        <div class="timestamp">
+          {{ formatDateTime(expense.timestamp) }}
         </div>
-        <div class="description">
-          {{ expense.description }}
-        </div>
-        <div class="amount-timestamp">
-          <div class="amount">
-            <strong>{{ formatCurrency(expense.amount) }}</strong>
-          </div>
-          <div class="timestamp">
-            {{ formatDateTime(expense.timestamp) }}
-          </div>
-        </div>
-      </template>
-    </Card>
-  </NuxtLink>
+      </div>
+    </template>
+  </AppLinkCard>
 </template>
 
 <script setup lang="ts">
+import AppLinkCard from '~/components/common/AppLinkCard.vue';
 import type { Expense } from '#shared/types/api';
 import MemberAvatar from '~/components/common/MemberAvatar.vue';
 import MemberAvatarGroup from '~/components/common/MemberAvatarGroup.vue';
@@ -76,39 +75,37 @@ const getMember = (memberId: string): Member | null =>
 <style scoped lang="scss">
 @use '~/styles/_utilities.scss';
 
-.expense-card-link {
-  @include utilities.reset-link;
-}
+.expense-card {
+  :deep(.p-card-content) {
+    @include utilities.flex-column(false);
 
-:deep(.p-card-content) {
-  @include utilities.flex-column(false);
-
-  .members-avatars {
-    @include utilities.flex-row-align-center;
-    justify-content: center;
-    margin-bottom: calc(var(--default-spacing) / 2);
-  }
-
-  .paid-by-text {
-    display: inline-flex;
-    align-items: center;
-  }
-
-  .description {
-    font-size: 130%;
-  }
-
-  .amount-timestamp {
-    @include utilities.flex-row-justify-between(false);
-    align-items: flex-end; // put timestamp on same baseline as amount
-
-    .amount {
-      font-size: 110%;
+    .members-avatars {
+      @include utilities.flex-row-align-center;
+      justify-content: center;
+      margin-bottom: calc(var(--default-spacing) / 2);
     }
 
-    .timestamp {
-      font-size: 0.75rem;
-      @include utilities.muted;
+    .paid-by-text {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .description {
+      font-size: 130%;
+    }
+
+    .amount-timestamp {
+      @include utilities.flex-row-justify-between(false);
+      align-items: flex-end; // put timestamp on same baseline as amount
+
+      .amount {
+        font-size: 110%;
+      }
+
+      .timestamp {
+        font-size: 0.75rem;
+        @include utilities.muted;
+      }
     }
   }
 }
