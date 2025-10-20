@@ -115,31 +115,8 @@
         </div>
       </div>
 
-      <div class="form-field">
-        <label for="participants">Participants</label>
-        <Listbox
-          id="participants"
-          v-model="r$.$value.participants"
-          :options="props.members"
-          option-label="name"
-          multiple
-          :invalid="r$.participants.$error"
-          :disabled="formDisabled"
-          fluid
-        />
-        <div
-          v-if="r$.participants.$error"
-          class="errors"
-        >
-          <Message
-            v-for="error in participantsErrors"
-            :key="error"
-            severity="error"
-            size="small"
-            variant="simple"
-            >{{ error }}
-          </Message>
-        </div>
+      <div class="expense-splitting">
+        <p>Participants</p>
       </div>
 
       <div class="form-footer">
@@ -245,39 +222,6 @@ const paidByErrors = computed<string[]>(() =>
   // id for now)
   Object.entries(r$.paidBy.$errors).flatMap(([, v]) => v),
 );
-const participantsErrors = computed<string[]>(() => {
-  // regle returns different formats for collection and individual item errors, we'll map to a
-  // flat string[] for now,
-  // example returns of r$.participants.$errors:
-  /*
-  {
-    "$self": [
-      "This field is required"
-    ],
-    "$each": []
-  }
-   */
-  /*
-  {
-    "$self": [],
-    "$each": [
-      {
-        "id": [
-          "Invalid member selected"
-        ],
-        "name": []
-      }
-    ]
-  }
-   */
-
-  return [
-    ...r$.participants.$errors.$self,
-    ...r$.participants.$errors.$each.flatMap((itemErrors) =>
-      Object.entries(itemErrors).flatMap(([, v]) => v as string[]),
-    ),
-  ];
-});
 const apiErrorTitle = computed<string | null>(() => {
   if (!apiError.value) return null;
   const problemDetails = (apiError.value as FetchError)?.data as ProblemDetails;
@@ -310,7 +254,6 @@ type FormState = {
   amount: number | null;
   timestamp: Date | null;
   paidBy: Member | null;
-  participants: Member[];
 };
 
 const formState = ref<FormState>({
@@ -318,9 +261,6 @@ const formState = ref<FormState>({
   amount: props.expense?.amount ?? null,
   timestamp: props.expense ? new Date(props.expense.timestamp) : maxTimestamp,
   paidBy: props.expense ? findMemberById(props.expense.paidByMemberId) : null,
-  participants: props.expense
-    ? props.expense.participants.map((p) => findMemberById(p.memberId)).filter((m) => m != null)
-    : [...props.members],
 });
 
 // Computed array of valid member IDs for validation
@@ -358,18 +298,6 @@ const formSchema = computed(() =>
         oneOf: withMessage(oneOf(validMemberIds.value), 'Invalid member selected'),
       },
     },
-
-    // Participants: required, non-empty array with valid member IDs
-    participants: {
-      required,
-      $each: {
-        id: {
-          string,
-          required,
-          oneOf: withMessage(oneOf(validMemberIds.value), 'Invalid member selected'),
-        },
-      },
-    },
   }),
 );
 
@@ -386,7 +314,6 @@ const onFormSubmit = async () => {
     timestamp: data.timestamp.toISOString(),
     paidByMemberId: data.paidBy.id,
     splitType: ExpenseSplitType.Evenly,
-    participants: data.participants.map((p) => ({ memberId: p.id })),
   };
   if (isCreate.value) {
     createMutation.mutate(request, {

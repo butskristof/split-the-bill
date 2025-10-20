@@ -78,7 +78,7 @@ defineProps<{
 }>();
 
 //#region create expense dialog
-const showCreateExpenseDialog = ref(false);
+const showCreateExpenseDialog = ref(true);
 const openCreateExpenseDialog = () => (showCreateExpenseDialog.value = true);
 const closeCreateExpenseDialog = () => (showCreateExpenseDialog.value = false);
 //#endregion
