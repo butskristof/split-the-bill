@@ -1,5 +1,6 @@
 <template>
   <Dialog
+    ref="dialogRef"
     visible
     modal
     :draggable="false"
@@ -14,8 +15,6 @@
         : undefined
     "
     maximizable
-    @maximize="isMaximized = true"
-    @unmaximize="isMaximized = false"
     @update:visible="onUpdateVisible"
   >
     <slot />
@@ -35,7 +34,8 @@ const onUpdateVisible = (newValue: boolean) => {
   if (!newValue) emit('close');
 };
 
-const isMaximized = ref(false);
+const dialogRef = ref<{ maximized: boolean }>();
+const isMaximized = computed(() => dialogRef.value?.maximized ?? false);
 </script>
 
 <style scoped lang="scss"></style>
